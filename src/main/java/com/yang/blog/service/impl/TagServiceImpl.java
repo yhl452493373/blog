@@ -1,0 +1,20 @@
+package com.yang.blog.service.impl;
+
+import com.yang.blog.entity.Tag;
+import com.yang.blog.mapper.TagMapper;
+import com.yang.blog.service.TagService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
+
+/**
+ * <p>
+ * 文章标签 服务实现类
+ * </p>
+ *
+ * @author User
+ * @since 2018-11-20
+ */
+@Service
+public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagService {
+
+}

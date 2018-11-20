@@ -1,0 +1,17 @@
+spring:
+  resources:
+    static-locations: classpath:/static/
+  freemarker:
+    cache: false
+    template-loader-path: classpath:/templates
+    enabled: true
+  profiles:
+    active:
+    - single-datasource
+server:
+  port: 8080
+  servlet:
+    context-path: /demo
+logging:
+  level:
+    com.yang.blog: info
