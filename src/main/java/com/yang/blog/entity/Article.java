@@ -1,8 +1,9 @@
 package com.yang.blog.entity;
 
-import java.time.LocalDateTime;
-import java.sql.Blob;
+import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -13,6 +14,8 @@ import java.io.Serializable;
  * @since 2018-11-20
  */
 public class Article implements Serializable, BaseEntity {
+    public static final Integer IS_DRAFT_FALSE = 0;//非草稿
+    public static final Integer IS_DRAFT_TRUE = 1;//草稿
 
     private static final long serialVersionUID = 1L;
 
@@ -31,7 +34,7 @@ public class Article implements Serializable, BaseEntity {
     /**
      * 博文内容
      */
-    private Blob content;
+    private String content;
 
     /**
      * 是否是草稿。单个用户最多只会有一个草稿。0-否，1-是
@@ -68,6 +71,12 @@ public class Article implements Serializable, BaseEntity {
      */
     private Integer available;
 
+    /**
+     * 用户设置的标签列表,逗号分隔,同一用户的标签不可同名
+     */
+    @TableField(exist = false)
+    private String tags;
+
     public String getId() {
         return id;
     }
@@ -75,6 +84,7 @@ public class Article implements Serializable, BaseEntity {
     public void setId(String id) {
         this.id = id;
     }
+
     public String getUserId() {
         return userId;
     }
@@ -82,6 +92,7 @@ public class Article implements Serializable, BaseEntity {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
     public String getTitle() {
         return title;
     }
@@ -89,13 +100,15 @@ public class Article implements Serializable, BaseEntity {
     public void setTitle(String title) {
         this.title = title;
     }
-    public Blob getContent() {
+
+    public String getContent() {
         return content;
     }
 
-    public void setContent(Blob content) {
+    public void setContent(String content) {
         this.content = content;
     }
+
     public Integer getIsDraft() {
         return isDraft;
     }
@@ -103,6 +116,7 @@ public class Article implements Serializable, BaseEntity {
     public void setIsDraft(Integer isDraft) {
         this.isDraft = isDraft;
     }
+
     public Integer getReadCount() {
         return readCount;
     }
@@ -110,6 +124,7 @@ public class Article implements Serializable, BaseEntity {
     public void setReadCount(Integer readCount) {
         this.readCount = readCount;
     }
+
     public Integer getPraiseCount() {
         return praiseCount;
     }
@@ -117,6 +132,7 @@ public class Article implements Serializable, BaseEntity {
     public void setPraiseCount(Integer praiseCount) {
         this.praiseCount = praiseCount;
     }
+
     public LocalDateTime getCreatedTime() {
         return createdTime;
     }
@@ -124,6 +140,7 @@ public class Article implements Serializable, BaseEntity {
     public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
     }
+
     public LocalDateTime getPublishTime() {
         return publishTime;
     }
@@ -131,6 +148,7 @@ public class Article implements Serializable, BaseEntity {
     public void setPublishTime(LocalDateTime publishTime) {
         this.publishTime = publishTime;
     }
+
     public LocalDateTime getModifiedTime() {
         return modifiedTime;
     }
@@ -138,6 +156,7 @@ public class Article implements Serializable, BaseEntity {
     public void setModifiedTime(LocalDateTime modifiedTime) {
         this.modifiedTime = modifiedTime;
     }
+
     public Integer getAvailable() {
         return available;
     }
@@ -146,20 +165,29 @@ public class Article implements Serializable, BaseEntity {
         this.available = available;
     }
 
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
     @Override
     public String toString() {
         return "Article{" +
-        "id=" + id +
-        ", userId=" + userId +
-        ", title=" + title +
-        ", content=" + content +
-        ", isDraft=" + isDraft +
-        ", readCount=" + readCount +
-        ", praiseCount=" + praiseCount +
-        ", createdTime=" + createdTime +
-        ", publishTime=" + publishTime +
-        ", modifiedTime=" + modifiedTime +
-        ", available=" + available +
-        "}";
+                "id=" + id +
+                ", userId=" + userId +
+                ", title=" + title +
+                ", content=" + content +
+                ", isDraft=" + isDraft +
+                ", readCount=" + readCount +
+                ", praiseCount=" + praiseCount +
+                ", createdTime=" + createdTime +
+                ", publishTime=" + publishTime +
+                ", modifiedTime=" + modifiedTime +
+                ", available=" + available +
+                ", tags=" + tags +
+                "}";
     }
 }

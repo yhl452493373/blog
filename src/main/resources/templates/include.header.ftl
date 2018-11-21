@@ -11,18 +11,20 @@
             <div class="layui-form-item blog-sewrap">
                 <div class="layui-input-block blog-sebox">
                     <i class="layui-icon layui-icon-search"></i>
-                    <input type="text" name="title" lay-verify="title" autocomplete="off"  class="layui-input">
+                    <input type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input">
                 </div>
             </div>
         </form>
         <div class="blog-nav pull-right">
             <ul class="layui-nav pull-left">
-                <li class="layui-nav-item layui-this"><a href="index.html">文章</a></li>
-                <li class="layui-nav-item"><a href="create.html">撰写</a></li>
-                <li class="layui-nav-item"><a href="message.html">留言</a></li>
-                <li class="layui-nav-item"><a href="about.html">关于</a></li>
+                <li class="layui-nav-item ${index!''}"><a href="${contextPath}/index">文章</a></li>
+                <@shiro.user>
+                    <li class="layui-nav-item ${create!''}"><a href="${contextPath}/create">撰写</a></li>
+                </@shiro.user>
+                <li class="layui-nav-item ${message!''}"><a href="${contextPath}/message">留言</a></li>
+                <li class="layui-nav-item ${about!''}"><a href="${contextPath}/about">关于</a></li>
             </ul>
-            <a href="login.html" class="personal pull-left">
+            <a href="${contextPath}/login" class="personal pull-left">
                 <i class="layui-icon layui-icon-username"></i>
             </a>
         </div>
@@ -33,10 +35,12 @@
         </div>
     </div>
     <ul class="pop-nav" id="pop-nav">
-        <li><a href="index.html">文章</a></li>
-        <li><a href="create.html">撰写</a></li>
-        <li><a href="message.html">留言</a></li>
-        <li><a href="about.html">关于</a></li>
-        <li><a href="login.html">登录</a></li>
+        <li><a href="${contextPath}/index">文章</a></li>
+        <@shiro.user>
+            <li><a href="${contextPath}/create">撰写</a></li>
+        </@shiro.user>
+        <li><a href="${contextPath}/message">留言</a></li>
+        <li><a href="${contextPath}/about">关于</a></li>
+        <li><a href="${contextPath}/login">登录</a></li>
     </ul>
 </div>

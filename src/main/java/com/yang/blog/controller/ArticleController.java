@@ -1,30 +1,42 @@
 package com.yang.blog.controller;
-import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
-
+import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.Article;
+import com.yang.blog.entity.ArticleTag;
+import com.yang.blog.entity.Tag;
+import com.yang.blog.entity.User;
+import com.yang.blog.shiro.ShiroUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- *
  * @author User
  * @since 2018-11-20
  */
 @RestController
 @RequestMapping("/data/article")
-public class ArticleController {
+public class ArticleController implements BaseController {
     private final Logger logger = LoggerFactory.getLogger(ArticleController.class);
     private ServiceConfig service = ServiceConfig.serviceConfig;
 
     /**
      * 分页查询数据
      *
-     * @param page  分页信息
+     * @param page    分页信息
      * @param article 查询对象
      * @return 查询结果
      */
@@ -49,13 +61,65 @@ public class ArticleController {
      * @return 添加结果
      */
     @RequestMapping("/add")
-    public JSONResult add(Article article) {
+    public JSONResult add(Article article, @RequestParam(defaultValue = "false", required = false) Boolean isDraft) {
         JSONResult jsonResult = JSONResult.init();
-        boolean result = service.articleService.save(article);
-        if (result)
-            jsonResult.success();
-        else
-            jsonResult.error();
+        User user = ShiroUtils.getLoginUser();
+        article.setId(CommonUtils.uuid());
+        article.setUserId(user.getId());
+        article.setIsDraft(isDraft ? Article.IS_DRAFT_TRUE : Article.IS_DRAFT_FALSE);
+        article.setReadCount(0);
+        article.setPraiseCount(0);
+        article.setCreatedTime(LocalDateTime.now());
+        article.setPublishTime(article.getCreatedTime());
+        article.setAvailable(Article.BLOCK);
+        boolean articleResult = false, tagResult = false, articleTagResult = false;
+        articleResult = service.articleService.save(article);
+        String tags = article.getTags();
+        List<Tag> tagList = null;
+        if (!StringUtils.isEmpty(tags)) {
+            List<String> tagNameList = Arrays.asList(tags.split(","));
+            QueryWrapper<Tag> tagQueryWrapper = new QueryWrapper<>();
+            tagQueryWrapper.in("name", tagNameList);
+            tagList = service.tagService.list(tagQueryWrapper);
+            List<Tag> finalTagList = tagList;
+            tagNameList.forEach(tagName -> {
+                boolean exist = false;
+                for (Tag tag : finalTagList) {
+                    if (tag.getName().equals(tagName)) {
+                        exist = true;
+                        break;
+                    }
+                }
+                if (!exist) {
+                    Tag tag = new Tag();
+                    tag.setName(tagName);
+                    tag.setAvailable(Tag.BLOCK);
+                    tag.setUserId(user.getId());
+                    tag.setCreatedTime(LocalDateTime.now());
+                    finalTagList.add(tag);
+                }
+            });
+            tagResult = service.tagService.saveOrUpdateBatch(tagList);
+            List<ArticleTag> articleTagList = new ArrayList<>();
+            tagList.forEach(tag -> {
+                ArticleTag articleTag = new ArticleTag();
+                articleTag.setArticleId(article.getId());
+                articleTag.setTagId(tag.getId());
+                articleTag.setUserId(user.getId());
+                articleTag.setCreatedTime(LocalDateTime.now());
+                articleTagList.add(articleTag);
+            });
+            articleTagResult = service.articleTagService.saveBatch(articleTagList);
+        }
+        if (articleResult && tagResult && articleTagResult) {
+            article.setAvailable(Article.AVAILABLE);
+            service.articleService.updateById(article);
+            tagList.forEach(tag -> tag.setAvailable(Tag.AVAILABLE));
+            service.tagService.updateBatchById(tagList);
+            jsonResult.success(ADD_SUCCESS);
+        } else {
+            jsonResult.error(ADD_FAILED);
+        }
         return jsonResult;
     }
 
@@ -72,7 +136,7 @@ public class ArticleController {
         //TODO 根据需要设置需要更新的列，字段值从article获取。以下注释部分为指定更新列示例，使用时需要注释或删除updateWrapper.setEntity(article);
         //updateWrapper.set("数据库字段1","字段值");
         //updateWrapper.set("数据库字段2","字段值");
-        updateWrapper.eq("表示主键的字段","article中表示主键的值");
+        updateWrapper.eq("表示主键的字段", "article中表示主键的值");
         boolean result = service.articleService.update(article, updateWrapper);
         if (result)
             jsonResult.success();
@@ -95,8 +159,8 @@ public class ArticleController {
         if (logical) {
             UpdateWrapper<Article> updateWrapper = new UpdateWrapper<>();
             //TODO 根据需要修改表示逻辑删除的列和值。
-            updateWrapper.set("表示逻辑删除的字段","表示逻辑删除的值");
-            result = service.articleService.update(article,updateWrapper);
+            updateWrapper.set("表示逻辑删除的字段", "表示逻辑删除的值");
+            result = service.articleService.update(article, updateWrapper);
         } else {
             QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
             queryWrapper.setEntity(article);

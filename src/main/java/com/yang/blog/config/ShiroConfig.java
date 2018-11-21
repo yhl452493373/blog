@@ -58,6 +58,14 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/data/user/register", "anon");
         //登录过程地址
         filterChainDefinitionMap.put("/data/user/login", "anon");
+        //留言页面
+        filterChainDefinitionMap.put("/message", "anon");
+        //文章列表页面
+        filterChainDefinitionMap.put("/index", "anon");
+        //关于页面
+        filterChainDefinitionMap.put("/about", "anon");
+        //文章页面
+        filterChainDefinitionMap.put("/details", "anon");
 
         // 配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了.退出不用写.直接访问/logout就行
         filterChainDefinitionMap.put("/logout", "logout");

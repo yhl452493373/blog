@@ -26,11 +26,11 @@ public class MyCodeGenerator {
         CodeGeneratorConfig cgc = new CodeGeneratorConfig(
                 "blog",
                 new String[]{
-                        "about", "article", "comment", "file", "message", "tag", "user"
+                        "article_tag", "article_file"
                 },
                 MyCodeGenerator.class.getPackage().getName()
         );
-        cgc.setFileOverride(true);
+        cgc.setFileOverride(false);
         cgc.setEnableCache(true);
         cgc.setEnableRedis(false);
         CodeGenerator.baseCodeGenerate(cgc);

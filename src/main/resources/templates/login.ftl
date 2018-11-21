@@ -29,7 +29,7 @@
                     <input name="username" type="text" class="layui-input" placeholder="请输入用户名">
                 </div>
                 <div class="layui-form-item">
-                    <input name="password" type="text" class="layui-input" placeholder="请输入密码">
+                    <input name="password" type="password" class="layui-input" placeholder="请输入密码">
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-inline" style="margin-right: 0">

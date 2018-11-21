@@ -1,7 +1,6 @@
 package com.yang.blog.entity;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.time.LocalDateTime;
 
 /**
@@ -31,7 +30,7 @@ public class Message implements Serializable, BaseEntity {
     /**
      * 留言内容
      */
-    private Blob content;
+    private String content;
 
     /**
      * 点赞次数
@@ -72,11 +71,11 @@ public class Message implements Serializable, BaseEntity {
         this.userId = userId;
     }
 
-    public Blob getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(Blob content) {
+    public void setContent(String content) {
         this.content = content;
     }
 

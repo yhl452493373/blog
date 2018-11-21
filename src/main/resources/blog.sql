@@ -50,7 +50,7 @@ CREATE TABLE `article` (
 `id` varchar(32) NOT NULL,
 `user_id` varchar(32) NULL COMMENT '博文所属用户id',
 `title` varchar(50) NULL COMMENT '博文标题',
-`content` blob NULL COMMENT '博文内容',
+`content` text NULL COMMENT '博文内容',
 `is_draft` int(1) NULL COMMENT '是否是草稿。单个用户最多只会有一个草稿。0-否，1-是',
 `read_count` int(11) NULL COMMENT '阅读次数',
 `praise_count` int(11) NULL COMMENT '点赞次数',
@@ -58,7 +58,7 @@ CREATE TABLE `article` (
 `publish_time` datetime NULL COMMENT '发布时间',
 `modified_time` datetime NULL COMMENT '修改时间',
 `available` int(1) NULL COMMENT '博文状态。-1-删除，0-不可见，1-正常',
-PRIMARY KEY (`id`) 
+PRIMARY KEY (`id`)
 )
 COMMENT = '博文内容';
 CREATE TABLE `comment` (
@@ -66,28 +66,28 @@ CREATE TABLE `comment` (
 `article_id` varchar(32) NULL COMMENT '评论所属博文id',
 `user_name` varchar(32) NULL COMMENT '评论人名字，外部用户使用，和user_id二选一',
 `user_id` varchar(32) NULL COMMENT '用户id，内部用户使用，和user_name二选一',
-`content` blob NULL COMMENT '评论内容',
+`content` text NULL COMMENT '评论内容',
 `praise_count` int(11) NULL COMMENT '点赞次数',
 `created_time` datetime NULL COMMENT '评论时间',
 `available` int(1) NULL COMMENT '评论状态。-1-删除，0-不可见，1-正常',
-PRIMARY KEY (`id`) 
+PRIMARY KEY (`id`)
 )
 COMMENT = '评论';
 CREATE TABLE `message` (
 `id` varchar(32) NOT NULL,
 `user_name` varchar(32) NULL COMMENT '留言人名字，外部用户使用，和user_id二选一',
 `user_id` varchar(32) NULL COMMENT '留言人id，内部用户使用。和user_name二选一',
-`content` blob NULL COMMENT '留言内容',
+`content` text NULL COMMENT '留言内容',
 `praise_count` int(11) NULL COMMENT '点赞次数',
 `created_time` datetime NULL COMMENT '留言时间',
 `available` int(1) NULL COMMENT '留言状态。-1-删除，0-不可见，1-正常',
-PRIMARY KEY (`id`) 
+PRIMARY KEY (`id`)
 )
 COMMENT = '留言';
 CREATE TABLE `about` (
 `id` varchar(32) NOT NULL,
 `user_id` varchar(32) NULL COMMENT '关于所属用户id',
-`content` blob NULL COMMENT '关于的内容',
+`content` text NULL COMMENT '关于的内容',
 `created_time` datetime NULL COMMENT '关于的填写时间',
 `available` int(1) NULL COMMENT '关于状态。-1-删除，0-不可见，1-可见。此表中每个用户最多有1个是可见状态',
 PRIMARY KEY (`id`) 

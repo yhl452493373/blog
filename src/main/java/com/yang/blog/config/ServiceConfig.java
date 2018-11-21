@@ -1,13 +1,8 @@
 package com.yang.blog.config;
 
 import com.github.yhl452493373.shiro.ShiroCaptcha;
-import com.yang.blog.service.AboutService;
-import com.yang.blog.service.ArticleService;
-import com.yang.blog.service.CommentService;
-import com.yang.blog.service.FileService;
-import com.yang.blog.service.MessageService;
-import com.yang.blog.service.TagService;
-import com.yang.blog.service.UserService;
+import com.yang.blog.entity.ArticleTag;
+import com.yang.blog.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,6 +32,8 @@ public class ServiceConfig {
     public TagService tagService;
     @Autowired
     public UserService userService;
+    @Autowired
+    public ArticleTagService articleTagService;
 
     @PostConstruct
     public void init() {

@@ -1,7 +1,6 @@
 package com.yang.blog.entity;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.time.LocalDateTime;
 
 /**
@@ -26,7 +25,7 @@ public class About implements Serializable, BaseEntity {
     /**
      * 关于的内容
      */
-    private Blob content;
+    private String content;
 
     /**
      * 关于的填写时间
@@ -54,11 +53,11 @@ public class About implements Serializable, BaseEntity {
         this.userId = userId;
     }
 
-    public Blob getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(Blob content) {
+    public void setContent(String content) {
         this.content = content;
     }
 

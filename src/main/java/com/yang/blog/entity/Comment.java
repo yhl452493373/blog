@@ -1,7 +1,6 @@
 package com.yang.blog.entity;
 
 import java.time.LocalDateTime;
-import java.sql.Blob;
 import java.io.Serializable;
 
 /**
@@ -36,7 +35,7 @@ public class Comment implements Serializable, BaseEntity {
     /**
      * 评论内容
      */
-    private Blob content;
+    private String content;
 
     /**
      * 点赞次数
@@ -81,11 +80,11 @@ public class Comment implements Serializable, BaseEntity {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-    public Blob getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(Blob content) {
+    public void setContent(String content) {
         this.content = content;
     }
     public Integer getPraiseCount() {
