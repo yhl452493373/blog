@@ -12,3 +12,7 @@ server:
 logging:
   level:
     com.yang.blog: info
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type:

@@ -12,7 +12,7 @@
 <div class="container-wrap">
     <div class="container">
         <div class="register-box">
-            <form id="registerForm" class="layui-form" action="${contextPath}/register" method="post">
+            <form id="registerForm" class="layui-form" action="${contextPath}/data/user/register" method="post">
                 <div class="layui-form-item">
                     <h3 class="box-title">用户注册</h3>
                 </div>
@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <a id="register" class="layui-btn layui-btn-normal layui-btn-fluid register-btn">注册</a>
+                    <button id="register" class="layui-btn layui-btn-normal layui-btn-fluid register-btn">注册</button>
                     <a href="${contextPath}/login" class="layui-btn layui-btn-normal layui-btn-fluid login-btn">登录</a>
                 </div>
             </form>

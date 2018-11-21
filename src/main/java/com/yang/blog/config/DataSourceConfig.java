@@ -1,5 +1,6 @@
 package com.yang.blog.config;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
@@ -47,7 +48,7 @@ public class DataSourceConfig {
         final MybatisSqlSessionFactoryBean sessionFactory = new MybatisSqlSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
         sessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(DataSourceConfig.MAPPER_LOCATION));
-        sessionFactory.setGlobalConfig(new GlobalConfig().setRefresh(true));
+        sessionFactory.setGlobalConfig(new GlobalConfig().setRefresh(true).setDbConfig(new GlobalConfig.DbConfig().setIdType(IdType.UUID)));
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setCacheEnabled(true);
         sessionFactory.setConfiguration(configuration);

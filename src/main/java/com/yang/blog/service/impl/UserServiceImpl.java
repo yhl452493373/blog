@@ -54,7 +54,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPassword(CommonUtils.hashPassword(password, salt, hashCount));
         user.setSalt(salt);
         user.setAvailable(User.AVAILABLE);
-        user.setId(CommonUtils.uuid());
         User existUser = baseMapper.findByUsername(username);
         if (existUser != null) {
             throw new UsernameExistException("用户已经存在");
