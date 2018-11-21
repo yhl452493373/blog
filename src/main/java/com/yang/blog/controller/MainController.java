@@ -2,10 +2,8 @@ package com.yang.blog.controller;
 
 import com.yang.blog.config.ServiceConfig;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,21 +29,11 @@ public class MainController {
         return "register";
     }
 
-    @RequestMapping("/login")
-    public String login(HttpServletRequest request, HttpServletResponse response) {
-        if (request.getMethod().equalsIgnoreCase("get")) {
-            return "login";
-        } else {
-            //TODO 验证验证码是否正确,代码生成后取消此处注释
-//            serviceConfig.shiroCaptcha.validate(request,response,request.getParameter("captcha"));
-            UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
-            usernamePasswordToken.setUsername("admin");
-            usernamePasswordToken.setPassword("admin".toCharArray());
-            usernamePasswordToken.setRememberMe(false);
-            SecurityUtils.getSubject().login(usernamePasswordToken);
-            if (SecurityUtils.getSubject().isAuthenticated())
-                return "redirect:/index";
-            return "redirect:/login";
+    @GetMapping("/login")
+    public String login() {
+        if (SecurityUtils.getSubject().isAuthenticated()) {
+            return "redirect:/index";
         }
+        return "login";
     }
 }

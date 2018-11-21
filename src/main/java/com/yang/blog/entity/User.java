@@ -81,6 +81,12 @@ public class User implements Serializable, BaseEntity {
     @TableField(exist = false)
     private String captcha;
 
+    /**
+     * 是否记住我
+     */
+    @TableField(exist = false)
+    private String isRememberMe;
+
     public String getId() {
         return id;
     }
@@ -175,6 +181,14 @@ public class User implements Serializable, BaseEntity {
         this.captcha = captcha;
     }
 
+    public String getIsRememberMe() {
+        return isRememberMe;
+    }
+
+    public void setIsRememberMe(String isRememberMe) {
+        this.isRememberMe = isRememberMe;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -191,6 +205,7 @@ public class User implements Serializable, BaseEntity {
         ", available=" + available +
         ", confirmPassword=" + confirmPassword +
         ", captcha=" + captcha +
+        ", isRememberMe=" + isRememberMe +
         "}";
     }
 }

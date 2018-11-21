@@ -60,7 +60,11 @@
                 data: $registerForm.serialize(),
                 success: function (result) {
                     layer.alert(result.message, function (index) {
-                        $('.captcha').click();
+                        if (result.status === 'success') {
+                            window.location.href = contextPath + "/login";
+                        } else {
+                            $('.captcha').click();
+                        }
                         layer.close(index);
                     });
                     console.log(result);

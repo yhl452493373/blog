@@ -1,9 +1,12 @@
 package com.yang.blog.shiro;
 
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.github.yhl452493373.utils.CommonUtils;
+import com.yang.blog.config.ServiceConfig;
+import com.yang.blog.entity.User;
+import com.yang.blog.exception.PasswordNullException;
+import com.yang.blog.exception.UsernameNullException;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -18,7 +21,6 @@ import java.util.Set;
  * @author 杨黄林
  */
 public class ShiroRealm extends AuthorizingRealm {
-
     /**
      * 授权
      */
@@ -45,19 +47,33 @@ public class ShiroRealm extends AuthorizingRealm {
     }
 
     /**
-    * 权限认证
-    */
+     * 权限认证
+     */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         //TODO 这里仅用于测试,实际使用根据token中的用户信息与数据库的进行比较,不一致则跑出相关异常.在登录接口中捕获这些异常进行返回提示
-        String username = "admin";
-        String password = "admin";
+        UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;
+        String username = usernamePasswordToken.getUsername();
+        String password = String.valueOf(usernamePasswordToken.getPassword());
 
-        System.out.println("用户信息认证");
+        if (StringUtils.isEmpty(username)) {
+            throw new UsernameNullException("用户名不能为空");
+        }
+        if (StringUtils.isEmpty(password)) {
+            throw new PasswordNullException("密码不能为空");
+        }
 
-        //TODO 认证后,username请换成对应的实体.便于通过shiro标签获取用户对象
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(username, password, getName());
+        User user = ServiceConfig.serviceConfig.userService.findByUsername(username);
+        if (user == null) {
+            throw new UnknownAccountException("用户不存在");
+        }
+        String dbPassword = user.getPassword();
+        String dbSalt = user.getSalt();
 
-        return info;
+        if (!CommonUtils.validatePassword(password, dbPassword, dbSalt, user.getHashCount())) {
+            throw new IncorrectCredentialsException("用户名密码不匹配");
+        }
+
+        return new SimpleAuthenticationInfo(user, usernamePasswordToken.getPassword(), getName());
     }
 }

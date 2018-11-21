@@ -56,6 +56,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/captcha", "anon");
         //注册过程地址
         filterChainDefinitionMap.put("/data/user/register", "anon");
+        //登录过程地址
+        filterChainDefinitionMap.put("/data/user/login", "anon");
 
         // 配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了.退出不用写.直接访问/logout就行
         filterChainDefinitionMap.put("/logout", "logout");

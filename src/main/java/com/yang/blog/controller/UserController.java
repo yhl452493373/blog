@@ -2,12 +2,19 @@ package com.yang.blog.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.config.SystemConfig;
 import com.yang.blog.entity.User;
 import com.yang.blog.exception.*;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.DisabledAccountException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +35,7 @@ public class UserController {
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
     private ServiceConfig service = ServiceConfig.serviceConfig;
 
-    @PostMapping(value = "/register")
+    @PostMapping("/register")
     public JSONResult register(User user, HttpServletRequest request, HttpServletResponse response) {
         JSONResult json = JSONResult.init();
         try {
@@ -55,6 +62,56 @@ public class UserController {
             e.printStackTrace();
             json.error("未知错误，请联系管理员");
         }
+        return json;
+    }
+
+    @PostMapping("/login")
+    public JSONResult login(User user, HttpServletRequest request, HttpServletResponse response) {
+        JSONResult json = JSONResult.init();
+        Subject subject = SecurityUtils.getSubject();
+        logger.info("------------------");
+        logger.info("{}->登录", user.getUsername());
+        try {
+            UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(user.getUsername(), user.getPassword());
+            //非ssoKey跳转,则验证验证码,是否启用记住我
+            if (StringUtils.isEmpty(user.getCaptcha())) {
+                throw new CaptchaNullException();
+            }
+            if (!service.shiroCaptcha.validate(request, response, user.getCaptcha())) {
+                throw new CaptchaErrorException();
+            }
+            String isRememberMe = user.getIsRememberMe();
+            if (isRememberMe != null && isRememberMe.equals("remember")) {
+                usernamePasswordToken.setRememberMe(true);
+                logger.info("启用记住我");
+            }
+            subject.login(usernamePasswordToken);
+        } catch (CaptchaNullException e) {
+            json.error("验证码为空");
+        } catch (CaptchaErrorException e) {
+            json.error("验证码错误");
+        } catch (UsernameNullException e) {
+            json.error("用户名为空");
+        } catch (PasswordNullException e) {
+            json.error("密码为空");
+        } catch (UnknownAccountException e) {
+            json.error("用户名不存在");
+        } catch (DisabledAccountException e) {
+            json.error("用户不可用");
+        } catch (IncorrectCredentialsException e) {
+            json.error("密码不正确");
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            logger.warn("未知错误，请联系管理员");
+            json.error("未知错误，请联系管理员");
+        }
+        if (!subject.isAuthenticated()) {
+            logger.info("{}->登录失败",user.getUsername());
+        } else {
+            logger.info("{}->登录成功", user.getUsername());
+            json.success("登录成功");
+        }
+        logger.info("------------------");
         return json;
     }
 
