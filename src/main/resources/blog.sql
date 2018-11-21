@@ -25,7 +25,7 @@ DROP TABLE `article_file`;
 CREATE TABLE `user` (
 `id` varchar(32) NOT NULL,
 `username` varchar(20) NULL COMMENT '用户名',
-`password` varchar(20) NULL COMMENT '密码',
+`password` varchar(255) NULL COMMENT '密码',
 `salt` varchar(20) NULL COMMENT '密码加密的盐',
 `hash_count` int(1) NULL COMMENT '加密次数',
 `avatar_file_id` varchar(32) NULL COMMENT '头像文件id',

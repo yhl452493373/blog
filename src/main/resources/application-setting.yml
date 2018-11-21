@@ -1,0 +1,10 @@
+system:
+  username-length:
+    min: 6
+    max: 18
+  password-length:
+    min: 6
+    max: 18
+  salt:
+    size: 6
+    hash-count: 4

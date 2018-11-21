@@ -1,0 +1,55 @@
+{
+  "groups": [
+    {
+      "name": "system",
+      "type": "java.lang.String"
+    }
+  ],
+  "properties": [
+    {
+      "name": "system.username-length",
+      "type": "java.lang.String",
+      "description": "用户名长度."
+    },
+    {
+      "name": "system.username-length.min",
+      "type": "java.lang.Integer",
+      "description": "用户名最小长度(>=)."
+    },
+    {
+      "name": "system.username-length.max",
+      "type": "java.lang.Integer",
+      "description": "用户名最大长度(<=)."
+    },
+    {
+      "name": "system.password-length",
+      "type": "java.lang.String",
+      "description": "密码长度."
+    },
+    {
+      "name": "system.password-length.min",
+      "type": "java.lang.Integer",
+      "description": "密码最小长度(>=)."
+    },
+    {
+      "name": "system.password-length.max",
+      "type": "java.lang.Integer",
+      "description": "密码最大长度(<=)."
+    },
+    {
+      "name": "system.salt",
+      "type": "java.lang.String",
+      "description": "盐配置."
+    },
+    {
+      "name": "system.salt.size",
+      "type": "java.lang.Integer",
+      "description": "盐长度."
+    },
+    {
+      "name": "system.salt.hash-count",
+      "type": "java.lang.Integer",
+      "description": "密码利用盐的加密次数."
+    }
+  ]
+}

@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author User
  * @since 2018-11-20
  */
-public class Article implements Serializable {
+public class Article implements Serializable, BaseEntity {
 
     private static final long serialVersionUID = 1L;
 

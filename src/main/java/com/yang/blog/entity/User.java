@@ -1,5 +1,7 @@
 package com.yang.blog.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -11,7 +13,7 @@ import java.io.Serializable;
  * @author User
  * @since 2018-11-20
  */
-public class User implements Serializable {
+public class User implements Serializable, BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -66,6 +68,18 @@ public class User implements Serializable {
      * 用户是否可用。-1-删除，0-锁定，1-正常
      */
     private Integer available;
+
+    /**
+     * 注册时输入的确认密码
+     */
+    @TableField(exist = false)
+    private String confirmPassword;
+
+    /**
+     * 用户输入的验证码
+     */
+    @TableField(exist = false)
+    private String captcha;
 
     public String getId() {
         return id;
@@ -145,6 +159,22 @@ public class User implements Serializable {
         this.available = available;
     }
 
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public String getCaptcha() {
+        return captcha;
+    }
+
+    public void setCaptcha(String captcha) {
+        this.captcha = captcha;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -159,6 +189,8 @@ public class User implements Serializable {
         ", createdTime=" + createdTime +
         ", modifiedTime=" + modifiedTime +
         ", available=" + available +
+        ", confirmPassword=" + confirmPassword +
+        ", captcha=" + captcha +
         "}";
     }
 }

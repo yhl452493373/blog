@@ -46,11 +46,16 @@ public class ShiroConfig {
         //TODO 根据项目配置拦截器
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
 
-        //配置记住我或认证通过可以访问的地址(配置不会被拦截的链接 顺序判断)
+        //静态资源
         filterChainDefinitionMap.put("/static/**", "anon");
+        //注册页面
         filterChainDefinitionMap.put("/register", "anon");
+        //登录页面
         filterChainDefinitionMap.put("/login", "anon");
+        //验证码
         filterChainDefinitionMap.put("/captcha", "anon");
+        //注册过程地址
+        filterChainDefinitionMap.put("/data/user/register", "anon");
 
         // 配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了.退出不用写.直接访问/logout就行
         filterChainDefinitionMap.put("/logout", "logout");

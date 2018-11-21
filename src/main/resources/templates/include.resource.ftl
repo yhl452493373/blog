@@ -4,3 +4,7 @@
 <link rel="stylesheet" href="${contextPath}/static/css/mian.css">
 <#--script-->
 <script src="${contextPath}/static/lib/layui/layui.js"></script>
+
+<script>
+    var contextPath = '${contextPath}';
+</script>

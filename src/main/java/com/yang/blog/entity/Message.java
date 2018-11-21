@@ -1,8 +1,8 @@
 package com.yang.blog.entity;
 
-import java.time.LocalDateTime;
-import java.sql.Blob;
 import java.io.Serializable;
+import java.sql.Blob;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author User
  * @since 2018-11-20
  */
-public class Message implements Serializable {
+public class Message implements Serializable, BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -55,6 +55,7 @@ public class Message implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
+
     public String getUserName() {
         return userName;
     }
@@ -62,6 +63,7 @@ public class Message implements Serializable {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
     public String getUserId() {
         return userId;
     }
@@ -69,6 +71,7 @@ public class Message implements Serializable {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
     public Blob getContent() {
         return content;
     }
@@ -76,6 +79,7 @@ public class Message implements Serializable {
     public void setContent(Blob content) {
         this.content = content;
     }
+
     public Integer getPraiseCount() {
         return praiseCount;
     }
@@ -83,6 +87,7 @@ public class Message implements Serializable {
     public void setPraiseCount(Integer praiseCount) {
         this.praiseCount = praiseCount;
     }
+
     public LocalDateTime getCreatedTime() {
         return createdTime;
     }
@@ -90,6 +95,7 @@ public class Message implements Serializable {
     public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
     }
+
     public Integer getAvailable() {
         return available;
     }
@@ -101,13 +107,13 @@ public class Message implements Serializable {
     @Override
     public String toString() {
         return "Message{" +
-        "id=" + id +
-        ", userName=" + userName +
-        ", userId=" + userId +
-        ", content=" + content +
-        ", praiseCount=" + praiseCount +
-        ", createdTime=" + createdTime +
-        ", available=" + available +
-        "}";
+                "id=" + id +
+                ", userName=" + userName +
+                ", userId=" + userId +
+                ", content=" + content +
+                ", praiseCount=" + praiseCount +
+                ", createdTime=" + createdTime +
+                ", available=" + available +
+                "}";
     }
 }

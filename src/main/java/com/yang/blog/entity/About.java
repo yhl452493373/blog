@@ -1,8 +1,8 @@
 package com.yang.blog.entity;
 
-import java.time.LocalDateTime;
-import java.sql.Blob;
 import java.io.Serializable;
+import java.sql.Blob;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author User
  * @since 2018-11-20
  */
-public class About implements Serializable {
+public class About implements Serializable, BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,6 +45,7 @@ public class About implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
+
     public String getUserId() {
         return userId;
     }
@@ -52,6 +53,7 @@ public class About implements Serializable {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
     public Blob getContent() {
         return content;
     }
@@ -59,6 +61,7 @@ public class About implements Serializable {
     public void setContent(Blob content) {
         this.content = content;
     }
+
     public LocalDateTime getCreatedTime() {
         return createdTime;
     }
@@ -66,6 +69,7 @@ public class About implements Serializable {
     public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
     }
+
     public Integer getAvailable() {
         return available;
     }
@@ -77,11 +81,11 @@ public class About implements Serializable {
     @Override
     public String toString() {
         return "About{" +
-        "id=" + id +
-        ", userId=" + userId +
-        ", content=" + content +
-        ", createdTime=" + createdTime +
-        ", available=" + available +
-        "}";
+                "id=" + id +
+                ", userId=" + userId +
+                ", content=" + content +
+                ", createdTime=" + createdTime +
+                ", available=" + available +
+                "}";
     }
 }
