@@ -6,7 +6,7 @@ datasource:
   datasource-properties-list:
   - name: mysql
     primary: true
-    url: jdbc:mysql://localhost:3306/mysql?useUnicode=true&useSSL=false&characterEncoding=utf8
+    url: jdbc:mysql://localhost:3306/mysql?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8
     username: root
     password: root
     driver-class-name: com.mysql.jdbc.Driver
@@ -14,7 +14,7 @@ datasource:
     mapper-package: com.yang.blog.mapper
     mapper-locations: classpath:/mapper
   - name: test
-    url: jdbc:mysql://localhost:3306/test?useUnicode=true&useSSL=false&characterEncoding=utf8
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8
     username: root
     password: root
     driver-class-name: com.mysql.jdbc.Driver

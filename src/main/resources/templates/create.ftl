@@ -56,7 +56,7 @@
 
         layedit.set({
             uploadImage: {
-                url: '' //图片上传接口url,此接口需要返回
+                url: contextPath + '/data/file/upload?layEditUpload=true' //图片上传接口url,此接口需要返回
                 /**
                  * {
                  *    "code": 0 //0表示成功，其它失败

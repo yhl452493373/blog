@@ -1,7 +1,6 @@
 package com.yang.blog.config;
 
 import com.github.yhl452493373.shiro.ShiroCaptcha;
-import com.yang.blog.entity.ArticleTag;
 import com.yang.blog.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

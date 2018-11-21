@@ -24,7 +24,7 @@ public class MainController {
 
     @GetMapping("/index")
     public String index(ModelMap modelMap) {
-        modelMap.addAttribute("index","layui-this");
+        modelMap.addAttribute("index", "layui-this");
         return "index";
     }
 
@@ -43,19 +43,19 @@ public class MainController {
 
     @GetMapping("/create")
     public String create(ModelMap modelMap) {
-        modelMap.addAttribute("create","layui-this");
+        modelMap.addAttribute("create", "layui-this");
         return "create";
     }
 
     @GetMapping("/message")
     public String message(ModelMap modelMap) {
-        modelMap.addAttribute("message","layui-this");
+        modelMap.addAttribute("message", "layui-this");
         return "message";
     }
 
     @GetMapping("/about")
     public String about(ModelMap modelMap) {
-        modelMap.addAttribute("about","layui-this");
+        modelMap.addAttribute("about", "layui-this");
         return "about";
     }
 
@@ -63,7 +63,12 @@ public class MainController {
     public String details(@PathVariable String articleId, ModelMap modelMap) {
         Article article = service.articleService.getById(articleId);
         modelMap.addAttribute("article", article);
-        modelMap.addAttribute("index","layui-this");
+        modelMap.addAttribute("index", "layui-this");
         return "details";
+    }
+
+    @GetMapping("/uploadTest")
+    public String uploadTest() {
+        return "uploadTest";
     }
 }

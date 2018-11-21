@@ -5,14 +5,12 @@ spring:
     active:
     - single-datasource
     - setting
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 100MB
 server:
   port: 8080
-  servlet:
-    context-path: /blog
 logging:
   level:
     com.yang.blog: info
-mybatis-plus:
-  global-config:
-    db-config:
-      id-type:
