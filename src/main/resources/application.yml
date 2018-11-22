@@ -14,4 +14,4 @@ server:
   port: 8080
 logging:
   level:
-    com.yang.blog: info
+    com.yang.blog: debug

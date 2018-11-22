@@ -56,6 +56,9 @@
         $(document).on('click', '#publish', function (e) {
             e.preventDefault();
             publish();
+        }).on('click', '#draft', function (e) {
+            e.preventDefault();
+            draft();
         });
 
         layedit.set({
@@ -166,7 +169,7 @@
                         layer.alert('文章发布失败，请稍后再试');
                     }
                 }
-            })
+            });
         }
 
         function draft() {
@@ -190,7 +193,7 @@
                         layer.alert('文章保存草稿失败，请稍后再试');
                     }
                 }
-            })
+            });
         }
     });
 </script>

@@ -79,7 +79,7 @@
     }).use(['blog', 'jquery', 'layer', 'laytpl'], function () {
         var $ = layui.jquery, layer = layui.layer, laytpl = layui.laytpl;
 
-        function loadData() {
+        function loadArticle() {
             $.ajax({
                 url: contextPath + '/data/article/list',
                 type: 'post',
@@ -121,7 +121,7 @@
             }
         }
 
-        loadData();
+        loadArticle();
     });
 </script>
 </body>

@@ -19,25 +19,28 @@
                     <div class="item-content">${article.content}</div>
                 </div>
             </div>
-            <form class="layui-form" action="">
+            <form id="commentForm" class="layui-form" action="${contextPath}/data/comment/add" method="post">
+                <input type="hidden" name="articleId" value="${article.id}">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" name="userName" value="<@shiro.principal property='username'/>"
+                                   placeholder="您的昵称" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="layui-form-item layui-form-text">
-                    <textarea class="layui-textarea" style="resize:none" placeholder="写点什么啊"></textarea>
+                    <textarea name="content" class="layui-textarea" style="resize:none" placeholder="写点什么啊"></textarea>
                 </div>
                 <div class="btnbox">
-                    <a href="${contextPath}/details/${article.id}" id="sure" class="layui-btn layui-btn-normal">
-                        确定
-                    </a>
+                    <a id="comment" class="layui-btn layui-btn-normal">确定</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
 <#include "include.footer.ftl">
-<script>
-    layui.extend({
-        blog: '{/}../res/layui-ext/blog/blog'
-    }).use('blog');
-</script>
 <script id="LAY-msg-tpl" type="text/html">
     <div class="info-box">
         <div class="info-item">
@@ -56,6 +59,40 @@
             </div>
         </div>
     </div>
+</script>
+<script>
+    layui.extend({
+        blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
+    }).use(['blog', 'layer', 'jquery'], function () {
+        var $ = layui.jquery, layer = layui.layer;
+
+        $(document).on('click', '#comment', function (e) {
+            e.preventDefault();
+            comment();
+        });
+
+        function comment() {
+            var $commentForm = $('#commentForm');
+            var formData = new FormData($commentForm.get(0));
+            $.ajax({
+                url: $commentForm.attr('action'),
+                type: $commentForm.attr('method'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    if (result.status === 'success') {
+                        layer.alert('评论成功!', function (index) {
+                            layer.close(index);
+                            window.location.href = contextPath + '/details/' + result.data['articleId'];
+                        });
+                    } else {
+                        layer.alert(result.message);
+                    }
+                }
+            })
+        }
+    });
 </script>
 </body>
 </html>

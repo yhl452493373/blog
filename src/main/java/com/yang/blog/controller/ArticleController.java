@@ -9,6 +9,7 @@ import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.*;
 import com.yang.blog.shiro.ShiroUtils;
+import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,7 +47,13 @@ public class ArticleController implements BaseController {
         //queryWrapper.like("数据库字段1","字段值");
         //queryWrapper.or();
         //queryWrapper.like("数据库字段2","字段值");
+        if (SecurityUtils.getSubject().isAuthenticated()) {
+            if (StringUtils.isEmpty(article.getUserId())) {
+                article.setUserId(ShiroUtils.getLoginUser().getId());
+            }
+        }
         queryWrapper.setEntity(article);
+        queryWrapper.orderByDesc(false, "publish_time");
         service.articleService.page(page, queryWrapper);
         jsonResult.success().data(page.getRecords()).count(page.getTotal());
         return jsonResult;
@@ -94,6 +101,7 @@ public class ArticleController implements BaseController {
                 articleFileList.add(articleFile);
             });
             service.articleFileService.saveBatch(articleFileList);
+            articleFileResult = true;
         }
         if (StringUtils.isNotEmpty(tags)) {
             List<String> tagNameList = Arrays.asList(tags.split(","));
@@ -133,7 +141,7 @@ public class ArticleController implements BaseController {
             tagResult = true;
             articleTagResult = true;
         }
-        if (articleResult && tagResult && articleTagResult) {
+        if (articleResult && tagResult && articleTagResult && articleFileResult) {
             article.setAvailable(Article.AVAILABLE);
             service.articleService.updateById(article);
             if (tagList != null) {

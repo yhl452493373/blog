@@ -65,7 +65,17 @@ public class ShiroConfig {
         //关于页面
         filterChainDefinitionMap.put("/about", "anon");
         //文章页面
-        filterChainDefinitionMap.put("/details", "anon");
+        filterChainDefinitionMap.put("/details/**", "anon");
+        //评论页面
+        filterChainDefinitionMap.put("/comment/**", "anon");
+        //添加评论过程
+        filterChainDefinitionMap.put("/data/comment/add", "anon");
+        //获取评论
+        filterChainDefinitionMap.put("/data/comment/list", "anon");
+        //获取文章列表过程
+        filterChainDefinitionMap.put("/data/article/list", "anon");
+        //下载文件
+        filterChainDefinitionMap.put("/data/file/download/**", "anon");
 
         // 配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了.退出不用写.直接访问/logout就行
         filterChainDefinitionMap.put("/logout", "logout");
@@ -76,9 +86,6 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
-
-
-
 
     @Bean
     public SessionManager sessionManager() {

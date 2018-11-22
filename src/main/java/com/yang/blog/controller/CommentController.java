@@ -1,4 +1,8 @@
 package com.yang.blog.controller;
+
+import com.alibaba.fastjson.JSONObject;
+import com.yang.blog.shiro.ShiroUtils;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -10,21 +14,22 @@ import com.yang.blog.entity.Comment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
+
 /**
- *
  * @author User
  * @since 2018-11-20
  */
 @RestController
 @RequestMapping("/data/comment")
-public class CommentController {
+public class CommentController implements BaseController {
     private final Logger logger = LoggerFactory.getLogger(CommentController.class);
     private ServiceConfig service = ServiceConfig.serviceConfig;
 
     /**
      * 分页查询数据
      *
-     * @param page  分页信息
+     * @param page    分页信息
      * @param comment 查询对象
      * @return 查询结果
      */
@@ -46,16 +51,25 @@ public class CommentController {
      * 添加数据
      *
      * @param comment 添加对象
-     * @return 添加结果
+     * @return 添加结果，data中包括文章id和评论id，便于跳转
      */
     @RequestMapping("/add")
     public JSONResult add(Comment comment) {
         JSONResult jsonResult = JSONResult.init();
+        comment.setAvailable(Comment.AVAILABLE);
+        comment.setCreatedTime(LocalDateTime.now());
+        if (SecurityUtils.getSubject().isAuthenticated()) {
+            comment.setUserId(ShiroUtils.getLoginUser().getId());
+            comment.setUserName(null);
+        }
         boolean result = service.commentService.save(comment);
-        if (result)
-            jsonResult.success();
-        else
-            jsonResult.error();
+        if (result) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("articleId", comment.getArticleId());
+            jsonObject.put("commentId", comment.getId());
+            jsonResult.success(ADD_SUCCESS).data(jsonObject);
+        } else
+            jsonResult.error(ADD_FAILED);
         return jsonResult;
     }
 
@@ -72,7 +86,7 @@ public class CommentController {
         //TODO 根据需要设置需要更新的列，字段值从comment获取。以下注释部分为指定更新列示例，使用时需要注释或删除updateWrapper.setEntity(comment);
         //updateWrapper.set("数据库字段1","字段值");
         //updateWrapper.set("数据库字段2","字段值");
-        updateWrapper.eq("表示主键的字段","comment中表示主键的值");
+        updateWrapper.eq("表示主键的字段", "comment中表示主键的值");
         boolean result = service.commentService.update(comment, updateWrapper);
         if (result)
             jsonResult.success();
@@ -95,8 +109,8 @@ public class CommentController {
         if (logical) {
             UpdateWrapper<Comment> updateWrapper = new UpdateWrapper<>();
             //TODO 根据需要修改表示逻辑删除的列和值。
-            updateWrapper.set("表示逻辑删除的字段","表示逻辑删除的值");
-            result = service.commentService.update(comment,updateWrapper);
+            updateWrapper.set("表示逻辑删除的字段", "表示逻辑删除的值");
+            result = service.commentService.update(comment, updateWrapper);
         } else {
             QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
             queryWrapper.setEntity(comment);

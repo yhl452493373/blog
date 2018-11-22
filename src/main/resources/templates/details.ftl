@@ -20,42 +20,87 @@
                 </div>
             </div>
             <a name="comment"> </a>
-            <div class="comt layui-clear">
+            <div class="comt layui-clear" style="margin-bottom: 0">
                 <a href="javascript:;" class="pull-left">评论</a>
                 <a href="${contextPath}/comment/${article.id}" class="pull-right">写评论</a>
             </div>
-            <div id="LAY-msg-box">
-                <div class="info-item">
-                    <img class="info-img" src="../res/static/images/info-img.png" alt="">
-                    <div class="info-text">
-                        <p class="title count">
-                            <span class="name">一片空白</span>
-                            <span class="info-img like"><i class="layui-icon layui-icon-praise"></i>5.8万</span>
-                        </p>
-                        <p class="info-intr">
-                            父爱如山，不善表达。回想十多年前，总记得父亲有个宽厚的肩膀，小小的自己跨坐在上面，越过人山人海去看更广阔的天空，那个时候期望自己有一双翅膀，能够像鸟儿一样飞得高，看得远。虽然父亲有时会和自己开玩笑，但在做错事的时候会受到严厉的训斥。父亲有双粗糙的大手掌。</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <img class="info-img" src="../res/static/images/info-img.png" alt="">
-                    <div class="info-text">
-                        <p class="title count">
-                            <span class="name">一片空白</span>
-                            <span class="info-img like"><i class="layui-icon layui-icon-praise"></i>5.8万</span>
-                        </p>
-                        <p class="info-intr">
-                            父爱如山，不善表达。回想十多年前，总记得父亲有个宽厚的肩膀，小小的自己跨坐在上面，越过人山人海去看更广阔的天空，那个时候期望自己有一双翅膀，能够像鸟儿一样飞得高，看得远。虽然父亲有时会和自己开玩笑，但在做错事的时候会受到严厉的训斥。父亲有双粗糙的大手掌。</p>
-                    </div>
-                </div>
+            <div id="commentItemList">
+
             </div>
         </div>
     </div>
 </div>
 <#include "include.footer.ftl">
+<script type="text/html" id="commentItem">
+    <div class="info-item" style="margin-bottom: 0;margin-top: 35px;box-shadow: 5px 5px 10px 0 #888;border: 1px solid #ddd;padding: 10px">
+    <#--头像-->
+    <#--<img class="info-img" src="../res/static/images/info-img.png" alt="">-->
+        <div class="info-text" style="padding-left: 0">
+            <p class="title count" style="margin-top: 0">
+                <span class="name">{{ d.userName }}</span>
+                <span class="info-img like"><i class="layui-icon layui-icon-praise"></i>{{ d.praiseCount }}</span>
+            </p>
+            <p class="info-intr">{{ d.content }}</p>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="commentItemEmpty">
+    <div class="info-item empty">
+        {{ d.message }}
+    </div>
+</script>
 <script>
+    var articleId = '${article.id}';
+
     layui.extend({
         blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
-    }).use('blog');
+    }).use(['blog', 'jquery', 'laytpl'], function () {
+        var $ = layui.jquery, laytpl = layui.laytpl;
+
+        function loadComment() {
+            $.ajax({
+                url: contextPath + '/data/comment/list',
+                type: 'post',
+                data: {
+                    articleId: articleId
+                },
+                success: function (result) {
+                    if (result.status === 'success') {
+                        if (result.data.length > 0) {
+                            result.data.forEach(function (item) {
+                                renderData(item);
+                            });
+                        } else {
+                            renderEmpty({
+                                message: '此处空空如也。。。。'
+                            });
+                        }
+                    }
+                }
+            })
+        }
+
+        function renderData(item) {
+            var view = $('#commentItem').html();
+            //模板渲染
+            laytpl(view).render(item, function (html) {
+                $('#commentItemList').children('.item-info.empty').remove().end().append(html);
+            });
+        }
+
+        function renderEmpty(item) {
+            var $items = $('#commentItemList').children('.item-info');
+            if ($items.length === 0) {
+                var view = $('#commentItemEmpty').html();
+                //模板渲染
+                laytpl(view).render(item, function (html) {
+                    $('#commentItemList').append(html);
+                });
+            }
+        }
+
+        loadComment();
+    });
 </script>
 </body>
 </html>
