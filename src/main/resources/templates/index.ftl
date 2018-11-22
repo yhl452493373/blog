@@ -56,7 +56,7 @@
             <div class="preview-content">{{ d.content }}</div>
         </div>
         <div class="comment count">
-            <a href="${contextPath}/details/{{ d.id }}#comment">评论</a>
+            <a href="${contextPath}/comment/{{ d.id }}">评论</a>
             <a href="javascript:;" class="like">点赞</a>
         </div>
     </div>
