@@ -46,6 +46,8 @@ public class ShiroConfig {
         //TODO 根据项目配置拦截器
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
 
+        //默认目录：
+        filterChainDefinitionMap.put("/", "anon");
         //静态资源
         filterChainDefinitionMap.put("/static/**", "anon");
         //注册页面
