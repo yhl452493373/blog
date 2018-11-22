@@ -119,7 +119,9 @@
                 processData: false,
                 contentType: false,
                 success: function (result) {
-                    console.log(result);
+                    if (result.status === 'success') {
+
+                    }
                 }
             })
         }

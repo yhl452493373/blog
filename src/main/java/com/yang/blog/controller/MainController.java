@@ -67,6 +67,14 @@ public class MainController {
         return "details";
     }
 
+    @GetMapping("/comment/{articleId}")
+    public String comment(@PathVariable String articleId, ModelMap modelMap) {
+        Article article = service.articleService.getById(articleId);
+        modelMap.addAttribute("article", article);
+        modelMap.addAttribute("index", "layui-this");
+        return "comment";
+    }
+
     @GetMapping("/uploadTest")
     public String uploadTest() {
         return "uploadTest";

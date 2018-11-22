@@ -250,17 +250,33 @@ body {
 }
 
 .lay-blog .container .item .item-box {
-    padding: 0 35px 24px;
+    padding: 0 35px;
     font-size: 14px;
+    max-height: 400px;
+    overflow: hidden;
+    box-sizing: border-box;
+    margin-bottom: 24px;
+}
+
+.lay-blog .container .item .item-box.item-content-box {
+    font-size: 14px;
+    max-height: none;
+    overflow: auto;
+    box-sizing: border-box;
+    margin-bottom: 24px;
 }
 
 .lay-blog .container .item h3 {
     line-height: 36px;
     font-size: 20px;
+    word-break: break-all;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .lay-blog .container .item h5 {
-    line-height: 38px;
+    line-height: 24px;
     color: #a5a5a5;
 }
 
@@ -477,7 +493,7 @@ body {
     margin-bottom: 10px;
 }
 
-.container-about .item .item-box p {
+.container-about .item .item-box .preview-content {
     color: #6a6a6a;
     margin-bottom: 20px;
 }

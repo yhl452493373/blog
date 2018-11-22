@@ -110,13 +110,19 @@ public class ArticleController implements BaseController {
                 articleTagList.add(articleTag);
             });
             articleTagResult = service.articleTagService.saveBatch(articleTagList);
+        } else {
+            tagResult = true;
+            articleTagResult = true;
         }
         if (articleResult && tagResult && articleTagResult) {
             article.setAvailable(Article.AVAILABLE);
             service.articleService.updateById(article);
-            tagList.forEach(tag -> tag.setAvailable(Tag.AVAILABLE));
-            service.tagService.updateBatchById(tagList);
-            jsonResult.success(ADD_SUCCESS);
+            if (tagList != null) {
+                tagList.forEach(tag -> tag.setAvailable(Tag.AVAILABLE));
+                service.tagService.updateBatchById(tagList);
+            }
+            //添加博客成功,返回其id作为data的值,通过id跳转
+            jsonResult.success(ADD_SUCCESS).data(article.getId());
         } else {
             jsonResult.error(ADD_FAILED);
         }
