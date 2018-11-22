@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class MultipartFileParam {
     /**
-     * 文件传输任务ID
+     * 文件传输任务ID,由于用的uuid,因此可以用于临时文件名
      */
     private String taskId;
 
@@ -17,9 +17,9 @@ public class MultipartFileParam {
     private int chunk;
 
     /**
-     * 每个分块的大小
+     * 每个分片的大小
      */
-    private long size;
+    private long chunkSize;
 
     /**
      * 分片总数
@@ -27,7 +27,22 @@ public class MultipartFileParam {
     private int chunkTotal;
 
     /**
-     * 分块文件传输对象
+     * 上传文件的文件名
+     */
+    private String fileName;
+
+    /**
+     * 上传文件的文件类型
+     */
+    private String fileType;
+
+    /**
+     * 上传文件的文件大小
+     */
+    private long fileSize;
+
+    /**
+     * 分片文件传输对象.如果不分片则为整个文件对象
      */
     private MultipartFile file;
 
@@ -47,12 +62,12 @@ public class MultipartFileParam {
         this.chunk = chunk;
     }
 
-    public long getSize() {
-        return size;
+    public long getChunkSize() {
+        return chunkSize;
     }
 
-    public void setSize(long size) {
-        this.size = size;
+    public void setChunkSize(long chunkSize) {
+        this.chunkSize = chunkSize;
     }
 
     public int getChunkTotal() {
@@ -61,6 +76,30 @@ public class MultipartFileParam {
 
     public void setChunkTotal(int chunkTotal) {
         this.chunkTotal = chunkTotal;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
+
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
     }
 
     public MultipartFile getFile() {

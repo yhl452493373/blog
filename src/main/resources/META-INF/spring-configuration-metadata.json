@@ -50,6 +50,21 @@
       "name": "system.salt.hash-count",
       "type": "java.lang.Integer",
       "description": "密码利用盐的加密次数."
+    },
+    {
+      "name": "system.file-upload",
+      "type": "java.lang.String",
+      "description": "文件上传配置."
+    },
+    {
+      "name": "system.file-upload.path",
+      "type": "java.lang.String",
+      "description": "文件上传保存路径."
+    },
+    {
+      "name": "system.file-upload.absolute",
+      "type": "java.lang.Boolean",
+      "description": "文件上传路径是否为绝对路径."
     }
   ]
 }

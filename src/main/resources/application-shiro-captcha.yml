@@ -3,12 +3,13 @@ captcha:
   cacheName: captcha
   cookieName: captcha-cache
   cookieMaxAge: -1
-  captchaBackgroundColor: Color.WHITE
+  #此属性暂时有问题
+  #captchaBackgroundColor: new Color(255, 255, 255)
   captchaSize: 4
-  captchaLineCount: 10
-  captchaPointCount: 10
-  captchaWidth: 80
-  captchaHeight: 40
+  captchaLineCount: 2
+  captchaPointCount: 2
+  captchaWidth: 76
+  captchaHeight: 36
   captchaFontSize: 20
   captchaHasBorder: false
   captchaIsColorful: true

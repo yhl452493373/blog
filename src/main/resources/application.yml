@@ -5,6 +5,7 @@ spring:
     active:
     - single-datasource
     - setting
+    - shiro-captcha
   servlet:
     multipart:
       max-file-size: 20MB

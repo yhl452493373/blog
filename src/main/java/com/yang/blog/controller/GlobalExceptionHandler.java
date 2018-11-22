@@ -17,9 +17,14 @@ public class GlobalExceptionHandler {
     private Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ResponseBody
-    @ExceptionHandler(value = MaxUploadSizeExceededException.class)
-    public JSONResult maxUploadSizeExceededException(MaxUploadSizeExceededException e) {
-        logger.error("上传文件过大:", e);
-        return JSONResult.init().error("上传文件过大！").detail(e.getMessage());
+    @ExceptionHandler(value = Exception.class)
+    public JSONResult defaultHandler(Exception e) {
+        JSONResult jsonResult = JSONResult.init();
+        if (e instanceof MaxUploadSizeExceededException) {
+            MaxUploadSizeExceededException maxUploadSizeExceededException = (MaxUploadSizeExceededException) e;
+            return jsonResult.error("上传文件过大!").detail(maxUploadSizeExceededException.getMessage());
+        }
+        logger.error("内部错误:", e);
+        return jsonResult.error("内部错误.").detail(e.getMessage());
     }
 }

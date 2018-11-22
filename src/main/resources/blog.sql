@@ -108,7 +108,7 @@ CREATE TABLE `file` (
 `save_name` varchar(100) NULL COMMENT '服务器上文件名字（不包含后缀名）',
 `extension_name` varchar(10) NULL COMMENT '扩展名（不包含.）',
 `file_type` varchar(50) NULL COMMENT '文件类型（类似 image/jpeg)',
-`size` bigint(32) NULL COMMENT '文件大小（字节）',
+`chunkSize` bigint(32) NULL COMMENT '文件大小（字节）',
 `user_id` varchar(32) NULL COMMENT '上传用户id',
 `created_time` datetime NULL COMMENT '上传时间',
 `available` int(1) NULL COMMENT '文件状态。-1-删除，0-不可见（临时文件），1-正常',

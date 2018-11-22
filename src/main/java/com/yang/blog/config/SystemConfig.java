@@ -13,6 +13,7 @@ public class SystemConfig {
     private UsernameLength usernameLength;
     private PasswordLength passwordLength;
     private Salt salt;
+    private FileUpload fileUpload;
 
     public static UsernameLength getUsernameLength() {
         return config.usernameLength;
@@ -36,6 +37,14 @@ public class SystemConfig {
 
     public void setSalt(Salt salt) {
         this.salt = salt;
+    }
+
+    public static FileUpload getFileUpload() {
+        return config.fileUpload;
+    }
+
+    public void setFileUpload(FileUpload fileUpload) {
+        this.fileUpload = fileUpload;
     }
 
     @PostConstruct
@@ -103,6 +112,27 @@ public class SystemConfig {
 
         public void setHashCount(Integer hashCount) {
             this.hashCount = hashCount;
+        }
+    }
+
+    public static class FileUpload {
+        private String path = "/upload";
+        private Boolean absolute = false;
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public Boolean getAbsolute() {
+            return absolute;
+        }
+
+        public void setAbsolute(Boolean absolute) {
+            this.absolute = absolute;
         }
     }
 }

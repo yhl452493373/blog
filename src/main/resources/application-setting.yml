@@ -8,3 +8,6 @@ system:
   salt:
     size: 6
     hash-count: 4
+  file-upload:
+    path: /upload
+    absolute: false

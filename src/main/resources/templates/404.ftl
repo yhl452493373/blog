@@ -52,7 +52,7 @@
         <div class="container-wrap">
             <div class="container">
                 <div class="contar-wrap">
-                    <div style="padding: 150px 0 50px; text-align: center; font-size: 30px; color: #ccc; font-weight: 300;">
+                    <div style="padding: 150px 0 50px; text-align: center; font-chunkSize: 30px; color: #ccc; font-weight: 300;">
                         心姐抛出了个 404
                     </div>
                 </div>

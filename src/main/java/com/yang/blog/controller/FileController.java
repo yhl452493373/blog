@@ -1,22 +1,26 @@
 package com.yang.blog.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yang.blog.bean.MultipartFileParam;
-import com.yang.blog.util.FileUploadUtil;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
-import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
-
+import com.yang.blog.bean.MultipartFileParam;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.File;
+import com.yang.blog.shiro.ShiroUtils;
+import com.yang.blog.util.FileUtils;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * @author User
@@ -28,9 +32,11 @@ public class FileController {
     private final Logger logger = LoggerFactory.getLogger(FileController.class);
     private ServiceConfig service = ServiceConfig.serviceConfig;
 
+    /**
+     * 单文件上传
+     */
     @PostMapping("/upload")
     public JSONObject upload(MultipartFileParam fileParam, @RequestParam(required = false, defaultValue = "false") Boolean layEditUpload, HttpServletRequest request) {
-        //todo 待测试断点上传
         JSONResult jsonResult = JSONResult.init();
         // 判断前端Form表单格式是否支持文件上传
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
@@ -45,19 +51,40 @@ public class FileController {
         }
         logger.info("上传文件开始");
         try {
-            java.io.File uploadedFile = FileUploadUtil.chunkUploadByMappedByteBuffer(fileParam);
-            if (uploadedFile != null) {
-                jsonResult.success("文件上传成功。");
+            Map<String, Object> uploadMap = FileUtils.upload(fileParam);
+            if (uploadMap.get("file") != null) {
+                java.io.File uploadFile = (java.io.File) uploadMap.get("file");
+                File file = new File();
+                file.setFileType(fileParam.getFileType());
+                file.setOriginalName(fileParam.getFileName());
+                file.setSaveName(uploadFile.getName());
+                file.setExtensionName(uploadFile.getName().substring(uploadFile.getName().lastIndexOf(".")));
+                file.setCreatedTime(LocalDateTime.now());
+                file.setSize(uploadFile.length());
+                file.setUserId(ShiroUtils.getLoginUser().getId());
+                file.setAvailable(File.BLOCK);
+                //去掉保存的文件名和原始文件名的后缀名
+                file.setOriginalName(file.getOriginalName().substring(0, file.getOriginalName().lastIndexOf(".")));
+                file.setSaveName(file.getSaveName().substring(0, file.getSaveName().lastIndexOf(".")));
+                service.fileService.save(file);
+                uploadMap.remove("file");
+                uploadMap.remove("taskId");
+                uploadMap.put("fileId", file.getId());
+                uploadMap.put("fileUrl", "/data/file/download/" + file.getId());
+                jsonResult.success("文件上传成功.").data(uploadMap);
                 if (layEditUpload) {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("code", 0);
                     jsonObject.put("msg", "文件上传成功");
                     JSONObject dataJSONObject = new JSONObject();
-                    dataJSONObject.put("src", "imgsrc");
-                    dataJSONObject.put("title", "imgtitle");
+                    dataJSONObject.put("src", "/data/file/download/" + file.getId());
+                    dataJSONObject.put("title", file.getOriginalName());
                     jsonObject.put("data", dataJSONObject);
                     return jsonObject;
                 }
+            } else {
+                uploadMap.remove("file");
+                jsonResult.success("文件上传中.").data(uploadMap);
             }
         } catch (IOException e) {
             logger.error("文件上传失败。{}", fileParam.toString());
@@ -71,6 +98,36 @@ public class FileController {
         }
         logger.info("上传文件结束");
         return jsonResult;
+    }
+
+    @GetMapping("/download/{fileId}")
+    public void download(@PathVariable String fileId, HttpServletRequest request, HttpServletResponse response) {
+        File file = service.fileService.getById(fileId);
+        JSONResult jsonResult = JSONResult.init();
+        if (file == null) {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("application/json; charset=utf-8");
+            try (PrintWriter writer = response.getWriter()) {
+                jsonResult.error("下载失败,文件记录未找到").code(HttpServletResponse.SC_NOT_FOUND);
+                writer.write(jsonResult.toJSONString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        java.io.File downloadFile = new java.io.File(FileUtils.uploadPath(file));
+        if (!downloadFile.exists()) {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("application/json; charset=utf-8");
+            try (PrintWriter writer = response.getWriter()) {
+                jsonResult.error("下载失败,文件记录对应的文件未找到").code(HttpServletResponse.SC_NOT_FOUND);
+                writer.write(jsonResult.toJSONString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        FileUtils.download(request, response, downloadFile, file.getOriginalName() + file.getExtensionName());
     }
 
     /**
