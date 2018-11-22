@@ -6,6 +6,13 @@
     <title>闲言轻博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<#include "include.resource.ftl">
+    <style>
+        .item.empty {
+            line-height: 40px;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+    </style>
 </head>
 <body class="lay-blog">
 		<#include "include.header.ftl">
@@ -50,7 +57,7 @@
 <#include "include.footer.ftl">
 <script type="text/html" id="articleItem">
     <div class="item">
-        <div class="item-box  layer-photos-demo1 layer-photos-demo">
+        <div class="item-box">
             <h3><a href="${contextPath}/details/{{ d.id }}">{{ d.title }}</a></h3>
             <h5>发布于：<span>{{ d.publishTime }}</span></h5>
             <div class="preview-content">{{ d.content }}</div>
@@ -60,7 +67,11 @@
             <a href="javascript:;" class="like">点赞</a>
         </div>
     </div>
-
+</script>
+<script type="text/html" id="articleItemEmpty">
+    <div class="item empty">
+        {{ d.message }}
+    </div>
 </script>
 <script>
     layui.extend({
@@ -70,13 +81,22 @@
 
         function loadData() {
             $.ajax({
-                url: '${contextPath}/data/article/list',
+                url: contextPath + '/data/article/list',
                 type: 'post',
+                data: {
+                    isDraft: 0//查询非草稿文章
+                },
                 success: function (result) {
                     if (result.status === 'success') {
-                        result.data.forEach(function (item) {
-                            renderData(item);
-                        });
+                        if (result.data.length > 0) {
+                            result.data.forEach(function (item) {
+                                renderData(item);
+                            });
+                        } else {
+                            renderEmpty({
+                                message: '此处空空如也。。。。'
+                            });
+                        }
                     }
                 }
             })
@@ -86,8 +106,19 @@
             var view = $('#articleItem').html();
             //模板渲染
             laytpl(view).render(item, function (html) {
-                $('#articleItemList').append(html);
+                $('#articleItemList').children('.item.empty').remove().end().append(html);
             });
+        }
+
+        function renderEmpty(item) {
+            var $items = $('#articleItemList').children('.item');
+            if ($items.length === 0) {
+                var view = $('#articleItemEmpty').html();
+                //模板渲染
+                laytpl(view).render(item, function (html) {
+                    $('#articleItemList').append(html);
+                });
+            }
         }
 
         loadData();

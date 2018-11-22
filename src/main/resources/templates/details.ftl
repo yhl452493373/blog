@@ -54,7 +54,7 @@
 <#include "include.footer.ftl">
 <script>
     layui.extend({
-        blog: '{/}../res/layui-ext/blog/blog',
+        blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
     }).use('blog');
 </script>
 </body>

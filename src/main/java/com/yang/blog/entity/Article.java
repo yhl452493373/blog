@@ -77,6 +77,12 @@ public class Article implements Serializable, BaseEntity {
     @TableField(exist = false)
     private String tags;
 
+    /**
+     * 与文章对应的文件id，多个用逗号分隔
+     */
+    @TableField(exist = false)
+    private String fileIds;
+
     public String getId() {
         return id;
     }
@@ -173,6 +179,14 @@ public class Article implements Serializable, BaseEntity {
         this.tags = tags;
     }
 
+    public String getFileIds() {
+        return fileIds;
+    }
+
+    public void setFileIds(String fileIds) {
+        this.fileIds = fileIds;
+    }
+
     @Override
     public String toString() {
         return "Article{" +
@@ -188,6 +202,7 @@ public class Article implements Serializable, BaseEntity {
                 ", modifiedTime=" + modifiedTime +
                 ", available=" + available +
                 ", tags=" + tags +
+                ", fileIds=" + fileIds +
                 "}";
     }
 }

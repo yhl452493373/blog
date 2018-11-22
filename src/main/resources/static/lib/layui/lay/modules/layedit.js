@@ -310,16 +310,27 @@ layui.define(["layer", "form"], function (t) {
                     accept: "image",
                     acceptMime: "image/*",
                     exts: "jpg|png|gif|bmp|jpeg",
-                    size: "10240"
+                    size: 10240,
+                    done: function (data) {
+
+                    }
                 },
                 uploadVideo: {
                     url: "",
                     accept: "video",
                     acceptMime: "video/*",
                     exts: "mp4|flv|avi|rm|rmvb",
-                    size: "20480"
+                    size: 20480,
+                    done: function (data) {
+
+                    }
                 },
-                calldel: {url: ""},
+                calldel: {
+                    url: "",
+                    done: function (data) {
+
+                    }
+                },
                 quote: {style: [], js: []},
                 devmode: !1,
                 hideTool: [],
@@ -467,13 +478,13 @@ layui.define(["layer", "form"], function (t) {
                         accept: s.accept,
                         acceptMime: s.acceptMime,
                         exts: s.exts,
-                        size: s.size,
+                        size: s.size + '',
                         elem: e(l).find("input")[0],
                         done: function (e) {
                             0 == e.code ? (e.data = e.data || {}, h.call(t, "img", {
                                 src: e.data.src,
                                 alt: e.data.title
-                            }, n)) : i.msg(e.msg || "上传失败")
+                            }, n), s.done && s.done(e)) : i.msg(e.msg || "上传失败")
                         }
                     })
                 })
@@ -508,7 +519,7 @@ layui.define(["layer", "form"], function (t) {
                                     s = i.msg("文件上传中,请稍等哦", {icon: 16, shade: .3, time: 0})
                                 },
                                 done: function (t, e, n) {
-                                    if (i.close(s), 0 == t.code) t.data = t.data || {}, c.val(t.data.src), r.val(t.data.name); else var a = i.open({
+                                    if (i.close(s), 0 == t.code) t.data = t.data || {}, c.val(t.data.src), r.val(t.data.name), u.done & u.done(t); else var a = i.open({
                                         type: 1,
                                         anim: 2,
                                         icon: 5,
@@ -559,12 +570,12 @@ layui.define(["layer", "form"], function (t) {
                                 accept: d.accept,
                                 acceptMime: d.acceptMime,
                                 exts: d.exts,
-                                size: d.size,
+                                size: d.size + '',
                                 before: function (t) {
                                     r = i.msg("文件上传中,请稍等哦", {icon: 16, shade: .3, time: 0})
                                 },
                                 done: function (t, e, n) {
-                                    if (i.close(r), 0 == t.code) t.data = t.data || {}, u.val(t.data.src); else var a = i.open({
+                                    if (i.close(r), 0 == t.code) t.data = t.data || {}, u.val(t.data.src), d.done && d.done(t); else var a = i.open({
                                         type: 1,
                                         anim: 2,
                                         icon: 5,
@@ -630,7 +641,7 @@ layui.define(["layer", "form"], function (t) {
                     content: '<div id ="aceHtmleditor" style="width:100%;height:100%"></div>',
                     btn: ['确定', '取消'],
                     btnAlign: 'c',
-                    yes:function(index){
+                    yes: function (index) {
                         var l = ace.edit("aceHtmleditor");
                         t.document.body.innerHTML = l.getValue();
                         i.close(index);
@@ -734,7 +745,7 @@ layui.define(["layer", "form"], function (t) {
                                         e = i.msg("文件上传中,请稍等哦", {icon: 16, shade: .3, time: 0})
                                     },
                                     done: function (t, n, o) {
-                                        if (i.close(e), 0 == t.code) t.data = t.data || {}, l.val(t.data.src), a.val(t.data.name); else var s = i.open({
+                                        if (i.close(e), 0 == t.code) t.data = t.data || {}, l.val(t.data.src), a.val(t.data.name), o.done && o.done(t); else var s = i.open({
                                             type: 1,
                                             anim: 2,
                                             icon: 5,
@@ -758,7 +769,8 @@ layui.define(["layer", "form"], function (t) {
                                 t.target.src = n.find('input[name="Imgsrc"]').val(), t.target.alt = n.find('input[name="altStr"]').val(), t.target.width = n.find('input[name="imgWidth"]').val(), t.target.height = n.find('input[name="imgHeight"]').val(), i.close(l)
                             }), n.find(".layui-btn-danger").on("click", function () {
                                 var n = a.calldel;
-                                "" != n.url ? e.post(n.url, {imgpath: t.target.src}, function (e) {
+                                "" != n.url ? e.post(n.url, {imagePath: t.target.src}, function (e) {
+                                    n.done && n.done(e);
                                     t.toElement.remove()
                                 }) : t.toElement.remove(), i.close(l)
                             }), !1
@@ -780,11 +792,13 @@ layui.define(["layer", "form"], function (t) {
                                 a && ("VIDEO" == n.tagName ? l.style = "text-align:" + a : n.style = "text-align:" + a), i.close(s)
                             }), o.find(".layui-btn-danger").on("click", function () {
                                 "BODY" == n.tagName ? i.msg("不能再删除了") : "VIDEO" == n.tagName ? "" != r.url ? e.post(r.url, {
-                                    filepath: t.target.src,
-                                    imgpath: t.target.poster
+                                    videoPath: t.target.src,
+                                    imagePath: t.target.poster
                                 }, function (t) {
+                                    r.done && r.done(t);
                                     l.remove()
                                 }) : l.remove() : "IMG" == n.tagName && "" != r.url ? e.post(r.url, {para: t.target.src}, function (t) {
+                                    r.done && r.done(t);
                                     n.remove()
                                 }) : n.remove(), i.close(s)
                             })

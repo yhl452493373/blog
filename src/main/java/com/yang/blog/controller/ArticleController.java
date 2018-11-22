@@ -7,10 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
 import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.config.ServiceConfig;
-import com.yang.blog.entity.Article;
-import com.yang.blog.entity.ArticleTag;
-import com.yang.blog.entity.Tag;
-import com.yang.blog.entity.User;
+import com.yang.blog.entity.*;
 import com.yang.blog.shiro.ShiroUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -71,12 +69,33 @@ public class ArticleController implements BaseController {
         article.setPraiseCount(0);
         article.setCreatedTime(LocalDateTime.now());
         article.setPublishTime(article.getCreatedTime());
-        article.setAvailable(Article.BLOCK);
-        boolean articleResult = false, tagResult = false, articleTagResult = false;
+        article.setAvailable(Article.TEMP);
+        boolean articleResult = false, tagResult = false, articleTagResult = false, articleFileResult = false;
         articleResult = service.articleService.save(article);
+        String fileIds = article.getFileIds();
         String tags = article.getTags();
         List<Tag> tagList = null;
-        if (!StringUtils.isEmpty(tags)) {
+        if (StringUtils.isNotEmpty(fileIds)) {
+            List<String> fileIdList = CommonUtils.splitIds(fileIds);
+
+            //将关联文件设置为正常状态
+            Collection<File> fileList = service.fileService.listByIds(fileIdList);
+            fileList.forEach(file -> file.setAvailable(File.AVAILABLE));
+            service.fileService.updateBatchById(fileList);
+
+            //将文件和文章关联
+            List<ArticleFile> articleFileList = new ArrayList<>();
+            fileIdList.forEach(fileId -> {
+                ArticleFile articleFile = new ArticleFile();
+                articleFile.setArticleId(article.getId());
+                articleFile.setFileId(fileId);
+                articleFile.setCreatedTime(LocalDateTime.now());
+                articleFile.setUserId(user.getId());
+                articleFileList.add(articleFile);
+            });
+            service.articleFileService.saveBatch(articleFileList);
+        }
+        if (StringUtils.isNotEmpty(tags)) {
             List<String> tagNameList = Arrays.asList(tags.split(","));
             QueryWrapper<Tag> tagQueryWrapper = new QueryWrapper<>();
             tagQueryWrapper.in("name", tagNameList);

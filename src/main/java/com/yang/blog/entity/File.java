@@ -53,7 +53,7 @@ public class File implements Serializable, BaseEntity {
     private LocalDateTime createdTime;
 
     /**
-     * 文件状态。-1-删除，0-不可见（临时文件），1-正常
+     * 文件状态。-1-删除，0-不可见，1-正常，2-临时文件
      */
     private Integer available;
 

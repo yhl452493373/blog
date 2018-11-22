@@ -23,6 +23,7 @@
                 <input name="title" type="text" class="layui-input create-title-input" placeholder="请输入文章标题">
             </div>
             <div class="layui-form-item">
+                <input type="hidden" id="fileIds" name="fileIds">
                 <textarea name="content" id="content" placeholder="文章内容" style="display: none;"></textarea>
             </div>
             <div class="layui-form-item create-tags-container">
@@ -47,8 +48,8 @@
     layui.extend({
         blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog',
         inputTags: '{/}${contextPath}/static/lib/layui-ext/input-tags/inputTags'
-    }).use(['blog', 'layedit', 'inputTags', 'jquery'], function () {
-        var layedit = layui.layedit;
+    }).use(['blog', 'layer', 'layedit', 'inputTags', 'jquery'], function () {
+        var layedit = layui.layedit, layer = layui.layer;
         var inputTags = layui.inputTags;
         var $ = layui.jquery;
 
@@ -60,25 +61,63 @@
         layedit.set({
             //暴露layupload参数设置接口 --详细查看layupload参数说明
             uploadImage: {
-                url: '${contextPath}/data/file/upload?layEditUpload=true',
+                url: contextPath + '/data/file/upload?layEditUpload=true',
                 accept: 'image',
                 acceptMime: 'image/*',
                 exts: 'jpg|png|gif|bmp|jpeg',
-                size: 1024 * 1024 * 2 + ''
+                size: 1024,
+                done: function (res) {
+                    //成功后的回调
+                    var $fileIds = $('#fileIds');
+                    var fileIds = $fileIds.val();
+                    if (fileIds.trim() === '') {
+                        fileIds = [];
+                    } else {
+                        fileIds = fileIds.split(',');
+                    }
+                    fileIds.push(res.data['fileId']);
+                    $fileIds.val(fileIds.join(','));
+                }
             }
             , uploadVideo: {
-                url: '${contextPath}/data/file/upload?layEditUpload=true',
+                url: contextPath + '/data/file/upload?layEditUpload=true',
                 accept: 'video',
                 acceptMime: 'video/*',
                 exts: 'mp4|flv|avi|rm|rmvb',
-                size: 1024 * 1024 * 10 + ''
+                size: 1024,
+                done: function (res) {
+                    //成功后的回调
+                    var $fileIds = $('#fileIds');
+                    var fileIds = $fileIds.val();
+                    if (fileIds.trim() === '') {
+                        fileIds = [];
+                    } else {
+                        fileIds = fileIds.split(',');
+                    }
+                    fileIds.push(res.data['fileId']);
+                    $fileIds.val(fileIds.join(','));
+                }
             }
             //右键删除图片/视频时的回调参数，post到后台删除服务器文件等操作，
             //传递参数：
             //图片： imgpath --图片路径
             //视频： filepath --视频路径 imgpath --封面路径
             , calldel: {
-                url: '${contextPath}/data/file/delete?layEditDelete=true'
+                url: contextPath + '/data/file/delete?layEditDelete=true',
+                done: function (res) {
+                    //成功后的回调
+                    var $fileIds = $('#fileIds');
+                    var fileIds = $fileIds.val();
+                    if (fileIds.trim() === '') {
+                        return;
+                    } else {
+                        fileIds = fileIds.split(',');
+                    }
+                    res.data.forEach(function (fileId) {
+                        fileIds.splice(fileIds.indexOf(fileId), 1);
+                    });
+                    $fileIds.val(fileIds.join(','));
+                }
             }
             //开发者模式 --默认为false
             , devmode: false
@@ -88,7 +127,7 @@
                 default: 'javascript' //hide为true时的默认语言格式
             }
             , tool: [
-                'html', 'code', 'strong', 'italic', 'underline', 'del', 'addhr', '|', 'fontFomatt', 'colorpicker', 'face'
+                'code', 'strong', 'italic', 'underline', 'del', 'addhr', '|', 'fontFomatt', 'colorpicker', 'face'
                 , '|', 'left', 'center', 'right', '|', 'link', 'unlink', 'image_alt', 'video', 'anchors'
                 , '|', 'fullScreen'
             ]
@@ -120,7 +159,35 @@
                 contentType: false,
                 success: function (result) {
                     if (result.status === 'success') {
+                        layer.alert('文章发布成功', function () {
+                            window.location.href = contextPath + '/details/' + result.data;
+                        });
+                    } else {
+                        layer.alert('文章发布失败，请稍后再试');
+                    }
+                }
+            })
+        }
 
+        function draft() {
+            layedit.sync(layeditIndex);
+            var $articleForm = $('#articleForm');
+            var formData = new FormData($articleForm.get(0));
+            formData.append('isDraft', 1 + '');//设置为草稿状态
+            $.ajax({
+                url: $articleForm.attr('action'),
+                type: $articleForm.attr('method'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    if (result.status === 'success') {
+                        //todo 保存草稿后需要允许继续编辑
+                        layer.alert('文章保存草稿成功', function () {
+                            window.location.href = contextPath + '/details/' + result.data;
+                        });
+                    } else {
+                        layer.alert('文章保存草稿失败，请稍后再试');
                     }
                 }
             })

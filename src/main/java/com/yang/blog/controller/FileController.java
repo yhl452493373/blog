@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
+import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.bean.MultipartFileParam;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.File;
@@ -21,6 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,12 +33,15 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/data/file")
-public class FileController {
+public class FileController implements BaseController {
     private final Logger logger = LoggerFactory.getLogger(FileController.class);
     private ServiceConfig service = ServiceConfig.serviceConfig;
 
     /**
      * 单文件上传
+     *
+     * @param fileParam     文件上传信息
+     * @param layEditUpload 是否layEdit的文件上传。layEdit文件上传返回值与其他的不一样。返回{code:0,msg:'消息',data:{src:'路径',titile:'文件名',fileId:'文件id'}}。其他返回JSONResult格式，在其data中有fileId表示文件id，fileUrl表示文件下载路径
      */
     @PostMapping("/upload")
     public JSONObject upload(MultipartFileParam fileParam, @RequestParam(required = false, defaultValue = "false") Boolean layEditUpload, HttpServletRequest request) {
@@ -63,7 +70,8 @@ public class FileController {
                 file.setCreatedTime(LocalDateTime.now());
                 file.setSize(uploadFile.length());
                 file.setUserId(ShiroUtils.getLoginUser().getId());
-                file.setAvailable(File.BLOCK);
+                //此处上传的所有文件都是临时状态，与其关联的对象添加后，要修改这个文件的状态
+                file.setAvailable(File.TEMP);
                 //去掉保存的文件名和原始文件名的后缀名
                 file.setOriginalName(file.getOriginalName().substring(0, file.getOriginalName().lastIndexOf(".")));
                 file.setSaveName(file.getSaveName().substring(0, file.getSaveName().lastIndexOf(".")));
@@ -80,6 +88,7 @@ public class FileController {
                     JSONObject dataJSONObject = new JSONObject();
                     dataJSONObject.put("src", "/data/file/download/" + file.getId());
                     dataJSONObject.put("title", file.getOriginalName());
+                    dataJSONObject.put("fileId", file.getId());
                     jsonObject.put("data", dataJSONObject);
                     return jsonObject;
                 }
@@ -110,6 +119,17 @@ public class FileController {
             response.setContentType("application/json; charset=utf-8");
             try (PrintWriter writer = response.getWriter()) {
                 jsonResult.error("下载失败,文件记录未找到").code(HttpServletResponse.SC_NOT_FOUND);
+                writer.write(jsonResult.toJSONString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        if (file.getAvailable().equals(File.DELETE)) {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("application/json; charset=utf-8");
+            try (PrintWriter writer = response.getWriter()) {
+                jsonResult.error("下载失败,文件已删除").code(HttpServletResponse.SC_NOT_FOUND);
                 writer.write(jsonResult.toJSONString());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -194,40 +214,52 @@ public class FileController {
     /**
      * 删除数据
      *
-     * @param file    删除对象
-     * @param logical 是否逻辑删除。默认false，使用物理删除
-     * @return 删除结果
+     * @param fileIds       删除对象id,多个id用逗号分隔
+     * @param logical       是否逻辑删除。默认false，使用物理删除
+     * @param layEditDelete 是否layEdit的文件删除
+     * @return 删除结果。data为删除的文件id数组
      */
     @RequestMapping("/delete")
-    public JSONResult delete(File file, HttpServletRequest request, @RequestParam(required = false, defaultValue = "false") Boolean logical, @RequestParam(defaultValue = "false", required = false) Boolean layEditDelete) {
+    public JSONResult delete(String fileIds, HttpServletRequest request, @RequestParam(required = false, defaultValue = "false") Boolean logical, @RequestParam(defaultValue = "false", required = false) Boolean layEditDelete) {
         JSONResult jsonResult = JSONResult.init();
         boolean result;
         if (!layEditDelete) {
+            List<String> fileIdList = CommonUtils.splitIds(fileIds);
+            Collection<File> fileList = service.fileService.listByIds(fileIdList);
             if (logical) {
-                UpdateWrapper<File> updateWrapper = new UpdateWrapper<>();
-                //TODO 根据需要修改表示逻辑删除的列和值。
-                updateWrapper.set("表示逻辑删除的字段", "表示逻辑删除的值");
-                result = service.fileService.update(file, updateWrapper);
+                fileList.forEach(file -> file.setAvailable(File.DELETE));
+                result = service.fileService.updateBatchById(fileList);
             } else {
-                QueryWrapper<File> queryWrapper = new QueryWrapper<>();
-                queryWrapper.setEntity(file);
-                result = service.fileService.remove(queryWrapper);
+                fileList.forEach(file -> {
+                    java.io.File uploadFile = new java.io.File(FileUtils.uploadPath(file));
+                    uploadFile.delete();
+                });
+                service.fileService.removeByIds(CommonUtils.convertToIdList(fileList));
+                result = true;
             }
+            if (result)
+                jsonResult.data(fileIdList);
         } else {
             result = true;
-            String imgPath = request.getParameter("imgpath");
-            String filePath = request.getParameter("imgpath");
-            if (StringUtils.isNotEmpty(imgPath)) {
-                String imgId = imgPath.substring(imgPath.lastIndexOf("/"));
+            String imagePath = request.getParameter("imagePath");
+            String videoPath = request.getParameter("videoPath");
+            List<String> fileIdList = new ArrayList<>();
+            if (StringUtils.isNotEmpty(imagePath)) {
+                String imageId = imagePath.substring(imagePath.lastIndexOf("/") + 1);
+                FileUtils.delete(imageId);
+                fileIdList.add(imageId);
             }
-            if (StringUtils.isNotEmpty(filePath)) {
-                String videoId = filePath.substring(filePath.lastIndexOf("/"));
+            if (StringUtils.isNotEmpty(videoPath)) {
+                String videoId = videoPath.substring(videoPath.lastIndexOf("/") + 1);
+                FileUtils.delete(videoId);
+                fileIdList.add(videoId);
             }
+            jsonResult.data(fileIdList);
         }
         if (result)
-            jsonResult.success();
+            jsonResult.success(DELETE_SUCCESS);
         else
-            jsonResult.error();
+            jsonResult.error(DELETE_FAILED);
         return jsonResult;
     }
 }

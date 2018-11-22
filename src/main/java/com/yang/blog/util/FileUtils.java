@@ -3,6 +3,7 @@ package com.yang.blog.util;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.bean.MultipartFileParam;
+import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.config.SystemConfig;
 import com.yang.blog.entity.User;
 import com.yang.blog.shiro.ShiroUtils;
@@ -132,9 +133,6 @@ public class FileUtils {
         map.put("taskId", param.getTaskId());
         if (isComplete) {
             map.put("file", renameFile(tempFile, fileSaveName));
-            //删除用于校验是否上传完成的文件
-            File confFile = new File(filePath, fileSaveName + ".conf");
-            confFile.delete();
         } else {
             map.put("file", null);
         }
@@ -207,7 +205,12 @@ public class FileUtils {
         for (int i = 0; i < completeStatusList.length && isComplete == Byte.MAX_VALUE; i++) {
             isComplete = (byte) (isComplete & completeStatusList[i]);
         }
-        return isComplete == Byte.MAX_VALUE;
+        if (isComplete == Byte.MAX_VALUE) {
+            confAccessFile.close();
+            confFile.delete();
+            return true;
+        }
+        return false;
     }
 
     public static void download(HttpServletRequest request, HttpServletResponse response, java.io.File file, String downloadFilename) {
@@ -325,5 +328,12 @@ public class FileUtils {
             }
         }
 
+    }
+
+    public static void delete(String fileId) {
+        com.yang.blog.entity.File file = ServiceConfig.serviceConfig.fileService.getById(fileId);
+        java.io.File uploadFile = new java.io.File(FileUtils.uploadPath(file));
+        uploadFile.delete();
+        ServiceConfig.serviceConfig.fileService.removeById(file.getId());
     }
 }
