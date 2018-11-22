@@ -341,7 +341,7 @@ body {
 /* end foooter */
 
 /*start login*/
-.box-title{
+.box-title {
     text-align: center;
     color: #6e6e6e;
 }
@@ -359,7 +359,7 @@ body {
     margin-top: -175px;
 }
 
-.register-box{
+.register-box {
     margin-top: -201px;
 }
 
@@ -376,7 +376,7 @@ body {
 }
 
 .login-btn, .register-btn {
-    margin: 5px 0 5px 0!important;
+    margin: 5px 0 5px 0 !important;
 }
 
 /*end login*/
@@ -529,6 +529,60 @@ body {
 
 .layui-form-radio i {
     color: #1e9fff;
+}
+
+#LayEdit_UpdateImage,
+#LayEdit_UpdateImage_Confirm,
+#knife-z-html button,
+#LAY_layedit_code button,
+#LAY_layedit_addmd button,
+#fly-jie-image-upload button,
+#fly-jie-video-upload button {
+    background-color: #1e9fff;
+    color: #fff;
+    height: 38px;
+    border: 1px solid #1e9fff;
+}
+
+#LayEdit_UpdateImage_Cancel,
+#knife-z-html .layui-btn-primary,
+#LAY_layedit_code .layui-btn-primary,
+#LAY_layedit_addmd .layui-btn-primary,
+#fly-jie-image-upload .layui-btn-primary,
+#fly-jie-video-upload .layui-btn-primary {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #c9c9c9;
+}
+
+#LayEdit_UpdateImage_Cancel:hover,
+#knife-z-html .layui-btn-primary:hover,
+#LAY_layedit_code .layui-btn-primary:hover,
+#LAY_layedit_addmd .layui-btn-primary:hover,
+#fly-jie-image-upload .layui-btn-primary:hover,
+#fly-jie-video-upload .layui-btn-primary:hover {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #5c5c5c;
+}
+
+#LAY_layedit_code .layui-form-select dd.layui-this {
+    background-color: #1e9fff;
+}
+
+#knife-z-html ~ .layui-layer-setwin ~ .layui-layer-btn a {
+    height: 36px;
+    line-height: 36px;
+}
+
+#knife-z-html ~ .layui-layer-setwin ~ .layui-layer-btn a:nth-child(2):hover {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #5c5c5c;
+}
+
+.layui-layedit {
+    background-color: #fff !important;
 }
 
 /*end create*/

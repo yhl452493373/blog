@@ -3,6 +3,7 @@ package com.yang.blog.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
 import com.yang.blog.bean.MultipartFileParam;
@@ -198,18 +199,30 @@ public class FileController {
      * @return 删除结果
      */
     @RequestMapping("/delete")
-    public JSONResult delete(File file, @RequestParam(required = false, defaultValue = "false") Boolean logical) {
+    public JSONResult delete(File file, HttpServletRequest request, @RequestParam(required = false, defaultValue = "false") Boolean logical, @RequestParam(defaultValue = "false", required = false) Boolean layEditDelete) {
         JSONResult jsonResult = JSONResult.init();
         boolean result;
-        if (logical) {
-            UpdateWrapper<File> updateWrapper = new UpdateWrapper<>();
-            //TODO 根据需要修改表示逻辑删除的列和值。
-            updateWrapper.set("表示逻辑删除的字段", "表示逻辑删除的值");
-            result = service.fileService.update(file, updateWrapper);
+        if (!layEditDelete) {
+            if (logical) {
+                UpdateWrapper<File> updateWrapper = new UpdateWrapper<>();
+                //TODO 根据需要修改表示逻辑删除的列和值。
+                updateWrapper.set("表示逻辑删除的字段", "表示逻辑删除的值");
+                result = service.fileService.update(file, updateWrapper);
+            } else {
+                QueryWrapper<File> queryWrapper = new QueryWrapper<>();
+                queryWrapper.setEntity(file);
+                result = service.fileService.remove(queryWrapper);
+            }
         } else {
-            QueryWrapper<File> queryWrapper = new QueryWrapper<>();
-            queryWrapper.setEntity(file);
-            result = service.fileService.remove(queryWrapper);
+            result = true;
+            String imgPath = request.getParameter("imgpath");
+            String filePath = request.getParameter("imgpath");
+            if (StringUtils.isNotEmpty(imgPath)) {
+                String imgId = imgPath.substring(imgPath.lastIndexOf("/"));
+            }
+            if (StringUtils.isNotEmpty(filePath)) {
+                String videoId = filePath.substring(filePath.lastIndexOf("/"));
+            }
         }
         if (result)
             jsonResult.success();
