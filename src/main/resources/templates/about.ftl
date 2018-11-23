@@ -12,8 +12,8 @@
 <div class="container-wrap">
     <div class="container container-message container-details container-about">
         <div class="contar-wrap">
-            <div class="item">
-                <div class="item-box">
+            <div class="item" style="max-height: none">
+                <div class="item-box" style="max-height: none">
                     <h3>关于</h3>
                     <p>诸葛亮于汉灵帝光和四年（181年）出生在琅琊郡阳都县的一个官吏之家，诸葛氏是琅琊的望族，先祖诸葛丰曾在西汉元帝时做过司隶校尉，诸葛亮的父亲诸葛珪在东汉末年做过泰山郡丞； [2]
                         诸葛亮3岁时母亲章氏病逝，诸葛亮8岁时丧父，与弟弟诸葛均一起跟随由袁术任命为豫章太守的叔父诸葛玄到豫章（今江西南昌）赴任，东汉朝廷派朱皓取代了诸葛玄职务，诸葛玄就去投奔荆州刘表。</p>
