@@ -1319,7 +1319,7 @@ layui.define(['layer', 'form'], function (exports) {
                 layui.each(faces, function (key, item) {
                     content.push('<li title="' + key + '"><img src="' + item + '" alt="' + key + '"/></li>');
                 });
-                return '<ul class="layui-clear">' + content.join('') + '</ul>';
+                return '<ul class="layui-clear" style="width: 279px;">' + content.join('') + '</ul>';
             }(), this, {
                 tips: 1
                 , time: 0
@@ -1360,7 +1360,7 @@ layui.define(['layer', 'form'], function (exports) {
                 layui.each(colors, function (key, item) {
                     content.push('<li title="' + item + '" style="background-color:' + item + '"><span style="background-' + item + '" alt="' + key + '"/></li>');
                 });
-                return '<ul class="layui-clear">' + content.join('') + '</ul>';
+                return '<ul class="layui-clear" style="width: 279px;">' + content.join('') + '</ul>';
             }(), this, {
                 tips: 1
                 , time: 0

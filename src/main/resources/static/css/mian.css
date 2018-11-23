@@ -325,6 +325,16 @@ body {
     }
 }
 
+@media only screen and (max-width: 450px) {
+    .register-box .layui-form-item .layui-input-inline,
+    .login-box .layui-form-item .layui-input-inline{
+        margin: 0 0 10px 0;
+        left: 0;
+        vertical-align: top;
+        width: 164px;
+        display: inline-block;
+    }
+}
 /* end container */
 
 /*    height: 60px;
@@ -364,15 +374,16 @@ body {
 
 .login-box, .register-box {
     position: absolute;
-    width: 332px;
+    width: 300px;
     left: 50%;
-    margin-left: -166px;
+    margin-left: -150px;
     padding: 25px;
     box-sizing: border-box;
     border: 1px solid #ccc;
     box-shadow: 0 0 10px 2px #ccc;
     top: 50%;
     margin-top: -175px;
+    background: #e7e7e7;
 }
 
 .register-box {
@@ -389,6 +400,11 @@ body {
     border: 1px solid #e6e6e6;
     width: 78px;
     height: 36px;
+}
+
+.register-box .layui-form-item .layui-input-inline,
+.login-box .layui-form-item .layui-input-inline{
+    width: 158px;
 }
 
 .login-btn, .register-btn {
