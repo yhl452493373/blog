@@ -241,8 +241,8 @@ public class FileController implements BaseController {
                 jsonResult.data(fileIdList);
         } else {
             result = true;
-            String imagePath = request.getParameter("imagePath");
-            String videoPath = request.getParameter("videoPath");
+            String imagePath = request.getParameter("imgpath");
+            String videoPath = request.getParameter("filepath");
             List<String> fileIdList = new ArrayList<>();
             if (StringUtils.isNotEmpty(imagePath)) {
                 String imageId = imagePath.substring(imagePath.lastIndexOf("/") + 1);

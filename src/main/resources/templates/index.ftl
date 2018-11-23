@@ -57,14 +57,14 @@
 <#include "include.footer.ftl">
 <script type="text/html" id="articleItem">
     <div class="item">
-        <div class="item-box">
+        <div class="item-box layer-photos-demo layer-photos-demo{{ d.index }}">
             <h3><a href="${contextPath}/details/{{ d.id }}">{{ d.title }}</a></h3>
             <h5>发布于：<span>{{ d.publishTime }}</span></h5>
             <div class="preview-content">{{ d.content }}</div>
         </div>
         <div class="comment count">
             <a href="${contextPath}/comment/{{ d.id }}">评论</a>
-            <a href="javascript:;" class="like">点赞</a>
+            <a href="javascript:void(0);" class="like" data-id="{{ d.id }}">点赞</a>
         </div>
     </div>
 </script>
@@ -78,6 +78,7 @@
         blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
     }).use(['blog', 'jquery', 'layer', 'laytpl'], function () {
         var $ = layui.jquery, layer = layui.layer, laytpl = layui.laytpl;
+        var blog = layui.blog;
 
         function loadArticle() {
             $.ajax({
@@ -89,7 +90,8 @@
                 success: function (result) {
                     if (result.status === 'success') {
                         if (result.data.length > 0) {
-                            result.data.forEach(function (item) {
+                            result.data.forEach(function (item, index) {
+                                item.index = index + 1;
                                 renderData(item);
                             });
                         } else {
@@ -107,6 +109,7 @@
             //模板渲染
             laytpl(view).render(item, function (html) {
                 $('#articleItemList').children('.item.empty').remove().end().append(html);
+                blog.initLayerPhotos('.layer-photos-demo' + item.index);
             });
         }
 
@@ -122,6 +125,7 @@
         }
 
         loadArticle();
+        blog.praise(blog.praise.paramType.articleId);
     });
 </script>
 </body>

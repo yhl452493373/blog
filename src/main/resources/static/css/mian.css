@@ -601,4 +601,8 @@ body {
     background-color: #fff !important;
 }
 
+.item-box img{
+    max-width: 100%;
+}
+
 /*end create*/

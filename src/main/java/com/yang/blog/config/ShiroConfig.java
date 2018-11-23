@@ -78,6 +78,10 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/data/article/list", "anon");
         //下载文件
         filterChainDefinitionMap.put("/data/file/download/**", "anon");
+        //点赞
+        filterChainDefinitionMap.put("/data/praise/add", "anon");
+        //取消点赞
+        filterChainDefinitionMap.put("/data/praise/delete", "anon");
 
         // 配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了.退出不用写.直接访问/logout就行
         filterChainDefinitionMap.put("/logout", "logout");

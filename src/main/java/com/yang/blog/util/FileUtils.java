@@ -332,8 +332,10 @@ public class FileUtils {
 
     public static void delete(String fileId) {
         com.yang.blog.entity.File file = ServiceConfig.serviceConfig.fileService.getById(fileId);
-        java.io.File uploadFile = new java.io.File(FileUtils.uploadPath(file));
-        uploadFile.delete();
-        ServiceConfig.serviceConfig.fileService.removeById(file.getId());
+        if (file != null) {
+            java.io.File uploadFile = new java.io.File(FileUtils.uploadPath(file));
+            uploadFile.delete();
+            ServiceConfig.serviceConfig.fileService.removeById(file.getId());
+        }
     }
 }

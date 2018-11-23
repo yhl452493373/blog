@@ -26,7 +26,7 @@ public class MyCodeGenerator {
         CodeGeneratorConfig cgc = new CodeGeneratorConfig(
                 "blog",
                 new String[]{
-                        "article_tag", "article_file"
+                        "praise"
                 },
                 MyCodeGenerator.class.getPackage().getName()
         );

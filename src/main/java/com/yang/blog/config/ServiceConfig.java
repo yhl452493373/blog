@@ -35,6 +35,8 @@ public class ServiceConfig {
     public ArticleTagService articleTagService;
     @Autowired
     public ArticleFileService articleFileService;
+    @Autowired
+    public PraiseService praiseService;
 
     @PostConstruct
     public void init() {
