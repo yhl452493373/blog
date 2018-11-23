@@ -468,30 +468,56 @@ layui.define(['layer', 'form'], function (exports) {
                         type: 1
                         , id: 'fly-jie-image-upload'
                         , title: '图片管理'
-                        , shade: false
-                        , area: '600px'
-                        , offset: '100px'
+                        , shade: 0.05
+                        , shadeClose: true
+                        , area: function () {
+                            if (/mobile/i.test(navigator.userAgent)) {
+                                return ['90%']
+                            } else {
+                                return ['485px']
+                            }
+                        }()
+                        , offset: function () {
+                            if (/mobile/i.test(navigator.userAgent)) {
+                                return 'auto'
+                            } else {
+                                return '100px'
+                            }
+                        }()
                         , skin: 'layui-layer-border'
-                        , content: ['<ul class="layui-form layui-form-pane" style="margin: 20px;">'
+                        , content: ['<ul class="layui-form layui-form-pane" style="margin: 20px 20px 0 20px;">'
                             , '<li class="layui-form-item">'
                             , '<div class="layui-upload">'
                             , '<button type="button" class="layui-btn" id="LayEdit_InsertImages"><i class="layui-icon"></i>多图上传</button> '
-                            , '<blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">'
+                            , '<blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;min-height: 116px">'
                             , '  预览图(点击图片可删除)：<div class="layui-upload-list" id="imgsPrev"></div>'
                             , '</blockquote>'
                             , '</div>'
                             , '</li>'
-                            , '<li class="layui-form-item">'
-                            , '<label class="layui-form-label">宽度</label>'
-                            , '<input type="text" required name="imgWidth" placeholder="width" style="width: 25%;position: relative;float: left;" value="" class="layui-input">'
-                            , '<label class="layui-form-label">高度</label>'
-                            , '<input type="text" required name="imgHeight" placeholder="height" style="width: 25%;" value="" class="layui-input">'
+                            , '<li class="layui-form-item" style="position: relative;width: 48%;display: inline-block;">'
+                            , '<label class="layui-form-label" style="position: relative;z-index: 10;width: 60px;">宽度</label>'
+                            , '<input type="text" required name="imgWidth" placeholder="px" style="position: absolute;width: 100%;padding-left: 70px;left: 0;top:0" value="" class="layui-input">'
                             , '</li>'
-                            , '<li class="layui-form-item" style="text-align: center;">'
-                            , '<button type="button" lay-submit  class="layui-btn layedit-btn-yes"> 确定 </button>'
-                            , '<button style="margin-left: 20px;" type="button" class="layui-btn layui-btn-primary"> 取消 </button>'
+                            , '<li class="layui-form-item" style="position: relative;width: 48%;display: inline-block;margin-left: 4%;">'
+                            , '<label class="layui-form-label" style="width: 60px;position: relative;z-index: 10;">高度</label>'
+                            , '<input type="text" required name="imgHeight" placeholder="px" style="position: absolute;width: 100%;padding-left: 70px;left: 0;top:0" value="" class="layui-input">'
                             , '</li>'
                             , '</ul>'].join('')
+                        , btn: ['确定', '取消']
+                        , btnAlign: 'c'
+                        , yes: function (index, layero) {
+                            var styleStr = "";
+                            if (layero.find('input[name="imgWidth"]').val() != "") {
+                                styleStr += "width:" + layero.find('input[name="imgWidth"]').val() + "px;";
+                            }
+                            if (layero.find('input[name="imgHeight"]').val() != "") {
+                                styleStr += "height:" + layero.find('input[name="imgHeight"]').val() + "px;";
+                            }
+                            insertInline.call(iframeWin, 'p', {
+                                text: layero.find('#imgsPrev').html().replace(new RegExp(/(max-width:70px;margin:2px)/g), styleStr)
+                            }, range);
+                            layer.close(index);
+                        }
                         , success: function (layero, index) {
                             layui.use('upload', function (upload) {
                                 var upload = layui.upload;
@@ -564,22 +590,6 @@ layui.define(['layer', 'form'], function (exports) {
                                         });
                                     }
                                 });
-                                layero.find('.layui-btn-primary').on('click', function () {
-                                    layer.close(index);
-                                });
-                                layero.find('.layedit-btn-yes').on('click', function () {
-                                    var styleStr = "";
-                                    if (layero.find('input[name="imgWidth"]').val() != "") {
-                                        styleStr += "width:" + layero.find('input[name="imgWidth"]').val() + "px;";
-                                    }
-                                    if (layero.find('input[name="imgHeight"]').val() != "") {
-                                        styleStr += "height:" + layero.find('input[name="imgHeight"]').val() + "px;";
-                                    }
-                                    insertInline.call(iframeWin, 'p', {
-                                        text: layero.find('#imgsPrev').html().replace(new RegExp(/(max-width:70px;margin:2px)/g), styleStr)
-                                    }, range);
-                                    layer.close(index);
-                                });
                             })
 
                         }
@@ -592,36 +602,64 @@ layui.define(['layer', 'form'], function (exports) {
                         type: 1
                         , id: 'fly-jie-image-upload'
                         , title: '图片管理'
-                        , shade: false
-                        , area: '485px'
-                        , offset: '100px'
+                        , shade: 0.05
+                        , shadeClose: true
+                        , area: function () {
+                            if (/mobile/i.test(navigator.userAgent)) {
+                                return ['90%']
+                            } else {
+                                return ['485px']
+                            }
+                        }()
+                        , offset: function () {
+                            if (/mobile/i.test(navigator.userAgent)) {
+                                return 'auto'
+                            } else {
+                                return '100px'
+                            }
+                        }()
                         , skin: 'layui-layer-border'
-                        , content: ['<ul class="layui-form layui-form-pane" style="margin: 20px;">'
-                            , '<li class="layui-form-item">'
-                            , '<label class="layui-form-label">图片</label>'
-                            , '<button type="button" class="layui-btn" id="LayEdit_InsertImage"> <i class="layui-icon"></i>上传图片</button>'
-                            , '<input type="text" name="Imgsrc" placeholder="请选择文件" style="width: 49%;position: relative;float: right;" class="layui-input">'
+                        , content: ['<ul class="layui-form layui-form-pane" style="margin: 20px 20px 0 20px">'
+                            , '<li class="layui-form-item" style="position: relative">'
+                            , '<button type="button" class="layui-btn" id="LayEdit_InsertImage" style="width: 110px;position: relative;z-index: 10;"><i class="layui-icon"></i>上传图片</button>'
+                            , '<input type="text" name="Imgsrc" placeholder="请选择文件" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" class="layui-input">'
                             , '</li>'
-                            , '<li class="layui-form-item">'
-                            , '<label class="layui-form-label">描述</label>'
-                            , '<input type="text" required name="altStr" placeholder="alt属性" style="width: 75%;" value="" class="layui-input">'
+                            , '<li class="layui-form-item" style="position: relative">'
+                            , '<label class="layui-form-label" style="width: 110px;position: relative;z-index: 10;">描述</label>'
+                            , '<input type="text" required name="altStr" placeholder="alt属性" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" value="" class="layui-input">'
                             , '</li>'
-                            , '<li class="layui-form-item">'
-                            , '<label class="layui-form-label">宽度</label>'
-                            , '<input type="text" required name="imgWidth" placeholder="width" style="width: 25%;position: relative;float: left;" value="" class="layui-input">'
-                            , '<label class="layui-form-label">高度</label>'
-                            , '<input type="text" required name="imgHeight" placeholder="height" style="width: 25%;" value="" class="layui-input">'
+                            , '<li class="layui-form-item" style="position: relative">'
+                            , '<label class="layui-form-label" style="width: 110px;position: relative;z-index: 10;">宽度</label>'
+                            , '<input type="text" required name="imgWidth" placeholder="px" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" value="" class="layui-input">'
                             , '</li>'
-                            , '<li class="layui-form-item" style="text-align: center;">'
-                            , '<button type="button" lay-submit  class="layui-btn layedit-btn-yes"> 确定 </button>'
-                            , '<button style="margin-left: 20px;" type="button" class="layui-btn layui-btn-primary"> 取消 </button>'
+                            , '<li class="layui-form-item" style="position: relative">'
+                            , '<label class="layui-form-label" style="width: 110px;position: relative;z-index: 10;">高度</label>'
+                            , '<input type="text" required name="imgHeight" placeholder="px" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" value="" class="layui-input">'
                             , '</li>'
                             , '</ul>'].join('')
+                        , btn: ['确定', '取消']
+                        , btnAlign: 'c'
+                        , yes: function (index, layero) {
+                            var styleStr = "", altStr = layero.find('input[name="altStr"]'),
+                                Imgsrc = layero.find('input[name="Imgsrc"]');
+                            if (layero.find('input[name="imgWidth"]').val() != "") {
+                                styleStr += "width:" + layero.find('input[name="imgWidth"]').val() + "px;";
+                            }
+                            if (layero.find('input[name="imgHeight"]').val() != "") {
+                                styleStr += "height:" + layero.find('input[name="imgHeight"]').val() + "px;";
+                            }
+                            insertInline.call(iframeWin, 'img', {
+                                src: Imgsrc.val()
+                                , alt: altStr.val()
+                                , style: styleStr
+                            }, range);
+                            layer.close(index);
+                        }
                         , success: function (layero, index) {
                             layui.use('upload', function (upload) {
-                                var upload = layui.upload;
-                                var loding, altStr = layero.find('input[name="altStr"]'),
+                                var upload = layui.upload, altStr = layero.find('input[name="altStr"]'),
                                     Imgsrc = layero.find('input[name="Imgsrc"]');
+                                var loding;
                                 var uploadImage = set.uploadImage || {};
                                 //执行实例
                                 upload.render({
@@ -674,24 +712,6 @@ layui.define(['layer', 'form'], function (exports) {
                                         }
                                     }
                                 });
-                                layero.find('.layui-btn-primary').on('click', function () {
-                                    layer.close(index);
-                                });
-                                layero.find('.layedit-btn-yes').on('click', function () {
-                                    var styleStr = "";
-                                    if (layero.find('input[name="imgWidth"]').val() != "") {
-                                        styleStr += "width:" + layero.find('input[name="imgWidth"]').val() + "px;";
-                                    }
-                                    if (layero.find('input[name="imgHeight"]').val() != "") {
-                                        styleStr += "height:" + layero.find('input[name="imgHeight"]').val() + "px;";
-                                    }
-                                    insertInline.call(iframeWin, 'img', {
-                                        src: Imgsrc.val()
-                                        , alt: altStr.val()
-                                        , style: styleStr
-                                    }, range);
-                                    layer.close(index);
-                                });
                             })
 
                         }
@@ -703,25 +723,44 @@ layui.define(['layer', 'form'], function (exports) {
                     layer.open({
                         type: 1
                         , id: 'fly-jie-video-upload'
-                        , title: '视频'
-                        , shade: false
-                        , area: '600px'
-                        , offset: '100px'
+                        , title: '视频管理'
+                        , shade: 0.05
+                        , shadeClose: true
+                        , area: function () {
+                            if (/mobile/i.test(navigator.userAgent)) {
+                                return ['90%']
+                            } else {
+                                return ['485px']
+                            }
+                        }()
+                        , offset: function () {
+                            if (/mobile/i.test(navigator.userAgent)) {
+                                return 'auto'
+                            } else {
+                                return '100px'
+                            }
+                        }()
                         , skin: 'layui-layer-border'
-                        , content: ['<ul class="layui-form layui-form-pane" style="margin: 20px;">'
-                            , '<li class="layui-form-item">'
-                            , '<button type="button" class="layui-btn" id="LayEdit_InsertVideo"> <i class="layui-icon"></i>上传视频</button>'
-                            , '<input type="text" name="video" placeholder="请选择文件" style="width: 79%;position: relative;float: right;" class="layui-input">'
+                        , content: ['<ul class="layui-form layui-form-pane" style="margin: 20px 20px 0 20px">'
+                            , '<li class="layui-form-item" style="position: relative">'
+                            , '<button type="button" class="layui-btn" id="LayEdit_InsertVideo" style="width: 110px;position: relative;z-index: 10;"> <i class="layui-icon"></i>上传视频</button>'
+                            , '<input type="text" name="video" placeholder="请选择文件" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" class="layui-input">'
                             , '</li>'
-                            , '<li class="layui-form-item">'
-                            , '<button type="button" class="layui-btn" id="LayEdit_InsertImage"> <i class="layui-icon"></i>上传封面</button>'
-                            , '<input type="text" name="cover" placeholder="请选择文件" style="width: 79%;position: relative;float: right;" class="layui-input">'
-                            , '</li>'
-                            , '<li class="layui-form-item" style="text-align: center;">'
-                            , '<button type="button" lay-submit  class="layui-btn layedit-btn-yes"> 确定 </button>'
-                            , '<button style="margin-left: 20px;" type="button" class="layui-btn layui-btn-primary"> 取消 </button>'
+                            , '<li class="layui-form-item" style="position: relative">'
+                            , '<button type="button" class="layui-btn" id="LayEdit_InsertImage" style="width: 110px;position: relative;z-index: 10;"> <i class="layui-icon"></i>上传封面</button>'
+                            , '<input type="text" name="cover" placeholder="请选择文件" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" class="layui-input">'
                             , '</li>'
                             , '</ul>'].join('')
+                        , btn: ['确定', '取消']
+                        , btnAlign: 'c'
+                        , yes: function (index, layero) {
+                            var video = layero.find('input[name="video"]'),
+                                cover = layero.find('input[name="cover"]');
+                            insertInline.call(iframeWin, 'p', {
+                                text: '&nbsp;<video src="' + video.val() + '" poster="' + cover.val() + '" controls="controls" >您的浏览器不支持video播放</video>&nbsp;'
+                            }, range);
+                            layer.close(index);
+                        }
                         , success: function (layero, index) {
 
                             layui.use('upload', function (upload) {
@@ -826,18 +865,6 @@ layui.define(['layer', 'form'], function (exports) {
                                             });
                                         }
                                     }
-                                });
-                                layero.find('.layui-btn-primary').on('click', function () {
-                                    layer.close(index);
-                                });
-                                layero.find('.layedit-btn-yes').on('click', function () {
-
-                                    var container = getContainer(range)
-                                        , parentNode = $(container).parent();
-                                    insertInline.call(iframeWin, 'p', {
-                                        text: '&nbsp;<video src="' + video.val() + '" poster="' + cover.val() + '" controls="controls" >您的浏览器不支持video播放</video>&nbsp;'
-                                    }, range);
-                                    layer.close(index);
                                 });
                             })
 
@@ -1013,33 +1040,67 @@ layui.define(['layer', 'form'], function (exports) {
                         case "IMG":
                             layer.open({
                                 type: 1,
-                                title: false,
-                                area: "485px",
-                                offset: [event.clientY + "px", event.clientX + "px"],
+                                id: 'fly-jie-image-upload',
+                                title: '图片管理',
+                                area: function () {
+                                    if (/mobile/i.test(navigator.userAgent)) {
+                                        return ['90%']
+                                    } else {
+                                        return ['485px']
+                                    }
+                                }(),
+                                offset: function () {
+                                    if (/mobile/i.test(navigator.userAgent)) {
+                                        return 'auto'
+                                    } else {
+                                        return '100px'
+                                    }
+                                }(),
+                                shade: 0.05,
                                 shadeClose: true,
-                                content: ['<ul class="layui-form layui-form-pane" style="margin: 20px;">'
-                                    , '<li class="layui-form-item">'
-                                    , '<label class="layui-form-label">图片</label>'
-                                    , '<button type="button" class="layui-btn" id="LayEdit_UpdateImage"> <i class="layui-icon"></i>上传图片</button>'
-                                    , '<input type="text" name="Imgsrc" placeholder="请选择文件" style="width: 49%;position: relative;float: right;" value="' + event.target.src + '" class="layui-input">'
+                                content: ['<ul class="layui-form layui-form-pane" style="margin: 20px 20px 0 20px">'
+                                    , '<li class="layui-form-item" style="position: relative">'
+                                    , '<button type="button" class="layui-btn" id="LayEdit_UpdateImage" style="width: 110px;position: relative;z-index: 10;"> <i class="layui-icon"></i>上传图片</button>'
+                                    , '<input type="text" name="Imgsrc" placeholder="请选择文件" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" value="' + event.target.src + '" class="layui-input">'
                                     , '</li>'
-                                    , '<li class="layui-form-item">'
-                                    , '<label class="layui-form-label">描述</label>'
-                                    , '<input type="text" required name="altStr" placeholder="alt属性" style="width: 75%;" value="' + event.target.alt + '" class="layui-input">'
+                                    , '<li class="layui-form-item" style="position: relative">'
+                                    , '<label class="layui-form-label" style="width: 110px;position: relative;z-index: 10;">描述</label>'
+                                    , '<input type="text" required name="altStr" placeholder="alt属性" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" value="' + event.target.alt + '" class="layui-input">'
                                     , '</li>'
+                                    , '<li class="layui-form-item" style="position: relative">'
+                                    , '<label class="layui-form-label" style="width: 110px;position: relative;z-index: 10;">宽度</label>'
+                                    , '<input type="text" required name="imgWidth" placeholder="px" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" value="' + (parseInt(event.target.style.width) || '') + '" class="layui-input">'
                                     , '</li>'
-                                    , '<li class="layui-form-item">'
-                                    , '<label class="layui-form-label">宽度</label>'
-                                    , '<input type="text" required name="imgWidth" placeholder="width" style="width: 25%;position: relative;float: left;" value="' + event.target.width + '" class="layui-input">'
-                                    , '<label class="layui-form-label">高度</label>'
-                                    , '<input type="text" required name="imgHeight" placeholder="height" style="width: 25%;" value="' + event.target.height + '" class="layui-input">'
-                                    , '</li>'
-                                    , '<li class="layui-form-item" style="text-align: center;">'
-                                    , '<button type="button" lay-submit  id="LayEdit_UpdateImage_Confirm" class="layui-btn layedit-btn-yes"> 确定 </button>'
-                                    , '<button style="margin-left: 20px;" type="button" id="LayEdit_UpdateImage_Cancel" class="layui-btn layui-btn-primary"> 取消 </button>'
-                                    , '<button type="button" class="layui-btn layui-btn-danger" > 删除 </button>'
+                                    , '<li class="layui-form-item" style="position: relative">'
+                                    , '<label class="layui-form-label" style="width: 110px;position: relative;z-index: 10;">高度</label>'
+                                    , '<input type="text" required name="imgHeight" placeholder="px" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" value="' + (parseInt(event.target.style.height) || '') + '" class="layui-input">'
                                     , '</li>'
                                     , '</ul>'].join(''),
+                                btn: ['确定', '取消', '删除'],
+                                btnAlign: 'c',
+                                yes: function (index, layero) {
+                                    var imgWidth = layero.find('input[name="imgWidth"]').val();
+                                    var imgHeight = layero.find('input[name="imgHeight"]').val();
+                                    event.target.src = layero.find('input[name="Imgsrc"]').val();
+                                    event.target.alt = layero.find('input[name="altStr"]').val();
+                                    event.target.style.width = imgWidth != '' ? imgWidth + 'px' : '';
+                                    event.target.style.height = imgHeight != '' ? imgHeight + 'px' : '';
+                                    layer.close(index);
+                                },
+                                btn2: function (index, layero) {
+                                },
+                                btn3: function (index, layero) {
+                                    var callDel = set.calldel;
+                                    if (callDel.url != "") {
+                                        $.post(callDel.url, {"imgpath": event.target.src}, function (res) {
+                                            event.toElement.remove();
+                                            callDel.done(res);
+                                        })
+                                    } else {
+                                        event.toElement.remove();
+                                    }
+                                    layer.close(index);
+                                },
                                 success: function (layero, index) {
                                     var uploadImage = set.uploadImage || {};
 
@@ -1098,28 +1159,6 @@ layui.define(['layer', 'form'], function (exports) {
                                             }
                                         });
                                     })
-                                    layero.find('.layui-btn-primary').on('click', function () {
-                                        layer.close(index);
-                                    });
-                                    layero.find('.layedit-btn-yes').on('click', function () {
-                                        event.target.src = layero.find('input[name="Imgsrc"]').val();
-                                        event.target.alt = layero.find('input[name="altStr"]').val();
-                                        event.target.style.width = layero.find('input[name="imgWidth"]').val() + 'px';
-                                        event.target.style.height = layero.find('input[name="imgHeight"]').val() + 'px';
-                                        layer.close(index);
-                                    });
-                                    layero.find('.layui-btn-danger').on('click', function () {
-                                        var callDel = set.calldel;
-                                        if (callDel.url != "") {
-                                            $.post(callDel.url, {"imgpath": event.target.src}, function (res) {
-                                                event.toElement.remove();
-                                                callDel.done(res);
-                                            })
-                                        } else {
-                                            event.toElement.remove();
-                                        }
-                                        layer.close(index);
-                                    });
                                     return false;
                                 }
                             })
@@ -1195,7 +1234,13 @@ layui.define(['layer', 'form'], function (exports) {
             var body = this, index = layer.open({
                 type: 1
                 , id: 'LAY_layedit_link'
-                , area: '460px'
+                , area: function () {
+                    if (/mobile/i.test(navigator.userAgent)) {
+                        return ['90%']
+                    } else {
+                        return ['460px']
+                    }
+                }()
                 , offset: '100px'
                 , shade: 0.05
                 , shadeClose: true
@@ -1276,11 +1321,13 @@ layui.define(['layer', 'form'], function (exports) {
                     , '<input name="text" value="' + (options.name || '') + '" autofocus="true" autocomplete="off" class="layui-input">'
                     , '</div>'
                     , '</li>'
-                    , '<li class="layui-form-item" style="text-align: center;">'
-                    , '<button type="button" lay-submit lay-filter="layedit-link-yes" class="layui-btn"> 确定 </button>'
-                    , '<button style="margin-left: 20px;" type="button" class="layui-btn layui-btn-primary"> 取消 </button>'
-                    , '</li>'
+                    , '<button type="button" lay-submit lay-filter="layedit-link-yes" id="layedit-link-yes" class="layui-btn" style="display: none;"> 确定 </button>'
                     , '</ul>'].join('')
+                , btn: ['确定', '取消']
+                , btnAlign: 'c'
+                , yes: function (index, layero) {
+                    $('#layedit-link-yes').click();
+                }
                 , success: function (layero, index) {
                     var eventFilter = 'submit(layedit-link-yes)';
                     form.render('radio');
@@ -1488,10 +1535,16 @@ layui.define(['layer', 'form'], function (exports) {
             var body = this, index = layer.open({
                 type: 1
                 , id: 'LAY_layedit_code'
-                , area: '550px'
+                , area: function () {
+                    if (/mobile/i.test(navigator.userAgent)) {
+                        return ['90%']
+                    } else {
+                        return ['650px']
+                    }
+                }()
+                , offset: '100px'
                 , shade: 0.05
                 , shadeClose: true
-                , offset: '100px'
                 , moveType: 1
                 , title: '插入代码'
                 , skin: 'layui-layer-msg'
@@ -1503,19 +1556,22 @@ layui.define(['layer', 'form'], function (exports) {
                     , '<textarea name="code" lay-verify="required" autofocus="true" class="layui-textarea" style="height: 200px;"></textarea>'
                     , '</div>'
                     , '</li>'
-                    , '<li class="layui-form-item" style="text-align: center;">'
-                    , '<button type="button" lay-submit lay-filter="layedit-code-yes" class="layui-btn"> 确定 </button>'
-                    , '<button style="margin-left: 20px;" type="button" class="layui-btn layui-btn-primary"> 取消 </button>'
-                    , '</li>'
+                    , '<button type="button" id="layedit-code-yes" lay-submit lay-filter="layedit-code-yes" class="layui-btn" style="display: none"> 确定 </button>'
                     , '</ul>'].join('')
+                , btn: ['确定', '取消']
+                , btnAlign: 'c'
+                , yes: function (index, layero) {
+                    $('#layedit-code-yes').click();
+                }
+                , btn1: function (index, layero) {
+                    layer.close(index);
+                    body.focus();
+                }
                 , success: function (layero, index) {
-                    var eventFilter = 'submit(layedit-code-yes)';
                     form.render('select');
-                    layero.find('.layui-btn-primary').on('click', function () {
-                        layer.close(index);
-                        body.focus();
-                    });
+                    var eventFilter = 'submit(layedit-code-yes)';
                     form.on(eventFilter, function (data) {
+                        console.log(data);
                         layer.close(code.index);
                         callback && callback(data.field, options.hide, options.default);
                     });

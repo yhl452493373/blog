@@ -327,7 +327,7 @@ body {
 
 @media only screen and (max-width: 450px) {
     .register-box .layui-form-item .layui-input-inline,
-    .login-box .layui-form-item .layui-input-inline{
+    .login-box .layui-form-item .layui-input-inline {
         margin: 0 0 10px 0;
         left: 0;
         vertical-align: top;
@@ -335,6 +335,7 @@ body {
         display: inline-block;
     }
 }
+
 /* end container */
 
 /*    height: 60px;
@@ -403,7 +404,7 @@ body {
 }
 
 .register-box .layui-form-item .layui-input-inline,
-.login-box .layui-form-item .layui-input-inline{
+.login-box .layui-form-item .layui-input-inline {
     width: 158px;
 }
 
@@ -563,50 +564,29 @@ body {
     color: #1e9fff;
 }
 
-#LayEdit_UpdateImage,
-#LayEdit_UpdateImage_Confirm,
-#knife-z-html button,
-#LAY_layedit_code button,
-#LAY_layedit_addmd button,
-#fly-jie-image-upload button,
-#fly-jie-video-upload button {
-    background-color: #1e9fff;
-    color: #fff;
-    height: 38px;
-    border: 1px solid #1e9fff;
-}
-
-#LayEdit_UpdateImage_Cancel,
-#knife-z-html .layui-btn-primary,
-#LAY_layedit_code .layui-btn-primary,
-#LAY_layedit_addmd .layui-btn-primary,
-#fly-jie-image-upload .layui-btn-primary,
-#fly-jie-video-upload .layui-btn-primary {
-    background-color: #fff;
-    color: #333;
-    border: 1px solid #c9c9c9;
-}
-
-#LayEdit_UpdateImage_Cancel:hover,
-#knife-z-html .layui-btn-primary:hover,
-#LAY_layedit_code .layui-btn-primary:hover,
-#LAY_layedit_addmd .layui-btn-primary:hover,
-#fly-jie-image-upload .layui-btn-primary:hover,
-#fly-jie-video-upload .layui-btn-primary:hover {
-    background-color: #fff;
-    color: #333;
-    border: 1px solid #5c5c5c;
-}
-
 #LAY_layedit_code .layui-form-select dd.layui-this {
     background-color: #1e9fff;
 }
 
+#LayEdit_InsertImage, #LayEdit_InsertImages, #LayEdit_UpdateImage, #LayEdit_InsertVideo {
+    background: #1E9FFF;
+}
+
+#LAY_layedit_addmd ~ .layui-layer-setwin ~ .layui-layer-btn a,
+#fly-jie-video-upload ~ .layui-layer-setwin ~ .layui-layer-btn a,
+#fly-jie-image-upload ~ .layui-layer-setwin ~ .layui-layer-btn a,
+#LAY_layedit_link ~ .layui-layer-setwin ~ .layui-layer-btn a,
+#LAY_layedit_code ~ .layui-layer-setwin ~ .layui-layer-btn a,
 #knife-z-html ~ .layui-layer-setwin ~ .layui-layer-btn a {
     height: 36px;
     line-height: 36px;
 }
 
+#LAY_layedit_addmd ~ .layui-layer-setwin ~ .layui-layer-btn a:nth-child(2):hover,
+#fly-jie-video-upload ~ .layui-layer-setwin ~ .layui-layer-btn a:nth-child(2):hover,
+#fly-jie-image-upload ~ .layui-layer-setwin ~ .layui-layer-btn a:nth-child(2):hover,
+#LAY_layedit_link ~ .layui-layer-setwin ~ .layui-layer-btn a:nth-child(2):hover,
+#LAY_layedit_code ~ .layui-layer-setwin ~ .layui-layer-btn a:nth-child(2):hover,
 #knife-z-html ~ .layui-layer-setwin ~ .layui-layer-btn a:nth-child(2):hover {
     background-color: #fff;
     color: #333;
@@ -617,7 +597,7 @@ body {
     background-color: #fff !important;
 }
 
-.item-box img{
+.item-box img {
     max-width: 100%;
 }
 

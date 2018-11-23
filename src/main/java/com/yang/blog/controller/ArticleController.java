@@ -72,7 +72,7 @@ public class ArticleController implements BaseController {
         article.setCreatedTime(LocalDateTime.now());
         article.setPublishTime(article.getCreatedTime());
         article.setAvailable(Article.TEMP);
-        boolean articleResult, tagResult, articleTagResult;
+        boolean articleResult, tagResult, articleTagResult, articleFileResult;
         articleResult = service.articleService.save(article);
         String fileIds = article.getFileIds();
         String tags = article.getTags();
@@ -83,19 +83,23 @@ public class ArticleController implements BaseController {
             //将关联文件设置为正常状态
             Collection<File> fileList = service.fileService.listByIds(fileIdList);
             fileList.forEach(file -> file.setAvailable(File.AVAILABLE));
-            service.fileService.updateBatchById(fileList);
+            articleFileResult = service.fileService.updateBatchById(fileList);
 
-            //将文件和文章关联
-            List<ArticleFile> articleFileList = new ArrayList<>();
-            fileIdList.forEach(fileId -> {
-                ArticleFile articleFile = new ArticleFile();
-                articleFile.setArticleId(article.getId());
-                articleFile.setFileId(fileId);
-                articleFile.setCreatedTime(LocalDateTime.now());
-                articleFile.setUserId(user.getId());
-                articleFileList.add(articleFile);
-            });
-            service.articleFileService.saveBatch(articleFileList);
+            if (articleFileResult) {
+                //将文件和文章关联
+                List<ArticleFile> articleFileList = new ArrayList<>();
+                fileIdList.forEach(fileId -> {
+                    ArticleFile articleFile = new ArticleFile();
+                    articleFile.setArticleId(article.getId());
+                    articleFile.setFileId(fileId);
+                    articleFile.setCreatedTime(LocalDateTime.now());
+                    articleFile.setUserId(user.getId());
+                    articleFileList.add(articleFile);
+                });
+                articleFileResult = service.articleFileService.saveBatch(articleFileList);
+            }
+        } else {
+            articleFileResult = true;
         }
         if (StringUtils.isNotEmpty(tags)) {
             List<String> tagNameList = Arrays.asList(tags.split(","));
@@ -135,7 +139,7 @@ public class ArticleController implements BaseController {
             tagResult = true;
             articleTagResult = true;
         }
-        if (articleResult && tagResult && articleTagResult) {
+        if (articleResult && tagResult && articleTagResult && articleFileResult) {
             article.setAvailable(Article.AVAILABLE);
             service.articleService.updateById(article);
             if (tagList != null) {
