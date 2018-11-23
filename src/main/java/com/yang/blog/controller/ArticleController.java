@@ -48,7 +48,7 @@ public class ArticleController implements BaseController {
         //queryWrapper.or();
         //queryWrapper.like("数据库字段2","字段值");
         queryWrapper.setEntity(article);
-        queryWrapper.orderByDesc( "publish_time");
+        queryWrapper.orderByDesc("publish_time");
         service.articleService.page(page, queryWrapper);
         jsonResult.success().data(page.getRecords()).count(page.getTotal());
         return jsonResult;
@@ -72,7 +72,7 @@ public class ArticleController implements BaseController {
         article.setCreatedTime(LocalDateTime.now());
         article.setPublishTime(article.getCreatedTime());
         article.setAvailable(Article.TEMP);
-        boolean articleResult = false, tagResult = false, articleTagResult = false, articleFileResult = false;
+        boolean articleResult, tagResult, articleTagResult;
         articleResult = service.articleService.save(article);
         String fileIds = article.getFileIds();
         String tags = article.getTags();
@@ -96,7 +96,6 @@ public class ArticleController implements BaseController {
                 articleFileList.add(articleFile);
             });
             service.articleFileService.saveBatch(articleFileList);
-            articleFileResult = true;
         }
         if (StringUtils.isNotEmpty(tags)) {
             List<String> tagNameList = Arrays.asList(tags.split(","));
@@ -136,7 +135,7 @@ public class ArticleController implements BaseController {
             tagResult = true;
             articleTagResult = true;
         }
-        if (articleResult && tagResult && articleTagResult && articleFileResult) {
+        if (articleResult && tagResult && articleTagResult) {
             article.setAvailable(Article.AVAILABLE);
             service.articleService.updateById(article);
             if (tagList != null) {
