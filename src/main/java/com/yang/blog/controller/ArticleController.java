@@ -42,18 +42,13 @@ public class ArticleController implements BaseController {
     @RequestMapping("/list")
     public JSONResult list(Article article, Page<Article> page) {
         JSONResult jsonResult = JSONResult.init();
-        QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<Article> queryWrapper = new QueryWrapper<>(article);
         //TODO 根据需要决定是否模糊查询，字段值从article中获取。以下注释部分为模糊查询示例，使用时需要注释或删除queryWrapper.setEntity(article);
         //queryWrapper.like("数据库字段1","字段值");
         //queryWrapper.or();
         //queryWrapper.like("数据库字段2","字段值");
-        if (SecurityUtils.getSubject().isAuthenticated()) {
-            if (StringUtils.isEmpty(article.getUserId())) {
-                article.setUserId(ShiroUtils.getLoginUser().getId());
-            }
-        }
         queryWrapper.setEntity(article);
-        queryWrapper.orderByDesc(false, "publish_time");
+        queryWrapper.orderByDesc( "publish_time");
         service.articleService.page(page, queryWrapper);
         jsonResult.success().data(page.getRecords()).count(page.getTotal());
         return jsonResult;

@@ -87,10 +87,11 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl'], function (expor
      * 文章点赞,参数写到带有class中有like的标签上.参数为data-id.
      * 页面初始化一次即可
      *
+     * @param additionalClass 附加的class,用于判断是哪个点赞按钮
      * @param paramType 参数类型:articleId或者commentId
      */
-    function praise(paramType) {
-        $(document).on('click', '.like', function () {
+    function praise(additionalClass, paramType) {
+        $(document).on('click' + additionalClass, additionalClass + '.like', function () {
             var param = {}, that = this, $that = $(that);
             param[paramType] = $that.attr('data-id');
             if (!($that.hasClass("layblog-this"))) {
@@ -106,6 +107,10 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl'], function (expor
                                 obj: $that,
                                 str: "+1",
                                 callback: function () {
+                                    var $count = $that.children('.count');
+                                    if ($count.length === 1) {
+                                        $count.text(result.data['praiseCount']);
+                                    }
                                 }
                             });
                             niceIn($that);

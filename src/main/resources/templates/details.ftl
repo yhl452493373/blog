@@ -6,6 +6,31 @@
     <title>文章-闲言轻博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<#include "include.resource.ftl">
+    <style>
+        .info-item {
+            margin-bottom: 0 !important;
+            margin-top: 35px !important;
+            padding: 10px !important;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .info-item.empty {
+            line-height: 40px;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        #commentItemList {
+            background-color: #fff;
+            padding: 10px;
+            margin-top: 30px !important;
+        }
+
+        .article-count {
+            margin-top: 0 !important;
+            padding: 0 35px 10px;
+        }
+    </style>
 </head>
 <body class="lay-blog">
 <#include "include.header.ftl">
@@ -18,27 +43,31 @@
                     <h5>发布于：<span>${article.publishTime}</span></h5>
                     <div class="item-content">${article.content}</div>
                 </div>
+                <div class="count article-count layui-clear">
+                    <span class="pull-left">阅读 <em>${article.readCount}</em></span>
+                    <span class="pull-right like" data-id="${article.id}">
+                        <i class="layui-icon layui-icon-praise"></i><em class="count">${article.praiseCount}</em>
+                    </span>
+                </div>
             </div>
-            <a name="comment"> </a>
             <div class="comt layui-clear" style="margin-bottom: 0">
                 <a href="javascript:;" class="pull-left">评论</a>
                 <a href="${contextPath}/comment/${article.id}" class="pull-right">写评论</a>
             </div>
-            <div id="commentItemList">
-
-            </div>
+            <div id="commentItemList"></div>
         </div>
     </div>
 </div>
 <#include "include.footer.ftl">
 <script type="text/html" id="commentItem">
-    <div class="info-item" style="margin-bottom: 0;margin-top: 35px;box-shadow: 5px 5px 10px 0 #888;border: 1px solid #ddd;padding: 10px">
+    <div class="info-item">
     <#--头像-->
     <#--<img class="info-img" src="../res/static/images/info-img.png" alt="">-->
         <div class="info-text" style="padding-left: 0">
             <p class="title count" style="margin-top: 0">
                 <span class="name">{{ d.userName }}</span>
-                <span class="info-img like"><i class="layui-icon layui-icon-praise"></i>{{ d.praiseCount }}</span>
+                <span class="info-img like" data-id="{{ d.id }}"><i class="layui-icon layui-icon-praise"></i><span
+                        class="count">{{ d.praiseCount }}</span></span>
             </p>
             <p class="info-intr">{{ d.content }}</p>
         </div>
@@ -56,6 +85,7 @@
         blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
     }).use(['blog', 'jquery', 'laytpl'], function () {
         var $ = layui.jquery, laytpl = layui.laytpl;
+        var blog = layui.blog;
 
         function loadComment() {
             $.ajax({
@@ -72,7 +102,7 @@
                             });
                         } else {
                             renderEmpty({
-                                message: '此处空空如也。。。。'
+                                message: '还没有人评论,来抢沙发!'
                             });
                         }
                     }
@@ -100,6 +130,9 @@
         }
 
         loadComment();
+
+        blog.praise('.pull-right', blog.praise.paramType.articleId);
+        blog.praise('.info-img', blog.praise.paramType.commentId);
     });
 </script>
 </body>

@@ -62,6 +62,8 @@ public class MainController {
     @GetMapping("/details/{articleId}")
     public String details(@PathVariable String articleId, ModelMap modelMap) {
         Article article = service.articleService.getById(articleId);
+        article.setReadCount(article.getReadCount() + 1);
+        service.articleService.updateById(article);
         modelMap.addAttribute("article", article);
         modelMap.addAttribute("index", "layui-this");
         return "details";

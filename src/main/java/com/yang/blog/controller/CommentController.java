@@ -42,6 +42,7 @@ public class CommentController implements BaseController {
         //queryWrapper.or();
         //queryWrapper.like("数据库字段2","字段值");
         queryWrapper.setEntity(comment);
+        queryWrapper.orderByDesc("created_time");
         service.commentService.page(page, queryWrapper);
         jsonResult.success().data(page.getRecords()).count(page.getTotal());
         return jsonResult;
@@ -62,6 +63,7 @@ public class CommentController implements BaseController {
             comment.setUserId(ShiroUtils.getLoginUser().getId());
             comment.setUserName(null);
         }
+        comment.setPraiseCount(0);
         boolean result = service.commentService.save(comment);
         if (result) {
             JSONObject jsonObject = new JSONObject();

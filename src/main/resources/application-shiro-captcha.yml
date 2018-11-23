@@ -3,8 +3,7 @@ captcha:
   cacheName: captcha
   cookieName: captcha-cache
   cookieMaxAge: -1
-  #此属性暂时有问题
-  #captchaBackgroundColor: new Color(255, 255, 255)
+  captchaBackgroundColor: '#ffffff'
   captchaSize: 4
   captchaLineCount: 2
   captchaPointCount: 2

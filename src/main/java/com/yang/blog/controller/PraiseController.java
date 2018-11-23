@@ -1,8 +1,12 @@
 package com.yang.blog.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yhl452493373.bean.JSONResult;
 import com.yang.blog.config.ServiceConfig;
+import com.yang.blog.entity.Article;
+import com.yang.blog.entity.Comment;
 import com.yang.blog.entity.Praise;
 import com.yang.blog.shiro.ShiroUtils;
 import org.apache.shiro.SecurityUtils;
@@ -36,9 +40,26 @@ public class PraiseController {
             praise.setUserId(ShiroUtils.getLoginUser().getId());
         }
         praise.setCreatedTime(LocalDateTime.now());
+        JSONObject countJSON = new JSONObject();
+        if (StringUtils.isNotEmpty(praise.getArticleId())) {
+            Article article = service.articleService.getById(praise.getArticleId());
+            article.setPraiseCount(article.getPraiseCount() + 1);
+            service.articleService.updateById(article);
+            article = service.articleService.getById(article.getId());
+            countJSON.put("readCount", article.getReadCount());
+            countJSON.put("praiseCount", article.getPraiseCount());
+        } else if (StringUtils.isNotEmpty(praise.getCommentId())) {
+            Comment comment = service.commentService.getById(praise.getCommentId());
+            comment.setPraiseCount(comment.getPraiseCount() + 1);
+            service.commentService.updateById(comment);
+            comment = service.commentService.getById(comment.getId());
+            countJSON.put("praiseCount", comment.getPraiseCount());
+        } else {
+            return jsonResult.error("点赞对象不存在");
+        }
         boolean result = service.praiseService.save(praise);
         if (result)
-            jsonResult.success();
+            jsonResult.success("点赞成功").data(countJSON);
         else
             jsonResult.error();
         return jsonResult;
