@@ -1345,6 +1345,7 @@ layui.define(['layer', 'form'], function (exports) {
                     type: 1
                     , title: false
                     , closeBtn: 0
+                    , shade: 0.05
                     , shadeClose: true
                     , content: function () {
                         var content = [];
@@ -1409,6 +1410,7 @@ layui.define(['layer', 'form'], function (exports) {
                     type: 1
                     , title: false
                     , closeBtn: 0
+                    , shade: 0.05
                     , shadeClose: true
                     , content: function () {
                         var content = [];
