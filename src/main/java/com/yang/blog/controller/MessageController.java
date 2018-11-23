@@ -42,6 +42,7 @@ public class MessageController implements BaseController {
         //queryWrapper.or();
         //queryWrapper.like("数据库字段2","字段值");
         queryWrapper.setEntity(message);
+        queryWrapper.orderByDesc("created_time");
         service.messageService.page(page, queryWrapper);
         jsonResult.success().data(page.getRecords()).count(page.getTotal());
         return jsonResult;
