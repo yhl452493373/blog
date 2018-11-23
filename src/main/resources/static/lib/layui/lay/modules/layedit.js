@@ -1314,31 +1314,57 @@ layui.define(['layer', 'form'], function (exports) {
                     layer.close(face.index);
                 }
             }
-            return face.index = layer.tips(function () {
-                var content = [];
-                layui.each(faces, function (key, item) {
-                    content.push('<li title="' + key + '"><img src="' + item + '" alt="' + key + '"/></li>');
-                });
-                return '<ul class="layui-clear" style="width: 279px;">' + content.join('') + '</ul>';
-            }(), this, {
-                tips: 1
-                , time: 0
-                , skin: 'layui-box layui-util-face'
-                , maxWidth: 500
-                , success: function (layero, index) {
-                    layero.css({
-                        marginTop: -4
-                        , marginLeft: -10
-                    }).find('.layui-clear>li').on('click', function () {
-                        callback && callback({
-                            src: faces[this.title]
-                            , alt: this.title
-                        });
-                        layer.close(index);
+            if (!/mobile/i.test(navigator.userAgent)) {
+                return face.index = layer.tips(function () {
+                    var content = [];
+                    layui.each(faces, function (key, item) {
+                        content.push('<li title="' + key + '"><img src="' + item + '" alt="' + key + '"/></li>');
                     });
-                    $(document).off('click', face.hide).on('click', face.hide);
-                }
-            });
+                    return '<ul class="layui-clear" style="width: 279px;">' + content.join('') + '</ul>';
+                }(), this, {
+                    tips: 1
+                    , time: 0
+                    , skin: 'layui-box layui-util-face'
+                    , maxWidth: 500
+                    , success: function (layero, index) {
+                        layero.css({
+                            marginTop: -4
+                            , marginLeft: -10
+                        }).find('.layui-clear>li').on('click', function () {
+                            callback && callback({
+                                src: faces[this.title]
+                                , alt: this.title
+                            });
+                            layer.close(index);
+                        });
+                        $(document).off('click', face.hide).on('click', face.hide);
+                    }
+                });
+            } else {
+                return face.index = layer.open({
+                    type: 1
+                    , title: false
+                    , closeBtn: 0
+                    , shadeClose: true
+                    , content: function () {
+                        var content = [];
+                        layui.each(faces, function (key, item) {
+                            content.push('<li title="' + key + '"><img src="' + item + '" alt="' + key + '"/></li>');
+                        });
+                        return '<ul class="layui-clear" style="width: 279px;">' + content.join('') + '</ul>';
+                    }()
+                    , skin: 'layui-box layui-util-face'
+                    , success: function (layero, index) {
+                        layero.find('.layui-clear>li').on('click', function () {
+                            callback && callback({
+                                src: faces[this.title]
+                                , alt: this.title
+                            });
+                            layer.close(index);
+                        });
+                    }
+                });
+            }
         }
         //字体颜色
         , colorpicker = function (callback) {
@@ -1355,28 +1381,52 @@ layui.define(['layer', 'form'], function (exports) {
                     layer.close(colorpicker.index);
                 }
             }
-            return colorpicker.index = layer.tips(function () {
-                var content = [];
-                layui.each(colors, function (key, item) {
-                    content.push('<li title="' + item + '" style="background-color:' + item + '"><span style="background-' + item + '" alt="' + key + '"/></li>');
-                });
-                return '<ul class="layui-clear" style="width: 279px;">' + content.join('') + '</ul>';
-            }(), this, {
-                tips: 1
-                , time: 0
-                , skin: 'layui-box layui-util-face'
-                //, maxWidth: 300
-                , success: function (layero, index) {
-                    layero.css({
-                        marginTop: -4
-                        , marginLeft: -10
-                    }).find('.layui-clear>li').on('click', function () {
-                        callback && callback(this.title);
-                        layer.close(index);
+            if (!/mobile/i.test(navigator.userAgent)) {
+                return colorpicker.index = layer.tips(function () {
+                    var content = [];
+                    layui.each(colors, function (key, item) {
+                        content.push('<li title="' + item + '" style="background-color:' + item + '"><span style="background-' + item + '" alt="' + key + '"/></li>');
                     });
-                    $(document).off('click', colorpicker.hide).on('click', colorpicker.hide);
-                }
-            });
+                    return '<ul class="layui-clear" style="width: 279px;">' + content.join('') + '</ul>';
+                }(), this, {
+                    tips: 1
+                    , time: 0
+                    , skin: 'layui-box layui-util-face'
+                    //, maxWidth: 300
+                    , success: function (layero, index) {
+                        layero.css({
+                            marginTop: -4
+                            , marginLeft: -10
+                        }).find('.layui-clear>li').on('click', function () {
+                            callback && callback(this.title);
+                            layer.close(index);
+                        });
+                        $(document).off('click', colorpicker.hide).on('click', colorpicker.hide);
+                    }
+                });
+            } else {
+                return colorpicker.index = layer.open({
+                    type: 1
+                    , title: false
+                    , closeBtn: 0
+                    , shadeClose: true
+                    , content: function () {
+                        var content = [];
+                        layui.each(colors, function (key, item) {
+                            content.push('<li title="' + item + '" style="background-color:' + item + '"><span style="background-' + item + '" alt="' + key + '"/></li>');
+                        });
+                        return '<ul class="layui-clear" style="width: 279px;">' + content.join('') + '</ul>';
+                    }()
+                    , skin: 'layui-box layui-util-face'
+                    , success: function (layero, index) {
+                        layero.find('.layui-clear>li').on('click', function () {
+                            callback && callback(this.title);
+                            layer.close(index);
+                        });
+                    }
+                });
+            }
+
         }
         , fontFomatt = function (options, callback) {
             fontFomatt.hide = fontFomatt.hide || function (e) {
