@@ -1,6 +1,7 @@
 package com.yang.blog.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.yang.blog.shiro.ShiroUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.web.bind.annotation.*;
@@ -37,13 +38,13 @@ public class CommentController implements BaseController {
     public JSONResult list(Comment comment, Page<Comment> page) {
         JSONResult jsonResult = JSONResult.init();
         QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
-        //TODO 根据需要决定是否模糊查询，字段值从comment中获取。以下注释部分为模糊查询示例，使用时需要注释或删除queryWrapper.setEntity(comment);
-        //queryWrapper.like("数据库字段1","字段值");
-        //queryWrapper.or();
-        //queryWrapper.like("数据库字段2","字段值");
         queryWrapper.setEntity(comment);
         queryWrapper.orderByDesc("created_time");
         service.commentService.page(page, queryWrapper);
+        page.getRecords().forEach(record->{
+            if(StringUtils.isNotEmpty(record.getUserId()))
+                record.setUserName(service.userService.findUsernameById(record.getUserId()));
+        });
         jsonResult.success().data(page.getRecords()).count(page.getTotal());
         return jsonResult;
     }

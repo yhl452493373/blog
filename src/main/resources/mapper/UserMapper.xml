@@ -8,5 +8,8 @@
     <select id="findByUsername" resultType="com.yang.blog.entity.User" flushCache="true">
         select * from user where user.username = #{username}
     </select>
+    <select id="findUsernameById" resultType="java.lang.String">
+        select username from user where user.id = #{id}
+    </select>
 
 </mapper>

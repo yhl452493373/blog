@@ -142,9 +142,7 @@ CREATE TABLE `message` (
   `praise_count` int(11) DEFAULT NULL COMMENT '点赞次数',
   `created_time` datetime DEFAULT NULL COMMENT '留言时间',
   `available` int(1) DEFAULT NULL COMMENT '留言状态。-1-删除，0-不可见，1-正常',
-  PRIMARY KEY (`id`),
-  KEY `fk_message_user_1` (`user_id`),
-  CONSTRAINT `fk_message_user_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='留言';
 
 -- ----------------------------

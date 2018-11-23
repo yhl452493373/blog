@@ -65,7 +65,7 @@
     <#--<img class="info-img" src="../res/static/images/info-img.png" alt="">-->
         <div class="info-text" style="padding-left: 0">
             <p class="title count" style="margin-top: 0">
-                <span class="name">{{ d.userName }} - {{ d.createdTime }}</span>
+                <span class="name">{{ d.userName }} 于 {{ d.createdTime }} 评论:</span>
                 <span class="info-img like" data-id="{{ d.id }}"><i class="layui-icon layui-icon-praise"></i><span
                         class="count">{{ d.praiseCount }}</span></span>
             </p>

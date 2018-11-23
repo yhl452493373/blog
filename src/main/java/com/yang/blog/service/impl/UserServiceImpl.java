@@ -64,4 +64,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public User findByUsername(String username) {
         return baseMapper.findByUsername(username);
     }
+
+    @Override
+    public String findUsernameById(String id) {
+        return baseMapper.findUsernameById(id);
+    }
 }

@@ -2,6 +2,7 @@ package com.yang.blog.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
 import com.yang.blog.config.ServiceConfig;
@@ -37,13 +38,13 @@ public class MessageController implements BaseController {
     public JSONResult list(Message message, Page<Message> page) {
         JSONResult jsonResult = JSONResult.init();
         QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
-        //TODO 根据需要决定是否模糊查询，字段值从message中获取。以下注释部分为模糊查询示例，使用时需要注释或删除queryWrapper.setEntity(message);
-        //queryWrapper.like("数据库字段1","字段值");
-        //queryWrapper.or();
-        //queryWrapper.like("数据库字段2","字段值");
         queryWrapper.setEntity(message);
         queryWrapper.orderByDesc("created_time");
         service.messageService.page(page, queryWrapper);
+        page.getRecords().forEach(record->{
+            if(StringUtils.isNotEmpty(record.getUserId()))
+                record.setUserName(service.userService.findUsernameById(record.getUserId()));
+        });
         jsonResult.success().data(page.getRecords()).count(page.getTotal());
         return jsonResult;
     }

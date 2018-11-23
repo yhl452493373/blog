@@ -15,4 +15,6 @@ public interface UserService extends IService<User> {
     void register(User user);
 
     User findByUsername(String username);
+
+    String findUsernameById(String id);
 }
