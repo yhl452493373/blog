@@ -90,7 +90,7 @@
                         layer.alert(result.message);
                     }
                 }
-            })
+            });
         }
     });
 </script>

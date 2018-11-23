@@ -18,14 +18,19 @@ public class Praise implements Serializable {
     private String id;
 
     /**
-     * 被赞文章id，和评论id二选一，不可同时有值
+     * 被赞文章id，和评论id，留言id，三选一，不可同时有值
      */
     private String articleId;
 
     /**
-     * 评论id，和文章id二选一，不可同时有值
+     * 评论id，和文章id，留言id，三选一，不可同时有值
      */
     private String commentId;
+
+    /**
+     * 留言id，和文章id，评论id，三选一，不可同时有值
+     */
+    private String messageId;
 
     /**
      * 点赞人id。如果没登录则没有
@@ -62,6 +67,14 @@ public class Praise implements Serializable {
         return userId;
     }
 
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
     public void setUserId(String userId) {
         this.userId = userId;
     }
@@ -79,6 +92,7 @@ public class Praise implements Serializable {
         "id=" + id +
         ", articleId=" + articleId +
         ", commentId=" + commentId +
+        ", messageId=" + messageId +
         ", userId=" + userId +
         ", createdTime=" + createdTime +
         "}";

@@ -7,6 +7,7 @@ import com.github.yhl452493373.bean.JSONResult;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.Article;
 import com.yang.blog.entity.Comment;
+import com.yang.blog.entity.Message;
 import com.yang.blog.entity.Praise;
 import com.yang.blog.shiro.ShiroUtils;
 import org.apache.shiro.SecurityUtils;
@@ -54,6 +55,12 @@ public class PraiseController {
             service.commentService.updateById(comment);
             comment = service.commentService.getById(comment.getId());
             countJSON.put("praiseCount", comment.getPraiseCount());
+        }else if (StringUtils.isNotEmpty(praise.getMessageId())) {
+            Message message = service.messageService.getById(praise.getMessageId());
+            message.setPraiseCount(message.getPraiseCount() + 1);
+            service.messageService.updateById(message);
+            message = service.messageService.getById(message.getId());
+            countJSON.put("praiseCount", message.getPraiseCount());
         } else {
             return jsonResult.error("点赞对象不存在");
         }

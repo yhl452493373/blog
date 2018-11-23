@@ -13,7 +13,6 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl'], function (expor
         , $ = layui.jquery
         , laytpl = layui.laytpl;
 
-
     //statr 分页
 
     laypage.render({
@@ -23,7 +22,6 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl'], function (expor
     });
 
     // end 分頁
-
 
     // start 导航显示隐藏
 
@@ -91,10 +89,11 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl'], function (expor
      * @param paramType 参数类型:articleId或者commentId
      */
     function praise(additionalClass, paramType) {
-        $(document).on('click' + additionalClass, additionalClass + '.like', function () {
-            var param = {}, that = this, $that = $(that);
+        $(document).on('click' + additionalClass, additionalClass + '.like', function (e) {
+            e.preventDefault();
+            var param = {}, that = this, $that = $(this);
             param[paramType] = $that.attr('data-id');
-            if (!($that.hasClass("layblog-this"))) {
+            if (!$that.hasClass("layblog-this")) {
                 $.ajax({
                     url: contextPath + '/data/praise/add',
                     data: param,
@@ -138,19 +137,11 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl'], function (expor
 
     praise.paramType = {
         articleId: 'articleId',
-        commentId: 'commentId'
+        commentId: 'commentId',
+        messageId: 'messageId'
     };
 
     //end 评论的特效
-
-
-    // start点赞图标变身
-    $('#LAY-msg-box').on('click', '.info-img', function () {
-        $(this).addClass('layblog-this');
-    });
-
-
-    // end点赞图标变身
 
     // start  图片遮罩
     var layerphotos = document.getElementsByClassName('layer-photos-demo');

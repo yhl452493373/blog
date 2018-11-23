@@ -1,30 +1,35 @@
 package com.yang.blog.controller;
-import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
-
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.Message;
+import com.yang.blog.shiro.ShiroUtils;
+import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
 
 /**
- *
  * @author User
  * @since 2018-11-20
  */
 @RestController
 @RequestMapping("/data/message")
-public class MessageController {
+public class MessageController implements BaseController {
     private final Logger logger = LoggerFactory.getLogger(MessageController.class);
     private ServiceConfig service = ServiceConfig.serviceConfig;
 
     /**
      * 分页查询数据
      *
-     * @param page  分页信息
+     * @param page    分页信息
      * @param message 查询对象
      * @return 查询结果
      */
@@ -46,16 +51,23 @@ public class MessageController {
      * 添加数据
      *
      * @param message 添加对象
-     * @return 添加结果
+     * @return 添加结果, data中是添加的那个对象
      */
     @RequestMapping("/add")
     public JSONResult add(Message message) {
         JSONResult jsonResult = JSONResult.init();
+        if (SecurityUtils.getSubject().isAuthenticated()) {
+            message.setUserName(null);
+            message.setUserId(ShiroUtils.getLoginUser().getId());
+        }
+        message.setAvailable(Message.AVAILABLE);
+        message.setCreatedTime(LocalDateTime.now());
+        message.setPraiseCount(0);
         boolean result = service.messageService.save(message);
         if (result)
-            jsonResult.success();
+            jsonResult.success(ADD_SUCCESS).data(message);
         else
-            jsonResult.error();
+            jsonResult.error(ADD_FAILED);
         return jsonResult;
     }
 
@@ -72,7 +84,7 @@ public class MessageController {
         //TODO 根据需要设置需要更新的列，字段值从message获取。以下注释部分为指定更新列示例，使用时需要注释或删除updateWrapper.setEntity(message);
         //updateWrapper.set("数据库字段1","字段值");
         //updateWrapper.set("数据库字段2","字段值");
-        updateWrapper.eq("表示主键的字段","message中表示主键的值");
+        updateWrapper.eq("表示主键的字段", "message中表示主键的值");
         boolean result = service.messageService.update(message, updateWrapper);
         if (result)
             jsonResult.success();
@@ -95,8 +107,8 @@ public class MessageController {
         if (logical) {
             UpdateWrapper<Message> updateWrapper = new UpdateWrapper<>();
             //TODO 根据需要修改表示逻辑删除的列和值。
-            updateWrapper.set("表示逻辑删除的字段","表示逻辑删除的值");
-            result = service.messageService.update(message,updateWrapper);
+            updateWrapper.set("表示逻辑删除的字段", "表示逻辑删除的值");
+            result = service.messageService.update(message, updateWrapper);
         } else {
             QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
             queryWrapper.setEntity(message);
