@@ -15,7 +15,10 @@ import com.yang.blog.util.FileUtils;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.unit.DataSize;
+import org.springframework.util.unit.DataUnit;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,6 +62,10 @@ public class FileController implements BaseController {
         }
         logger.info("上传文件开始");
         try {
+            //分片上传时，判断文件的大小是否超过服务器设置的单个文件大小
+            if (fileParam.getChunkTotal() != 0 && service.getMaxFileSize().compareTo(DataSize.ofBytes(fileParam.getFileSize())) < 0) {
+                throw new MaxUploadSizeExceededException(fileParam.getFileSize());
+            }
             Map<String, Object> uploadMap = FileUtils.upload(fileParam);
             if (uploadMap.get("file") != null) {
                 java.io.File uploadFile = (java.io.File) uploadMap.get("file");

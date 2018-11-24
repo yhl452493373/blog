@@ -68,7 +68,7 @@
                 accept: 'image',
                 acceptMime: 'image/*',
                 exts: 'jpg|png|gif|bmp|jpeg',
-                size: 1024,
+                size: 0,
                 done: function (res) {
                     //成功后的回调
                     var $fileIds = $('#fileIds');
@@ -87,7 +87,7 @@
                 accept: 'video',
                 acceptMime: 'video/*',
                 exts: 'mp4|flv|avi|rm|rmvb',
-                size: 1024,
+                size: 0,
                 done: function (res) {
                     //成功后的回调
                     var $fileIds = $('#fileIds');

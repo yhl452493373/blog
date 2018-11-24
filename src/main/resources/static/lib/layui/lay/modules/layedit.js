@@ -34,21 +34,23 @@ layui.define(['layer', 'form'], function (exports) {
             ]
             , uploadImage: {
                 url: '',
+                field: 'file',//上传时的文件参数字段名
                 accept: 'image',
                 acceptMime: 'image/*',
                 exts: 'jpg|png|gif|bmp|jpeg',
-                size: '10240',
-                done: function (data) {
+                size: 1024 * 10, //单位为KB
+                done: function (data) {//文件上传接口返回code为0时的回调
 
                 }
             }
             , uploadVideo: {
                 url: '',
+                field: 'file',//上传时的文件参数字段名
                 accept: 'video',
                 acceptMime: 'video/*',
                 exts: 'mp4|flv|avi|rm|rmvb',
-                size: '20480',
-                done: function (data) {
+                size: 1024 * 20, //单位为KB
+                done: function (data) {//文件上传接口返回code为0时的回调
 
                 }
             }
@@ -425,8 +427,9 @@ layui.define(['layer', 'form'], function (exports) {
                 //图片
                 , image: function (range) {
                     var that = this;
-                    layui.use('upload', function (upload) {
+                    layui.use('upload', function () {
                         var uploadImage = set.uploadImage || {};
+                        var upload = layui.upload;
                         upload.render({
                             url: uploadImage.url
                             , method: uploadImage.type
@@ -519,7 +522,7 @@ layui.define(['layer', 'form'], function (exports) {
                             layer.close(index);
                         }
                         , success: function (layero, index) {
-                            layui.use('upload', function (upload) {
+                            layui.use('upload', function () {
                                 var upload = layui.upload;
                                 var uploadImage = set.uploadImage || {};
                                 //执行实例
@@ -543,34 +546,7 @@ layui.define(['layer', 'form'], function (exports) {
                                             $("#imgsPrev img:last")[0].src = res.data.src;
                                             uploadImage.done(res);
                                         } else {
-                                            var curIndex = layer.open({
-                                                type: 1
-                                                ,
-                                                anim: 2
-                                                ,
-                                                icon: 5
-                                                ,
-                                                title: '提示'
-                                                ,
-                                                area: ['390px', '260px']
-                                                ,
-                                                offset: 't'
-                                                ,
-                                                content: res.msg + "<div style='text-align:center;'><img src='" + res.data.src + "' style='max-height:80px'/></div><p style='text-align:center'>确定使用该文件吗？</p>"
-                                                ,
-                                                btn: ['确定', '取消']
-                                                ,
-                                                yes: function () {
-                                                    res.data = res.data || {};
-                                                    $("#imgsPrev img:last")[0].src = res.data.src;
-                                                    layer.close(curIndex);
-                                                }
-                                                ,
-                                                btn2: function () {
-                                                    $("#imgsPrev img:last").remove();
-                                                    layer.close(curIndex);
-                                                }
-                                            });
+                                            layer.msg(res.msg || '上传失败');
                                         }
 
                                         layero.find('.layui-upload-img').on('click', function () {
@@ -656,7 +632,7 @@ layui.define(['layer', 'form'], function (exports) {
                             layer.close(index);
                         }
                         , success: function (layero, index) {
-                            layui.use('upload', function (upload) {
+                            layui.use('upload', function () {
                                 var upload = layui.upload, altStr = layero.find('input[name="altStr"]'),
                                     Imgsrc = layero.find('input[name="Imgsrc"]');
                                 var loding;
@@ -681,34 +657,7 @@ layui.define(['layer', 'form'], function (exports) {
                                             altStr.val(res.data.name);
                                             uploadImage.done(res);
                                         } else {
-                                            var curIndex = layer.open({
-                                                type: 1
-                                                ,
-                                                anim: 2
-                                                ,
-                                                icon: 5
-                                                ,
-                                                title: '提示'
-                                                ,
-                                                area: ['390px', '260px']
-                                                ,
-                                                offset: 't'
-                                                ,
-                                                content: res.msg + "<div style='text-align:center;'><img src='" + res.data.src + "' style='max-height:80px'/></div><p style='text-align:center'>确定使用该文件吗？</p>"
-                                                ,
-                                                btn: ['确定', '取消']
-                                                ,
-                                                yes: function () {
-                                                    res.data = res.data || {};
-                                                    Imgsrc.val(res.data.src);
-                                                    altStr.val(res.data.name);
-                                                    layer.close(curIndex);
-                                                }
-                                                ,
-                                                btn2: function () {
-                                                    layer.close(curIndex);
-                                                }
-                                            });
+                                            layer.msg(res.msg || '上传失败');
                                         }
                                     }
                                 });
@@ -763,7 +712,7 @@ layui.define(['layer', 'form'], function (exports) {
                         }
                         , success: function (layero, index) {
 
-                            layui.use('upload', function (upload) {
+                            layui.use('upload', function () {
                                 var loding, video = layero.find('input[name="video"]'),
                                     cover = layero.find('input[name="cover"]');
                                 var upload = layui.upload;
@@ -788,33 +737,7 @@ layui.define(['layer', 'form'], function (exports) {
                                             cover.val(res.data.src);
                                             uploadImage.done(res);
                                         } else {
-                                            var curIndex = layer.open({
-                                                type: 1
-                                                ,
-                                                anim: 2
-                                                ,
-                                                icon: 5
-                                                ,
-                                                title: '提示'
-                                                ,
-                                                area: ['390px', '260px']
-                                                ,
-                                                offset: 't'
-                                                ,
-                                                content: res.msg + "<div><img src='" + res.data.src + "' style='max-height:100px'/></div><label class='layui-form-label'>确定使用该文件吗？</label>"
-                                                ,
-                                                btn: ['确定', '取消']
-                                                ,
-                                                yes: function () {
-                                                    res.data = res.data || {};
-                                                    cover.val(res.data.src);
-                                                    layer.close(curIndex);
-                                                }
-                                                ,
-                                                btn2: function () {
-                                                    layer.close(curIndex);
-                                                }
-                                            });
+                                            layer.msg(res.msg || '上传失败');
                                         }
                                     }
                                 });
@@ -835,34 +758,7 @@ layui.define(['layer', 'form'], function (exports) {
                                             video.val(res.data.src);
                                             uploadfile.done(res);
                                         } else {
-                                            var curIndex = layer.open({
-                                                type: 1
-                                                ,
-                                                anim: 2
-                                                ,
-                                                icon: 5
-                                                ,
-                                                title: '提示'
-                                                ,
-                                                area: ['390px', '260px']
-                                                ,
-                                                offset: 't'
-                                                ,
-                                                content: res.msg + "<div><video src='" + res.data.src + "' style='max-height:100px' controls='controls'/></div>确定使用该文件吗？"
-                                                ,
-                                                btn: ['确定', '取消']
-                                                ,
-                                                yes: function () {
-                                                    res.data = res.data || {};
-                                                    video.val(res.data.src);
-                                                    layer.close(curIndex);
-                                                    uploadfile.done(res);
-                                                }
-                                                ,
-                                                btn2: function () {
-                                                    layer.close(curIndex);
-                                                }
-                                            });
+                                            layer.msg(res.msg || '上传失败');
                                         }
                                     }
                                 });
@@ -1104,10 +1000,10 @@ layui.define(['layer', 'form'], function (exports) {
                                 success: function (layero, index) {
                                     var uploadImage = set.uploadImage || {};
 
-                                    layui.use('upload', function (upload) {
+                                    layui.use('upload', function () {
                                         var loding, altStr = layero.find('input[name="altStr"]'),
                                             Imgsrc = layero.find('input[name="Imgsrc"]');
-                                        upload = layui.upload;
+                                        var upload = layui.upload;
                                         upload.render({
                                             elem: '#LayEdit_UpdateImage'
                                             , url: uploadImage.url
@@ -1127,41 +1023,14 @@ layui.define(['layer', 'form'], function (exports) {
                                                     altStr.val(res.data.name);
                                                     uploadImage.done(res);
                                                 } else {
-                                                    var curIndex = layer.open({
-                                                        type: 1
-                                                        ,
-                                                        anim: 2
-                                                        ,
-                                                        icon: 5
-                                                        ,
-                                                        title: '提示'
-                                                        ,
-                                                        area: ['390px', '260px']
-                                                        ,
-                                                        offset: 't'
-                                                        ,
-                                                        content: res.msg + "<div style='text-align:center;'><img src='" + res.data.src + "' style='max-height:80px'/></div><p style='text-align:center'>确定使用该文件吗？</p>"
-                                                        ,
-                                                        btn: ['确定', '取消']
-                                                        ,
-                                                        yes: function () {
-                                                            res.data = res.data || {};
-                                                            Imgsrc.val(res.data.src);
-                                                            altStr.val(res.data.name);
-                                                            layer.close(curIndex);
-                                                        }
-                                                        ,
-                                                        btn2: function () {
-                                                            layer.close(curIndex);
-                                                        }
-                                                    });
+                                                    layer.msg(res.msg || '上传失败');
                                                 }
                                             }
                                         });
-                                    })
+                                    });
                                     return false;
                                 }
-                            })
+                            });
                             break;
                         default:
                             var currenNode = event.toElement, parentNode = event.toElement.parentNode;
