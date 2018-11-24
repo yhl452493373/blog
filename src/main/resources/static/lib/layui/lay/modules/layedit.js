@@ -4,7 +4,7 @@
  @Author：贤心
  @Modifier:KnifeZ
  @License：MIT
- @Version: V18.11.16
+ @Version: V18.11.24
  */
 
 layui.define(['layer', 'form'], function (exports) {
@@ -155,7 +155,6 @@ layui.define(['layer', 'form'], function (exports) {
         } else {
             $(iframeWin[0].document.body).html(content)
         }
-        ;
         this.sync(index)
     };
     //将编辑器内容同步到textarea（一般用于异步提交时）
@@ -309,15 +308,16 @@ layui.define(['layer', 'form'], function (exports) {
                 elem.setAttribute(key, attr[key]);
             }
             elem.removeAttribute('text');
-
-            if (iframeDOM.selection) { //IE
+            // be fix
+            if (device.ie) { //IE
                 var text = range.text || attr.text;
                 if (tagName === 'a' && !text) return;
                 if (text) {
                     elem.innerHTML = text;
                 }
-                range.pasteHTML($(elem).prop('outerHTML'));
-                range.select();
+                layer.msg("暂不支持IE浏览器");
+                range.selectNode(this.document.body.childNodes.item(0));
+                range.insertNode(elem);
             } else { //非IE
                 var text = range.toString() || attr.text;
                 if (tagName === 'a' && !text) return;
@@ -336,7 +336,7 @@ layui.define(['layer', 'form'], function (exports) {
                 , container = getContainer(Range(iframeDOM))
                 , item = function (type) {
                 return tools.find('.layedit-tool-' + type)
-            }
+            };
 
             if (othis) {
                 othis[othis.hasClass(CHECK) ? 'removeClass' : 'addClass'](CHECK);
@@ -349,18 +349,18 @@ layui.define(['layer', 'form'], function (exports) {
                 var tagName = this.tagName.toLowerCase()
                     , textAlign = this.style.textAlign;
                 //文字
-                //if (tagName === 'b' || tagName === 'strong') {
-                //    item('b').addClass(CHECK)
-                //}
-                //if (tagName === 'i' || tagName === 'em') {
-                //    item('i').addClass(CHECK)
-                //}
-                //if (tagName === 'u') {
-                //    item('u').addClass(CHECK)
-                //}
-                //if (tagName === 'strike') {
-                //    item('d').addClass(CHECK)
-                //}
+                if (tagName === 'b' || tagName === 'strong') {
+                    item('b').addClass(CHECK)
+                }
+                if (tagName === 'i' || tagName === 'em') {
+                    item('i').addClass(CHECK)
+                }
+                if (tagName === 'u') {
+                    item('u').addClass(CHECK)
+                }
+                if (tagName === 'strike') {
+                    item('d').addClass(CHECK)
+                }
                 //对齐
                 if (tagName === 'p') {
                     if (textAlign === 'center') {
@@ -422,6 +422,9 @@ layui.define(['layer', 'form'], function (exports) {
                             src: img.src
                             , alt: img.alt
                         }, range);
+                        setTimeout(function () {
+                            body.focus();
+                        }, 100);
                     });
                 }
                 //图片
@@ -446,6 +449,9 @@ layui.define(['layer', 'form'], function (exports) {
                                         , alt: res.data.title
                                     }, range);
                                     uploadImage.done(res);
+                                    setTimeout(function () {
+                                        body.focus();
+                                    }, 100);
                                 } else {
                                     layer.msg(res.msg || '上传失败');
                                 }
@@ -461,6 +467,9 @@ layui.define(['layer', 'form'], function (exports) {
                             text: pre.code
                             , 'lay-lang': pre.lang
                         }, range);
+                        setTimeout(function () {
+                            body.focus();
+                        }, 100);
                     });
                 }
                 /*#Extens#*/
@@ -524,6 +533,9 @@ layui.define(['layer', 'form'], function (exports) {
                                 }, range);
                                 layer.close(index);
                             }
+                            setTimeout(function () {
+                                body.focus();
+                            }, 100);
                         }
                         , success: function (layero, index) {
                             layui.use('upload', function () {
@@ -651,6 +663,9 @@ layui.define(['layer', 'form'], function (exports) {
                                 }, range);
                                 layer.close(index);
                             }
+                            setTimeout(function () {
+                                body.focus();
+                            }, 100);
                         }
                         , success: function (layero, index) {
                             layui.use('upload', function () {
@@ -734,6 +749,9 @@ layui.define(['layer', 'form'], function (exports) {
                                 }, range);
                                 layer.close(index);
                             }
+                            setTimeout(function () {
+                                body.focus();
+                            }, 100);
                         }
                         , success: function (layero, index) {
 
@@ -847,7 +865,19 @@ layui.define(['layer', 'form'], function (exports) {
                         iframeDOM.execCommand('forecolor', false, color);
                         setTimeout(function () {
                             body.focus();
-                        }, 10);
+                        }, 100);
+                    });
+                }
+                , fontBackColor: function (range) {
+                    colorpicker.call(this, function (color) {
+                        if (device.ie)
+                            iframeDOM.execCommand('backColor', false, color);
+                        else
+                            iframeDOM.execCommand('hiliteColor', false, color);
+
+                        setTimeout(function () {
+                            body.focus();
+                        }, 100);
                     });
                 }
                 , fontFomatt: function (range) {
@@ -873,20 +903,25 @@ layui.define(['layer', 'form'], function (exports) {
                         iframeDOM.execCommand('formatBlock', false, "<" + value + ">");
                         setTimeout(function () {
                             body.focus();
-                        }, 10);
+                        }, 100);
                     });
                 }
-
                 , anchors: function (range) {
                     anchors.call(body, {}, function (field) {
                         insertInline.call(iframeWin, 'a', {
                             name: "#" + field.text
                             , text: " ", class: 'anchor'
                         }, range);
+                        setTimeout(function () {
+                            body.focus();
+                        }, 100);
                     });
                 }
                 , addhr: function (range) {
                     insertInline.call(iframeWin, 'hr', {}, range);
+                    setTimeout(function () {
+                        body.focus();
+                    }, 100);
                 }
                 /*End*/
                 //帮助
@@ -924,9 +959,6 @@ layui.define(['layer', 'form'], function (exports) {
                         }
                     }
                     iframeDOM.execCommand(command);
-                    setTimeout(function () {
-                        body.focus();
-                    }, 10);
                 } else {
                     toolEvent[events] && toolEvent[events].call(this, range, iframeDOM);
                 }
@@ -1068,6 +1100,7 @@ layui.define(['layer', 'form'], function (exports) {
                                 type: 1,
                                 title: false,
                                 offset: [event.clientY + "px", event.clientX + "px"],
+                                shade: 0.05,
                                 shadeClose: true,
                                 content: ['<ul style="width:100px">'
                                     , '<li><a type="button" class="layui-btn layui-btn-primary layui-btn-sm" style="width:80%" lay-command="left"> 居左 </a></li>'
@@ -1120,7 +1153,7 @@ layui.define(['layer', 'form'], function (exports) {
                                         layer.close(index);
                                     });
                                 }
-                            })
+                            });
                             break;
                     }
                 }
@@ -1237,9 +1270,6 @@ layui.define(['layer', 'form'], function (exports) {
                     form.render('radio');
                     layero.find('.layui-btn-primary').on('click', function () {
                         layer.close(index);
-                        setTimeout(function () {
-                            body.focus();
-                        }, 10);
                     });
                     form.on(eventFilter, function (data) {
                         layer.close(anchors.index);
@@ -1329,7 +1359,8 @@ layui.define(['layer', 'form'], function (exports) {
                 return arr;
             }();
             colorpicker.hide = colorpicker.hide || function (e) {
-                if ($(e.target).attr('layedit-event') !== 'colorpicker') {
+                if ($(e.target).attr('layedit-event') == 'colorpicker' || $(e.target).attr('layedit-event') == 'fontBackColor') {
+                } else {
                     layer.close(colorpicker.index);
                 }
             };
@@ -1410,8 +1441,9 @@ layui.define(['layer', 'form'], function (exports) {
         , code = function (options, callback) {
             var objSel = ['<li class="layui-form-item objSel">'
                 , '<label class="layui-form-label">请选择语言</label>'
+                , '<style>#selectCodeLang ~ .layui-form-select .layui-select-title ~ dl{max-height: 192px;}</style>'
                 , '<div class="layui-input-block">'
-                , '<select name="lang">'
+                , '<select name="lang" id="selectCodeLang">'
                 , '<option value="JavaScript">JavaScript</option>'
                 , '<option value="HTML">HTML</option>'
                 , '<option value="CSS">CSS</option>'
@@ -1441,9 +1473,13 @@ layui.define(['layer', 'form'], function (exports) {
                 , id: 'LAY_layedit_code'
                 , area: function () {
                     if (/mobile/i.test(navigator.userAgent)) {
-                        return ['90%']
+                        return ['85%']
                     } else {
-                        return ['650px']
+                        if ($(window).width() < 485) {
+                            return ['85%']
+                        } else {
+                            return ['485px']
+                        }
                     }
                 }()
                 , offset: '100px'
@@ -1475,7 +1511,6 @@ layui.define(['layer', 'form'], function (exports) {
                     form.render('select');
                     var eventFilter = 'submit(layedit-code-yes)';
                     form.on(eventFilter, function (data) {
-                        console.log(data);
                         layer.close(code.index);
                         callback && callback(data.field, options.hide, options.default);
                     });
@@ -1525,6 +1560,8 @@ layui.define(['layer', 'form'], function (exports) {
             fullScreen: '<i class="layui-icon layedit-tool-fullScreen" title="全屏" layedit-event="fullScreen"style="font-size:18px">&#xe638;</i>'
             ,
             colorpicker: '<i class="layui-icon layedit-tool-colorpicker" title="字体颜色选择" layedit-event="colorpicker" style="font-size:18px">&#xe66a;</i>'
+            ,
+            fontBackColor: '<i class="layui-icon layedit-tool-fontBackColor" title="字体背景色选择" layedit-event="fontBackColor" style="font-size:18px;">&#xe60f;</i>'
             ,
             fontFomatt: '<i class="layui-icon layedit-tool-fontFomatt" title="段落格式" layedit-event="fontFomatt" style="font-size:18px">&#xe639;</i>'
             ,
