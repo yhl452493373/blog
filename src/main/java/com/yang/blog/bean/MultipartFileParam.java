@@ -7,6 +7,11 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class MultipartFileParam {
     /**
+     * 是否预先上传文信息的CHUNK值。如果CHUNK是这个值，这说明是用来比较文件大小等上传前的判断操作的
+     */
+    public static Integer PRE_UPLOAD_CHUNK = -1;
+
+    /**
      * 文件传输任务ID,由于用的uuid,因此可以用于临时文件名
      */
     private String taskId;

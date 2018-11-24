@@ -205,8 +205,8 @@ public class FileUtils {
         for (int i = 0; i < completeStatusList.length && isComplete == Byte.MAX_VALUE; i++) {
             isComplete = (byte) (isComplete & completeStatusList[i]);
         }
+        confAccessFile.close();
         if (isComplete == Byte.MAX_VALUE) {
-            confAccessFile.close();
             confFile.delete();
             return true;
         }
