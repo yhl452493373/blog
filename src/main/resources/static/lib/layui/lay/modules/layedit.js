@@ -516,15 +516,20 @@ layui.define(['layer', 'form'], function (exports) {
                             if (layero.find('input[name="imgHeight"]').val() != "") {
                                 styleStr += "height:" + layero.find('input[name="imgHeight"]').val() + "px;";
                             }
-                            insertInline.call(iframeWin, 'p', {
-                                text: layero.find('#imgsPrev').html().replace(new RegExp(/(max-width:70px;margin:2px)/g), styleStr)
-                            }, range);
-                            layer.close(index);
+                            if (layero.find('#imgsPrev').find('img').length === 0) {
+                                layer.msg('请选择要插入的图片');
+                            } else {
+                                insertInline.call(iframeWin, 'p', {
+                                    text: layero.find('#imgsPrev').html().replace(new RegExp(/(max-width:70px;margin:2px)/g), styleStr)
+                                }, range);
+                                layer.close(index);
+                            }
                         }
                         , success: function (layero, index) {
                             layui.use('upload', function () {
                                 var upload = layui.upload;
                                 var uploadImage = set.uploadImage || {};
+                                var errorIndex = [];//上传接口出错的文件索引
                                 //执行实例
                                 upload.render({
                                     elem: '#LayEdit_InsertImages'
@@ -537,8 +542,20 @@ layui.define(['layer', 'form'], function (exports) {
                                     , multiple: true
                                     , before: function (obj) {
                                         obj.preview(function (index, file, result) {
-                                            $('#imgsPrev').append('<img src="' + result + '" alt="' + file.name + '" style="max-width:70px;margin:2px" class="layui-upload-img">')
+                                            //由于有时预览会在allDone之后回调，此时所有单个文件的error已经执行，即已经出错的文件id以有，因此需要判断此预览文件id是否是上传出错文件的id，不是才预览
+                                            if (errorIndex.indexOf(index) === -1)
+                                                $('#imgsPrev').append('<img data-index="' + index + '" src="' + result + '" alt="' + file.name + '" style="max-width:70px;margin:2px" class="layui-upload-img">')
                                         });
+                                    }
+                                    , allDone: function () {
+                                        //所有上传操作完成后，删除出错的文件
+                                        for (var i = 0; i < errorIndex.length; i++) {
+                                            $('#imgsPrev').find('img[data-index="' + errorIndex[i] + '"]').remove();
+                                        }
+                                    }
+                                    , error: function (index, upload) {
+                                        //某文件上传接口返回错误时，将其错误index记录下来
+                                        errorIndex.push(index);
                                     }
                                     , done: function (res, input, upload) {
                                         if (res.code == 0) {
@@ -624,12 +641,16 @@ layui.define(['layer', 'form'], function (exports) {
                             if (layero.find('input[name="imgHeight"]').val() != "") {
                                 styleStr += "height:" + layero.find('input[name="imgHeight"]').val() + "px;";
                             }
-                            insertInline.call(iframeWin, 'img', {
-                                src: Imgsrc.val()
-                                , alt: altStr.val()
-                                , style: styleStr
-                            }, range);
-                            layer.close(index);
+                            if (Imgsrc.val() == '') {
+                                layer.msg('请选择一张图片或输入图片地址');
+                            } else {
+                                insertInline.call(iframeWin, 'img', {
+                                    src: Imgsrc.val()
+                                    , alt: altStr.val()
+                                    , style: styleStr
+                                }, range);
+                                layer.close(index);
+                            }
                         }
                         , success: function (layero, index) {
                             layui.use('upload', function () {
@@ -705,10 +726,14 @@ layui.define(['layer', 'form'], function (exports) {
                         , yes: function (index, layero) {
                             var video = layero.find('input[name="video"]'),
                                 cover = layero.find('input[name="cover"]');
-                            insertInline.call(iframeWin, 'p', {
-                                text: '&nbsp;<video src="' + video.val() + '" poster="' + cover.val() + '" controls="controls" >您的浏览器不支持video播放</video>&nbsp;'
-                            }, range);
-                            layer.close(index);
+                            if (video.val() == '') {
+                                layer.msg('请选择一个视频或输入视频地址')
+                            } else {
+                                insertInline.call(iframeWin, 'p', {
+                                    text: '&nbsp;<video src="' + video.val() + '" poster="' + cover.val() + '" controls="controls" >您的浏览器不支持video播放</video>&nbsp;'
+                                }, range);
+                                layer.close(index);
+                            }
                         }
                         , success: function (layero, index) {
 
@@ -975,13 +1000,18 @@ layui.define(['layer', 'form'], function (exports) {
                                 btn: ['确定', '取消', '删除'],
                                 btnAlign: 'c',
                                 yes: function (index, layero) {
+                                    var imgSrc = layero.find('input[name="Imgsrc"]').val();
                                     var imgWidth = layero.find('input[name="imgWidth"]').val();
                                     var imgHeight = layero.find('input[name="imgHeight"]').val();
-                                    event.target.src = layero.find('input[name="Imgsrc"]').val();
-                                    event.target.alt = layero.find('input[name="altStr"]').val();
-                                    event.target.style.width = imgWidth != '' ? imgWidth + 'px' : '';
-                                    event.target.style.height = imgHeight != '' ? imgHeight + 'px' : '';
-                                    layer.close(index);
+                                    if (imgSrc == '') {
+                                        layer.msg('请选择一张图片或输入图片地址');
+                                    } else {
+                                        event.target.src = imgSrc;
+                                        event.target.alt = layero.find('input[name="altStr"]').val();
+                                        event.target.style.width = imgWidth != '' ? imgWidth + 'px' : '';
+                                        event.target.style.height = imgHeight != '' ? imgHeight + 'px' : '';
+                                        layer.close(index);
+                                    }
                                 },
                                 btn2: function (index, layero) {
                                 },
@@ -1110,7 +1140,13 @@ layui.define(['layer', 'form'], function (exports) {
                         return ['460px']
                     }
                 }()
-                , offset: '100px'
+                , offset: function () {
+                    if (/mobile/i.test(navigator.userAgent)) {
+                        return 'auto'
+                    } else {
+                        return '100px'
+                    }
+                }()
                 , shade: 0.05
                 , shadeClose: true
                 , moveType: 1
@@ -1129,7 +1165,7 @@ layui.define(['layer', 'form'], function (exports) {
                     , '<input name="text" value="' + (options.text || '') + '" autofocus="true" autocomplete="off" class="layui-input">'
                     , '</div>'
                     , '</li>'
-                    , '<li class="layui-form-item layui-hide">'
+                    , '<li class="layui-form-item ' + (dMode ? '' : 'layui-hide') + '">'
                     , '<label class="layui-form-label" style="width: 70px;">打开方式</label>'
                     , '<div class="layui-input-block">'
                     , '<input type="radio" name="target" value="_blank" class="layui-input" title="新窗口" '
@@ -1138,7 +1174,7 @@ layui.define(['layer', 'form'], function (exports) {
                     + (options.target === '_self' ? 'checked' : '') + '>'
                     , '</div>'
                     , '</li>'
-                    , '<li class="layui-form-item layui-hide">'
+                    , '<li class="layui-form-item ' + (dMode ? '' : 'layui-hide') + '">'
                     , '<label class="layui-form-label" style="width: 70px;">rel属性</label>'
                     , '<div class="layui-input-block">'
                     , '<input type="radio" name="rel" value="nofollow" class="layui-input" title="nofollow"'
@@ -1147,23 +1183,22 @@ layui.define(['layer', 'form'], function (exports) {
                     + (options.rel === '' ? 'checked' : '') + '>'
                     , '</div>'
                     , '</li>'
-                    , '<li class="layui-form-item" style="text-align: center;">'
-                    , '<button type="button" lay-submit lay-filter="layedit-link-yes" class="layui-btn"> 确定 </button>'
-                    , '<button style="margin-left: 20px;" type="button" class="layui-btn layui-btn-primary"> 取消 </button>'
-                    , '</li>'
+                    , '<button type="button" lay-submit lay-filter="layedit-link-yes" id="layedit-link-yes" class="layui-btn" style="display: none;"> 确定 </button>'
                     , '</ul>'].join('')
+                , btn: ['确定', '取消']
+                , btnAlign: 'c'
+                , yes: function (index, layero) {
+                    $('#layedit-link-yes').click();
+                }
+                , btn1: function (index, layero) {
+                    layer.close(index);
+                    setTimeout(function () {
+                        body.focus();
+                    }, 10);
+                }
                 , success: function (layero, index) {
-                    if (dMode) {
-                        layero.find('.layui-hide').removeClass("layui-hide");
-                    }
                     var eventFilter = 'submit(layedit-link-yes)';
                     form.render('radio');
-                    layero.find('.layui-btn-primary').on('click', function () {
-                        layer.close(index);
-                        setTimeout(function () {
-                            body.focus();
-                        }, 10);
-                    });
                     form.on(eventFilter, function (data) {
                         layer.close(link.index);
                         callback && callback(data.field);
@@ -1229,7 +1264,7 @@ layui.define(['layer', 'form'], function (exports) {
                 if ($(e.target).attr('layedit-event') !== 'face') {
                     layer.close(face.index);
                 }
-            }
+            };
             if (!/mobile/i.test(navigator.userAgent)) {
                 return face.index = layer.tips(function () {
                     var content = [];
@@ -1297,7 +1332,7 @@ layui.define(['layer', 'form'], function (exports) {
                 if ($(e.target).attr('layedit-event') !== 'colorpicker') {
                     layer.close(colorpicker.index);
                 }
-            }
+            };
             if (!/mobile/i.test(navigator.userAgent)) {
                 return colorpicker.index = layer.tips(function () {
                     var content = [];
