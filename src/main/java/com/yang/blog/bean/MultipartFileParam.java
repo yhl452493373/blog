@@ -1,5 +1,6 @@
 package com.yang.blog.bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -15,6 +16,11 @@ public class MultipartFileParam {
      * 文件传输任务ID,由于用的uuid,因此可以用于临时文件名
      */
     private String taskId;
+
+    /**
+     * 是否分片上传，默认否
+     */
+    private boolean isChunk = false;
 
     /**
      * 当前为第几分片
@@ -49,6 +55,7 @@ public class MultipartFileParam {
     /**
      * 分片文件传输对象.如果不分片则为整个文件对象
      */
+    @JSONField(serialize = false)
     private MultipartFile file;
 
     public String getTaskId() {
@@ -57,6 +64,14 @@ public class MultipartFileParam {
 
     public void setTaskId(String taskId) {
         this.taskId = taskId;
+    }
+
+    public boolean getIsChunk() {
+        return isChunk;
+    }
+
+    public void setIsChunk(boolean isChunk) {
+        this.isChunk = isChunk;
     }
 
     public int getChunk() {

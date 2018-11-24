@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +26,7 @@ import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class FileUtils {
     private static Logger logger = LoggerFactory.getLogger(FileUtils.class);
     //文件保存位置
@@ -116,7 +118,7 @@ public class FileUtils {
         //第二步
         FileChannel fileChannel = raf.getChannel();
         //第三步
-        long offset = param.getChunk() * param.getChunkSize();
+        long offset = param.getIsChunk() ? param.getChunk() * param.getChunkSize() : 0;
         //第四步
         byte[] fileData = param.getFile().getBytes();
         //第五步
@@ -191,22 +193,24 @@ public class FileUtils {
      * 检查文件上传进度
      */
     private static boolean checkUploadStatus(MultipartFileParam param, String fileName, String filePath) throws IOException {
+        if (!param.getIsChunk())
+            return true;
         File confFile = new File(filePath, fileName + ".conf");
         RandomAccessFile confAccessFile = new RandomAccessFile(confFile, "rw");
         //设置文件长度
         confAccessFile.setLength(param.getChunkTotal());
-        //设置起始偏移量
-        confAccessFile.seek(param.getChunk());
         //将指定的一个字节写入文件中 127
-        confAccessFile.write(Byte.MAX_VALUE);
+        confAccessFile.getChannel().position(param.getChunk()).write(ByteBuffer.wrap(new byte[]{Byte.MAX_VALUE}));
         byte[] completeStatusList = org.apache.commons.io.FileUtils.readFileToByteArray(confFile);
         byte isComplete = Byte.MAX_VALUE;
         //这一段逻辑有点复杂，看的时候思考了好久，创建conf文件文件长度为总分片数，每上传一个分块即向conf文件中写入一个127，那么没上传的位置就是默认的0,已上传的就是Byte.MAX_VALUE 127
         for (int i = 0; i < completeStatusList.length && isComplete == Byte.MAX_VALUE; i++) {
             isComplete = (byte) (isComplete & completeStatusList[i]);
         }
-        confAccessFile.close();
+        //关闭
+        confAccessFile.getChannel().close();
         if (isComplete == Byte.MAX_VALUE) {
+            //上传完成则删除临时文件
             confFile.delete();
             return true;
         }

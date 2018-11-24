@@ -62,11 +62,13 @@ public class FileController implements BaseController {
         logger.info("上传文件开始");
         try {
             //分片上传时，判断文件的大小是否超过服务器设置的单个文件大小
-            if (fileParam.getChunk() == MultipartFileParam.PRE_UPLOAD_CHUNK) {
-                if (service.getMaxFileSize().compareTo(DataSize.ofBytes(fileParam.getFileSize())) < 0) {
-                    throw new MaxUploadSizeExceededException(fileParam.getFileSize());
-                } else {
-                    return jsonResult.success("文件符合要求,允许上传");
+            if (fileParam.getIsChunk()) {
+                if (fileParam.getChunk() == MultipartFileParam.PRE_UPLOAD_CHUNK) {
+                    if (service.getMaxFileSize().compareTo(DataSize.ofBytes(fileParam.getFileSize())) < 0) {
+                        throw new MaxUploadSizeExceededException(fileParam.getFileSize());
+                    } else {
+                        return jsonResult.success("文件符合要求,允许上传");
+                    }
                 }
             }
             Map<String, Object> uploadMap = FileUtils.upload(fileParam);
