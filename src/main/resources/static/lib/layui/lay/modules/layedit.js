@@ -4,7 +4,7 @@
  @Author：贤心
  @Modifier:KnifeZ
  @License：MIT
- @Version: V18.11.24
+ @Version: V18.11.25
  */
 
 layui.define(['layer', 'form'], function (exports) {
@@ -40,7 +40,6 @@ layui.define(['layer', 'form'], function (exports) {
                 exts: 'jpg|png|gif|bmp|jpeg',
                 size: 1024 * 10, //单位为KB
                 done: function (data) {//文件上传接口返回code为0时的回调
-
                 }
             }
             , uploadVideo: {
@@ -51,13 +50,11 @@ layui.define(['layer', 'form'], function (exports) {
                 exts: 'mp4|flv|avi|rm|rmvb',
                 size: 1024 * 20, //单位为KB
                 done: function (data) {//文件上传接口返回code为0时的回调
-
                 }
             }
             , calldel: {
                 url: '',
-                done: function (date) {
-
+                done: function (data) {
                 }
             }
             , quote: {
@@ -155,6 +152,7 @@ layui.define(['layer', 'form'], function (exports) {
         } else {
             $(iframeWin[0].document.body).html(content)
         }
+        ;
         this.sync(index)
     };
     //将编辑器内容同步到textarea（一般用于异步提交时）
@@ -336,7 +334,7 @@ layui.define(['layer', 'form'], function (exports) {
                 , container = getContainer(Range(iframeDOM))
                 , item = function (type) {
                 return tools.find('.layedit-tool-' + type)
-            };
+            }
 
             if (othis) {
                 othis[othis.hasClass(CHECK) ? 'removeClass' : 'addClass'](CHECK);
@@ -349,18 +347,18 @@ layui.define(['layer', 'form'], function (exports) {
                 var tagName = this.tagName.toLowerCase()
                     , textAlign = this.style.textAlign;
                 //文字
-                if (tagName === 'b' || tagName === 'strong') {
-                    item('b').addClass(CHECK)
-                }
-                if (tagName === 'i' || tagName === 'em') {
-                    item('i').addClass(CHECK)
-                }
-                if (tagName === 'u') {
-                    item('u').addClass(CHECK)
-                }
-                if (tagName === 'strike') {
-                    item('d').addClass(CHECK)
-                }
+                //if (tagName === 'b' || tagName === 'strong') {
+                //    item('b').addClass(CHECK)
+                //}
+                //if (tagName === 'i' || tagName === 'em') {
+                //    item('i').addClass(CHECK)
+                //}
+                //if (tagName === 'u') {
+                //    item('u').addClass(CHECK)
+                //}
+                //if (tagName === 'strike') {
+                //    item('d').addClass(CHECK)
+                //}
                 //对齐
                 if (tagName === 'p') {
                     if (textAlign === 'center') {
@@ -430,12 +428,11 @@ layui.define(['layer', 'form'], function (exports) {
                 //图片
                 , image: function (range) {
                     var that = this;
-                    layui.use('upload', function () {
+                    layui.use('upload', function (upload) {
                         var uploadImage = set.uploadImage || {};
-                        var upload = layui.upload;
                         upload.render({
                             url: uploadImage.url
-                            , method: uploadImage.type
+                            , field: uploadImage.field
                             , accept: uploadImage.accept
                             , acceptMime: uploadImage.acceptMime
                             , exts: uploadImage.exts
@@ -483,7 +480,7 @@ layui.define(['layer', 'form'], function (exports) {
                         , shade: 0.05
                         , shadeClose: true
                         , area: function () {
-                            if (/mobile/i.test(navigator.userAgent)) {
+                            if (/mobile/i.test(navigator.userAgent) || $(window).width() <= 485) {
                                 return ['90%']
                             } else {
                                 return ['485px']
@@ -533,9 +530,6 @@ layui.define(['layer', 'form'], function (exports) {
                                 }, range);
                                 layer.close(index);
                             }
-                            setTimeout(function () {
-                                body.focus();
-                            }, 100);
                         }
                         , success: function (layero, index) {
                             layui.use('upload', function () {
@@ -546,6 +540,7 @@ layui.define(['layer', 'form'], function (exports) {
                                 upload.render({
                                     elem: '#LayEdit_InsertImages'
                                     , url: uploadImage.url
+                                    , field: uploadImage.field
                                     , method: uploadImage.type
                                     , accept: uploadImage.accept
                                     , acceptMime: uploadImage.acceptMime
@@ -596,7 +591,6 @@ layui.define(['layer', 'form'], function (exports) {
                                     }
                                 });
                             })
-
                         }
                     });
                 }
@@ -610,7 +604,7 @@ layui.define(['layer', 'form'], function (exports) {
                         , shade: 0.05
                         , shadeClose: true
                         , area: function () {
-                            if (/mobile/i.test(navigator.userAgent)) {
+                            if (/mobile/i.test(navigator.userAgent) || $(window).width() <= 485) {
                                 return ['90%']
                             } else {
                                 return ['485px']
@@ -663,21 +657,18 @@ layui.define(['layer', 'form'], function (exports) {
                                 }, range);
                                 layer.close(index);
                             }
-                            setTimeout(function () {
-                                body.focus();
-                            }, 100);
                         }
                         , success: function (layero, index) {
-                            layui.use('upload', function () {
-                                var upload = layui.upload, altStr = layero.find('input[name="altStr"]'),
+                            layui.use('upload', function (upload) {
+                                var upload = layui.upload;
+                                var loding, altStr = layero.find('input[name="altStr"]'),
                                     Imgsrc = layero.find('input[name="Imgsrc"]');
-                                var loding;
                                 var uploadImage = set.uploadImage || {};
                                 //执行实例
                                 upload.render({
                                     elem: '#LayEdit_InsertImage'
                                     , url: uploadImage.url
-                                    , method: uploadImage.type
+                                    , field: uploadImage.field
                                     , accept: uploadImage.accept
                                     , acceptMime: uploadImage.acceptMime
                                     , exts: uploadImage.exts
@@ -692,13 +683,37 @@ layui.define(['layer', 'form'], function (exports) {
                                             Imgsrc.val(res.data.src);
                                             altStr.val(res.data.name);
                                             uploadImage.done(res);
+                                        } else if (res.code == 2) {
+                                            var curIndex = layer.open({
+                                                type: 1
+                                                ,
+                                                anim: 2
+                                                ,
+                                                icon: 5
+                                                ,
+                                                title: '提示'
+                                                ,
+                                                area: ['390px', '260px']
+                                                ,
+                                                offset: 't'
+                                                ,
+                                                content: res.msg + "<div style='text-align:center;'><img src='" + res.data.src + "' style='max-height:80px'/></div><p style='text-align:center'>确定使用该文件吗？</p>"
+                                                ,
+                                                btn: ['确定', '取消']
+                                                ,
+                                                yes: function () {
+                                                    res.data = res.data || {};
+                                                    Imgsrc.val(res.data.src);
+                                                    altStr.val(res.data.name);
+                                                    layer.close(curIndex);
+                                                }
+                                            });
                                         } else {
-                                            layer.msg(res.msg || '上传失败');
+                                            layer.msg(res.msg || "上传失败");
                                         }
                                     }
                                 });
                             })
-
                         }
                     });
                 }
@@ -712,7 +727,7 @@ layui.define(['layer', 'form'], function (exports) {
                         , shade: 0.05
                         , shadeClose: true
                         , area: function () {
-                            if (/mobile/i.test(navigator.userAgent)) {
+                            if (/mobile/i.test(navigator.userAgent) || $(window).width() <= 485) {
                                 return ['90%']
                             } else {
                                 return ['485px']
@@ -749,13 +764,10 @@ layui.define(['layer', 'form'], function (exports) {
                                 }, range);
                                 layer.close(index);
                             }
-                            setTimeout(function () {
-                                body.focus();
-                            }, 100);
                         }
                         , success: function (layero, index) {
 
-                            layui.use('upload', function () {
+                            layui.use('upload', function (upload) {
                                 var loding, video = layero.find('input[name="video"]'),
                                     cover = layero.find('input[name="cover"]');
                                 var upload = layui.upload;
@@ -765,7 +777,7 @@ layui.define(['layer', 'form'], function (exports) {
                                 upload.render({
                                     elem: '#LayEdit_InsertImage'
                                     , url: uploadImage.url
-                                    , method: uploadImage.type
+                                    , field: uploadImage.field
                                     , accept: uploadImage.accept
                                     , acceptMime: uploadImage.acceptMime
                                     , exts: uploadImage.exts
@@ -779,14 +791,39 @@ layui.define(['layer', 'form'], function (exports) {
                                             res.data = res.data || {};
                                             cover.val(res.data.src);
                                             uploadImage.done(res);
+                                        } else if (res.code == 2) {
+                                            var curIndex = layer.open({
+                                                type: 1
+                                                ,
+                                                anim: 2
+                                                ,
+                                                icon: 5
+                                                ,
+                                                title: '提示'
+                                                ,
+                                                area: ['390px', '260px']
+                                                ,
+                                                offset: 't'
+                                                ,
+                                                content: res.msg + "<div><img src='" + res.data.src + "' style='max-height:100px'/></div><label class='layui-form-label'>确定使用该文件吗？</label>"
+                                                ,
+                                                btn: ['确定', '取消']
+                                                ,
+                                                yes: function () {
+                                                    res.data = res.data || {};
+                                                    cover.val(res.data.src);
+                                                    layer.close(curIndex);
+                                                }
+                                            });
                                         } else {
-                                            layer.msg(res.msg || '上传失败');
+                                            layer.msg(res.msg || "上传失败");
                                         }
                                     }
                                 });
                                 upload.render({
                                     elem: '#LayEdit_InsertVideo'
                                     , url: uploadfile.url
+                                    , field: uploadfile.field
                                     , accept: uploadfile.accept
                                     , acceptMime: uploadfile.acceptMime
                                     , exts: uploadfile.exts
@@ -800,10 +837,49 @@ layui.define(['layer', 'form'], function (exports) {
                                             res.data = res.data || {};
                                             video.val(res.data.src);
                                             uploadfile.done(res);
+                                        } else if (res.code == 2) {
+                                            var curIndex = layer.open({
+                                                type: 1
+                                                ,
+                                                anim: 2
+                                                ,
+                                                icon: 5
+                                                ,
+                                                title: '提示'
+                                                ,
+                                                area: ['390px', '260px']
+                                                ,
+                                                offset: 't'
+                                                ,
+                                                content: res.msg + "<div><video src='" + res.data.src + "' style='max-height:100px' controls='controls'/></div>确定使用该文件吗？"
+                                                ,
+                                                btn: ['确定', '取消']
+                                                ,
+                                                yes: function () {
+                                                    res.data = res.data || {};
+                                                    video.val(res.data.src);
+                                                    layer.close(curIndex);
+                                                }
+                                            });
                                         } else {
-                                            layer.msg(res.msg || '上传失败');
+                                            layer.msg(res.msg || "上传失败");
                                         }
                                     }
+                                });
+                                layero.find('.layui-btn-primary').on('click', function () {
+                                    layer.close(index);
+                                });
+                                layero.find('.layedit-btn-yes').on('click', function () {
+
+                                    var container = getContainer(range)
+                                        , parentNode = $(container).parent();
+                                    insertInline.call(iframeWin, 'p', {
+                                        text: '<video src="' + video.val() + '" poster="' + cover.val() + '" controls="controls" >您的浏览器不支持video播放</video>'
+                                    }, range);
+                                    setTimeout(function () {
+                                        body.focus();
+                                    }, 100);
+                                    layer.close(index);
                                 });
                             })
 
@@ -836,14 +912,8 @@ layui.define(['layer', 'form'], function (exports) {
                             editor.session.setMode("ace/mode/html");
                             editor.setTheme("ace/theme/tomorrow");
                             editor.setValue(docs);
-                            editor.setOption("wrap", "free")
+                            editor.setOption("wrap", "free");
                             editor.gotoLine(0);
-                            layero.find('.layui-btn-primary').on('click', function () {
-                                layer.close(index);
-                            });
-                            window.onresize = function () {
-                                editor.resize();
-                            }
                         }
                     });
                 }
@@ -912,16 +982,10 @@ layui.define(['layer', 'form'], function (exports) {
                             name: "#" + field.text
                             , text: " ", class: 'anchor'
                         }, range);
-                        setTimeout(function () {
-                            body.focus();
-                        }, 100);
                     });
                 }
                 , addhr: function (range) {
                     insertInline.call(iframeWin, 'hr', {}, range);
-                    setTimeout(function () {
-                        body.focus();
-                    }, 100);
                 }
                 /*End*/
                 //帮助
@@ -959,6 +1023,9 @@ layui.define(['layer', 'form'], function (exports) {
                         }
                     }
                     iframeDOM.execCommand(command);
+                    setTimeout(function () {
+                        body.focus();
+                    }, 10);
                 } else {
                     toolEvent[events] && toolEvent[events].call(this, range, iframeDOM);
                 }
@@ -996,7 +1063,7 @@ layui.define(['layer', 'form'], function (exports) {
                                 id: 'fly-jie-image-upload',
                                 title: '图片管理',
                                 area: function () {
-                                    if (/mobile/i.test(navigator.userAgent)) {
+                                    if (/mobile/i.test(navigator.userAgent) || $(window).width() <= 485) {
                                         return ['90%']
                                     } else {
                                         return ['485px']
@@ -1029,13 +1096,14 @@ layui.define(['layer', 'form'], function (exports) {
                                     , '<input type="text" required name="imgHeight" placeholder="px" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" value="' + (parseInt(event.target.style.height) || '') + '" class="layui-input">'
                                     , '</li>'
                                     , '</ul>'].join(''),
-                                btn: ['确定', '取消', '删除'],
+                                btn: ['确定', '取消', '<span style="color:red">删除</span>'],
                                 btnAlign: 'c',
                                 yes: function (index, layero) {
                                     var imgSrc = layero.find('input[name="Imgsrc"]').val();
                                     var imgWidth = layero.find('input[name="imgWidth"]').val();
                                     var imgHeight = layero.find('input[name="imgHeight"]').val();
                                     if (imgSrc == '') {
+                                        //be fix remove?
                                         layer.msg('请选择一张图片或输入图片地址');
                                     } else {
                                         event.target.src = imgSrc;
@@ -1062,14 +1130,14 @@ layui.define(['layer', 'form'], function (exports) {
                                 success: function (layero, index) {
                                     var uploadImage = set.uploadImage || {};
 
-                                    layui.use('upload', function () {
+                                    layui.use('upload', function (upload) {
                                         var loding, altStr = layero.find('input[name="altStr"]'),
                                             Imgsrc = layero.find('input[name="Imgsrc"]');
-                                        var upload = layui.upload;
+                                        upload = layui.upload;
                                         upload.render({
                                             elem: '#LayEdit_UpdateImage'
                                             , url: uploadImage.url
-                                            , method: uploadImage.type
+                                            , field: uploadImage.field
                                             , accept: uploadImage.accept
                                             , acceptMime: uploadImage.acceptMime
                                             , exts: uploadImage.exts
@@ -1083,16 +1151,40 @@ layui.define(['layer', 'form'], function (exports) {
                                                     res.data = res.data || {};
                                                     Imgsrc.val(res.data.src);
                                                     altStr.val(res.data.name);
-                                                    uploadImage.done(res);
+                                                } else if (res.code == 2) {
+                                                    var curIndex = layer.open({
+                                                        type: 1
+                                                        ,
+                                                        anim: 2
+                                                        ,
+                                                        icon: 5
+                                                        ,
+                                                        title: '提示'
+                                                        ,
+                                                        area: ['390px', '260px']
+                                                        ,
+                                                        offset: 't'
+                                                        ,
+                                                        content: res.msg + "<div style='text-align:center;'><img src='" + res.data.src + "' style='max-height:80px'/></div><p style='text-align:center'>确定使用该文件吗？</p>"
+                                                        ,
+                                                        btn: ['确定', '取消']
+                                                        ,
+                                                        yes: function () {
+                                                            res.data = res.data || {};
+                                                            Imgsrc.val(res.data.src);
+                                                            altStr.val(res.data.name);
+                                                            layer.close(curIndex);
+                                                        }
+                                                    });
                                                 } else {
-                                                    layer.msg(res.msg || '上传失败');
+                                                    layer.msg(res.msg || "上传失败");
                                                 }
                                             }
                                         });
-                                    });
+                                    })
                                     return false;
                                 }
-                            });
+                            })
                             break;
                         default:
                             var currenNode = event.toElement, parentNode = event.toElement.parentNode;
@@ -1100,7 +1192,6 @@ layui.define(['layer', 'form'], function (exports) {
                                 type: 1,
                                 title: false,
                                 offset: [event.clientY + "px", event.clientX + "px"],
-                                shade: 0.05,
                                 shadeClose: true,
                                 content: ['<ul style="width:100px">'
                                     , '<li><a type="button" class="layui-btn layui-btn-primary layui-btn-sm" style="width:80%" lay-command="left"> 居左 </a></li>'
@@ -1140,7 +1231,7 @@ layui.define(['layer', 'form'], function (exports) {
                                         }
                                         else if (currenNode.tagName == "IMG") {
                                             if (callDel.url != "") {
-                                                $.post(callDel.url, {para: event.target.src}, function (res) {
+                                                $.post(callDel.url, {para: event.target.src}, function (r) {
                                                     currenNode.remove();
                                                     callDel.done(res);
                                                 })
@@ -1153,7 +1244,7 @@ layui.define(['layer', 'form'], function (exports) {
                                         layer.close(index);
                                     });
                                 }
-                            });
+                            })
                             break;
                     }
                 }
@@ -1167,7 +1258,7 @@ layui.define(['layer', 'form'], function (exports) {
                 type: 1
                 , id: 'LAY_layedit_link'
                 , area: function () {
-                    if (/mobile/i.test(navigator.userAgent)) {
+                    if (/mobile/i.test(navigator.userAgent) || $(window).width() <= 460) {
                         return ['90%']
                     } else {
                         return ['460px']
@@ -1270,6 +1361,9 @@ layui.define(['layer', 'form'], function (exports) {
                     form.render('radio');
                     layero.find('.layui-btn-primary').on('click', function () {
                         layer.close(index);
+                        setTimeout(function () {
+                            body.focus();
+                        }, 10);
                     });
                     form.on(eventFilter, function (data) {
                         layer.close(anchors.index);
@@ -1364,36 +1458,14 @@ layui.define(['layer', 'form'], function (exports) {
                     layer.close(colorpicker.index);
                 }
             };
-            if (!/mobile/i.test(navigator.userAgent)) {
-                return colorpicker.index = layer.tips(function () {
-                    var content = [];
-                    layui.each(colors, function (key, item) {
-                        content.push('<li title="' + item + '" style="background-color:' + item + '"><span style="background-' + item + '" alt="' + key + '"/></li>');
-                    });
-                    return '<ul class="layui-clear" style="width: 279px;">' + content.join('') + '</ul>';
-                }(), this, {
-                    tips: 1
-                    , time: 0
-                    , skin: 'layui-box layui-util-face'
-                    //, maxWidth: 300
-                    , success: function (layero, index) {
-                        layero.css({
-                            marginTop: -4
-                            , marginLeft: -10
-                        }).find('.layui-clear>li').on('click', function () {
-                            callback && callback(this.title);
-                            layer.close(index);
-                        });
-                        $(document).off('click', colorpicker.hide).on('click', colorpicker.hide);
-                    }
-                });
-            } else {
+            if (/mobile/i.test(navigator.userAgent)) {
                 return colorpicker.index = layer.open({
                     type: 1
                     , title: false
                     , closeBtn: 0
                     , shade: 0.05
                     , shadeClose: true
+                    , area: ['auto']
                     , content: function () {
                         var content = [];
                         layui.each(colors, function (key, item) {
@@ -1409,8 +1481,31 @@ layui.define(['layer', 'form'], function (exports) {
                         });
                     }
                 });
+            } else {
+                return colorpicker.index = layer.tips(function () {
+                    var content = [];
+                    layui.each(colors, function (key, item) {
+                        content.push('<li title="' + item + '" style="background-color:' + item + '"><span style="background-' + item + '" alt="' + key + '"/></li>');
+                    });
+                    return '<ul class="layui-clear" style="width: 279px;">' + content.join('') + '</ul>';
+                }(), this, {
+                    tips: 1
+                    , time: 0
+                    , skin: 'layui-box layui-util-face'
+                    , area: ['auto']
+                    //, maxWidth: 300
+                    , success: function (layero, index) {
+                        layero.css({
+                            marginTop: -4
+                            , marginLeft: -10
+                        }).find('.layui-clear>li').on('click', function () {
+                            callback && callback(this.title);
+                            layer.close(index);
+                        });
+                        $(document).off('click', colorpicker.hide).on('click', colorpicker.hide);
+                    }
+                });
             }
-
         }
         , fontFomatt = function (options, callback) {
             fontFomatt.hide = fontFomatt.hide || function (e) {
@@ -1441,9 +1536,9 @@ layui.define(['layer', 'form'], function (exports) {
         , code = function (options, callback) {
             var objSel = ['<li class="layui-form-item objSel">'
                 , '<label class="layui-form-label">请选择语言</label>'
-                , '<style>#selectCodeLang ~ .layui-form-select .layui-select-title ~ dl{max-height: 192px;}</style>'
+                , '<style>#selectCodeLanguage ~ .layui-form-select > dl {max-height: 192px} </style>'
                 , '<div class="layui-input-block">'
-                , '<select name="lang" id="selectCodeLang">'
+                , '<select name="lang" id="selectCodeLanguage">'
                 , '<option value="JavaScript">JavaScript</option>'
                 , '<option value="HTML">HTML</option>'
                 , '<option value="CSS">CSS</option>'
@@ -1472,17 +1567,19 @@ layui.define(['layer', 'form'], function (exports) {
                 type: 1
                 , id: 'LAY_layedit_code'
                 , area: function () {
-                    if (/mobile/i.test(navigator.userAgent)) {
-                        return ['85%']
+                    if (/mobile/i.test(navigator.userAgent) || $(window).width() <= 650) {
+                        return ['90%']
                     } else {
-                        if ($(window).width() < 485) {
-                            return ['85%']
-                        } else {
-                            return ['485px']
-                        }
+                        return ['650px']
                     }
                 }()
-                , offset: '100px'
+                , offset: function () {
+                    if (/mobile/i.test(navigator.userAgent)) {
+                        return 'auto'
+                    } else {
+                        return '100px'
+                    }
+                }()
                 , shade: 0.05
                 , shadeClose: true
                 , moveType: 1
@@ -1508,8 +1605,8 @@ layui.define(['layer', 'form'], function (exports) {
                     body.focus();
                 }
                 , success: function (layero, index) {
-                    form.render('select');
                     var eventFilter = 'submit(layedit-code-yes)';
+                    form.render('select');
                     form.on(eventFilter, function (data) {
                         layer.close(code.index);
                         callback && callback(data.field, options.hide, options.default);
