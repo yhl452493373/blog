@@ -1,7 +1,12 @@
 package com.yang.blog.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yang.blog.config.ServiceConfig;
+import com.yang.blog.entity.About;
+import com.yang.blog.entity.AboutFile;
 import com.yang.blog.entity.Article;
+import com.yang.blog.entity.User;
+import com.yang.blog.shiro.ShiroUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -10,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class MainController {
@@ -55,8 +62,35 @@ public class MainController {
 
     @GetMapping("/about")
     public String about(ModelMap modelMap) {
+        QueryWrapper<About> aboutQueryWrapper = new QueryWrapper<>();
+        aboutQueryWrapper.orderByDesc("created_time");
+        About about = service.aboutService.getOne(aboutQueryWrapper);
+        modelMap.addAttribute("aboutRead", about);
         modelMap.addAttribute("about", "layui-this");
         return "about";
+    }
+
+    @GetMapping("/about/edit")
+    public String aboutEdit(ModelMap modelMap) {
+        QueryWrapper<About> aboutQueryWrapper = new QueryWrapper<>();
+        User user = ShiroUtils.getLoginUser();
+        aboutQueryWrapper.ge("user_id", user.getId());
+        aboutQueryWrapper.orderByDesc("created_time");
+        About about = service.aboutService.getOne(aboutQueryWrapper);
+        if (about == null) {
+            about = new About();
+        } else {
+            QueryWrapper<AboutFile> aboutFileQueryWrapper = new QueryWrapper<>();
+            aboutFileQueryWrapper.eq("user_id", user.getId());
+            aboutFileQueryWrapper.eq("about_id", about.getId());
+            List<AboutFile> aboutFileList = service.aboutFileService.list(aboutFileQueryWrapper);
+            List<String> fileIdList = new ArrayList<>();
+            aboutFileList.forEach(aboutFile -> fileIdList.add(aboutFile.getFileId()));
+            about.setFileIds(String.join(",", fileIdList));
+        }
+        modelMap.addAttribute("aboutEdit", about);
+        modelMap.addAttribute("about", "layui-this");
+        return "about.edit";
     }
 
     @GetMapping("/details/{articleId}")

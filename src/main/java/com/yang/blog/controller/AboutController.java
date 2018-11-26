@@ -1,46 +1,32 @@
 package com.yang.blog.controller;
-import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yhl452493373.bean.JSONResult;
-
+import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.config.ServiceConfig;
-import com.yang.blog.entity.About;
+import com.yang.blog.entity.*;
+import com.yang.blog.shiro.ShiroUtils;
+import com.yang.blog.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
  * @author User
  * @since 2018-11-20
  */
 @RestController
 @RequestMapping("/data/about")
-public class AboutController {
+public class AboutController implements BaseController {
     private final Logger logger = LoggerFactory.getLogger(AboutController.class);
     private ServiceConfig service = ServiceConfig.serviceConfig;
-
-    /**
-     * 分页查询数据
-     *
-     * @param page  分页信息
-     * @param about 查询对象
-     * @return 查询结果
-     */
-    @RequestMapping("/list")
-    public JSONResult list(About about, Page<About> page) {
-        JSONResult jsonResult = JSONResult.init();
-        QueryWrapper<About> queryWrapper = new QueryWrapper<>();
-        //TODO 根据需要决定是否模糊查询，字段值从about中获取。以下注释部分为模糊查询示例，使用时需要注释或删除queryWrapper.setEntity(about);
-        //queryWrapper.like("数据库字段1","字段值");
-        //queryWrapper.or();
-        //queryWrapper.like("数据库字段2","字段值");
-        queryWrapper.setEntity(about);
-        service.aboutService.page(page, queryWrapper);
-        jsonResult.success().data(page.getRecords()).count(page.getTotal());
-        return jsonResult;
-    }
 
     /**
      * 添加数据
@@ -51,30 +37,45 @@ public class AboutController {
     @RequestMapping("/add")
     public JSONResult add(About about) {
         JSONResult jsonResult = JSONResult.init();
-        boolean result = service.aboutService.save(about);
-        if (result)
-            jsonResult.success();
-        else
-            jsonResult.error();
+        User user = ShiroUtils.getLoginUser();
+        about.setId(CommonUtils.uuid());
+        about.setUserId(user.getId());
+        about.setCreatedTime(LocalDateTime.now());
+        about.setAvailable(Article.TEMP);
+        boolean aboutResult, aboutFileResult = true;
+        aboutResult = service.aboutService.saveOrUpdate(about);
+        String fileIds = about.getFileIds();
+        if (StringUtils.isNotEmpty(fileIds)) {
+            aboutFileResult = relateAboutAndFile(about, fileIds);
+        }
+        if (aboutResult && aboutFileResult) {
+            about.setAvailable(Article.AVAILABLE);
+            service.aboutService.updateById(about);
+            //添加博客成功,返回其id作为data的值,通过id跳转
+            jsonResult.success(ADD_SUCCESS).data(about.getId());
+        } else {
+            jsonResult.error(ADD_FAILED);
+        }
         return jsonResult;
     }
 
     /**
-     * 更新数据
+     * 修改数据
      *
-     * @param about 更新对象
-     * @return 添加结果
+     * @param about 修改对象
+     * @return 修改结果
      */
     @RequestMapping("/update")
     public JSONResult update(About about) {
         JSONResult jsonResult = JSONResult.init();
+        if (StringUtils.isEmpty(about.getId()))
+            return jsonResult.error(UPDATE_FAILED + ",id参数异常");
         UpdateWrapper<About> updateWrapper = new UpdateWrapper<>();
-        //TODO 根据需要设置需要更新的列，字段值从about获取。以下注释部分为指定更新列示例，使用时需要注释或删除updateWrapper.setEntity(about);
-        //updateWrapper.set("数据库字段1","字段值");
-        //updateWrapper.set("数据库字段2","字段值");
-        updateWrapper.eq("表示主键的字段","about中表示主键的值");
-        boolean result = service.aboutService.update(about, updateWrapper);
-        if (result)
+        updateWrapper.eq("id", about.getId());
+        boolean aboutResult = service.aboutService.update(about, updateWrapper), aboutFileResult = true;
+        String fileIds = about.getFileIds();
+        aboutFileResult = relateAboutAndFile(about, fileIds);
+        if (aboutResult && aboutFileResult)
             jsonResult.success();
         else
             jsonResult.error();
@@ -82,30 +83,45 @@ public class AboutController {
     }
 
     /**
-     * 删除数据
+     * 将指定id的文件和about对象关联起来
      *
-     * @param about 删除对象
-     * @param logical 是否逻辑删除。默认false，使用物理删除
-     * @return 删除结果
+     * @param about   实体对象
+     * @param fileIds 文件id
+     * @return 关联结果
      */
-    @RequestMapping("/delete")
-    public JSONResult delete(About about, @RequestParam(required = false, defaultValue = "false") Boolean logical) {
-        JSONResult jsonResult = JSONResult.init();
-        boolean result;
-        if (logical) {
-            UpdateWrapper<About> updateWrapper = new UpdateWrapper<>();
-            //TODO 根据需要修改表示逻辑删除的列和值。
-            updateWrapper.set("表示逻辑删除的字段","表示逻辑删除的值");
-            result = service.aboutService.update(about,updateWrapper);
-        } else {
-            QueryWrapper<About> queryWrapper = new QueryWrapper<>();
-            queryWrapper.setEntity(about);
-            result = service.aboutService.remove(queryWrapper);
+    private boolean relateAboutAndFile(About about, String fileIds) {
+        boolean fileResult = true, aboutFileResult = true;
+        List<String> fileIdList = CommonUtils.splitIds(fileIds);
+        if (!fileIdList.isEmpty()) {
+            User user = ShiroUtils.getLoginUser();
+            fileResult = service.fileService.setAvailable(fileIdList, File.AVAILABLE);
+            if (fileResult) {
+                //将文件和文章关联
+                List<AboutFile> aboutFileList = new ArrayList<>();
+                fileIdList.forEach(fileId -> {
+                    AboutFile articleFile = new AboutFile();
+                    articleFile.setAboutId(about.getId());
+                    articleFile.setFileId(fileId);
+                    articleFile.setCreatedTime(LocalDateTime.now());
+                    articleFile.setUserId(user.getId());
+                    aboutFileList.add(articleFile);
+                });
+                aboutFileResult = service.aboutFileService.saveBatch(aboutFileList);
+            }
         }
-        if (result)
-            jsonResult.success();
-        else
-            jsonResult.error();
-        return jsonResult;
+
+        if (fileResult) {
+            //清理临时状态的文件.此一步操作稍作修改可作为定时任务一部分
+            QueryWrapper<AboutFile> aboutQueryWrapper = new QueryWrapper<>();
+            aboutQueryWrapper.eq("about_id", about.getId());
+            List<AboutFile> aboutFileList = service.aboutFileService.list(aboutQueryWrapper);
+            List<String> aboutFileIdList = CommonUtils.convertToFieldList(aboutFileList, "getFileId");
+            QueryWrapper<File> fileQueryWrapper = new QueryWrapper<>();
+            fileQueryWrapper.in("id", aboutFileIdList);
+            fileQueryWrapper.eq("available", File.TEMP);
+            List<File> tempFileList = service.fileService.list(fileQueryWrapper);
+            aboutFileResult = FileUtils.delete(CommonUtils.convertToIdList(tempFileList));
+        }
+        return fileResult && aboutFileResult;
     }
 }

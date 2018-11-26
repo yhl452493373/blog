@@ -1,7 +1,9 @@
 package com.yang.blog.service;
 
-import com.yang.blog.entity.File;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.yang.blog.entity.File;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2018-11-20
  */
 public interface FileService extends IService<File> {
-
+    boolean setAvailable(List<String> fileIdList, Integer available);
 }

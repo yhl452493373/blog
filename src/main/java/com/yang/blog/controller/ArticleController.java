@@ -9,7 +9,6 @@ import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.*;
 import com.yang.blog.shiro.ShiroUtils;
-import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -43,10 +41,6 @@ public class ArticleController implements BaseController {
     public JSONResult list(Article article, Page<Article> page) {
         JSONResult jsonResult = JSONResult.init();
         QueryWrapper<Article> queryWrapper = new QueryWrapper<>(article);
-        //TODO 根据需要决定是否模糊查询，字段值从article中获取。以下注释部分为模糊查询示例，使用时需要注释或删除queryWrapper.setEntity(article);
-        //queryWrapper.like("数据库字段1","字段值");
-        //queryWrapper.or();
-        //queryWrapper.like("数据库字段2","字段值");
         queryWrapper.setEntity(article);
         queryWrapper.orderByDesc("publish_time");
         service.articleService.page(page, queryWrapper);
@@ -79,11 +73,7 @@ public class ArticleController implements BaseController {
         List<Tag> tagList = null;
         if (StringUtils.isNotEmpty(fileIds)) {
             List<String> fileIdList = CommonUtils.splitIds(fileIds);
-
-            //将关联文件设置为正常状态
-            Collection<File> fileList = service.fileService.listByIds(fileIdList);
-            fileList.forEach(file -> file.setAvailable(File.AVAILABLE));
-            articleFileResult = service.fileService.updateBatchById(fileList);
+            articleFileResult = service.fileService.setAvailable(fileIdList, File.AVAILABLE);
 
             if (articleFileResult) {
                 //将文件和文章关联

@@ -23,7 +23,9 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -334,12 +336,26 @@ public class FileUtils {
 
     }
 
-    public static void delete(String fileId) {
+    public static boolean delete(String fileId) {
+        boolean result = true;
         com.yang.blog.entity.File file = ServiceConfig.serviceConfig.fileService.getById(fileId);
         if (file != null) {
             java.io.File uploadFile = new java.io.File(FileUtils.uploadPath(file));
             uploadFile.delete();
-            ServiceConfig.serviceConfig.fileService.removeById(file.getId());
+            result = ServiceConfig.serviceConfig.fileService.removeById(file.getId());
         }
+        return result;
+    }
+
+    public static boolean delete(List<String> fileIdList) {
+        if (fileIdList.isEmpty()) {
+            return true;
+        }
+        Collection<com.yang.blog.entity.File> fileList = ServiceConfig.serviceConfig.fileService.listByIds(fileIdList);
+        fileList.forEach(file -> {
+            java.io.File uploadFile = new java.io.File(FileUtils.uploadPath(file));
+            uploadFile.delete();
+        });
+        return ServiceConfig.serviceConfig.fileService.removeByIds(fileIdList);
     }
 }

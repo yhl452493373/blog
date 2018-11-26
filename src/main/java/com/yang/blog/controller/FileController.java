@@ -1,10 +1,8 @@
 package com.yang.blog.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
 import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.bean.MultipartFileParam;
@@ -24,10 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author User
@@ -164,27 +159,6 @@ public class FileController implements BaseController {
     }
 
     /**
-     * 分页查询数据
-     *
-     * @param page 分页信息
-     * @param file 查询对象
-     * @return 查询结果
-     */
-    @RequestMapping("/list")
-    public JSONResult list(File file, Page<File> page) {
-        JSONResult jsonResult = JSONResult.init();
-        QueryWrapper<File> queryWrapper = new QueryWrapper<>();
-        //TODO 根据需要决定是否模糊查询，字段值从file中获取。以下注释部分为模糊查询示例，使用时需要注释或删除queryWrapper.setEntity(file);
-        //queryWrapper.like("数据库字段1","字段值");
-        //queryWrapper.or();
-        //queryWrapper.like("数据库字段2","字段值");
-        queryWrapper.setEntity(file);
-        service.fileService.page(page, queryWrapper);
-        jsonResult.success().data(page.getRecords()).count(page.getTotal());
-        return jsonResult;
-    }
-
-    /**
      * 添加数据
      *
      * @param file 添加对象
@@ -227,21 +201,28 @@ public class FileController implements BaseController {
      * 删除数据
      *
      * @param fileIds       删除对象id,多个id用逗号分隔
+     * @param temporary     是否设置为临时文件,主要用于富文本等涉及到图片修改的地方.此时先将图片设置为临时,最后保存时再将使用的文件修改为正常状态.临时文件会被定时清除
      * @param logical       是否逻辑删除。默认false，使用物理删除
      * @param layEditDelete 是否layEdit的文件删除
      * @return 删除结果。data为删除的文件id数组
      */
     @RequestMapping("/delete")
-    public JSONResult delete(String fileIds, HttpServletRequest request, @RequestParam(required = false, defaultValue = "false") Boolean logical, @RequestParam(defaultValue = "false", required = false) Boolean layEditDelete) {
+    public JSONResult delete(String fileIds, HttpServletRequest request, @RequestParam(required = false, defaultValue = "false") Boolean temporary, @RequestParam(required = false, defaultValue = "false") Boolean logical, @RequestParam(defaultValue = "false", required = false) Boolean layEditDelete) {
         JSONResult jsonResult = JSONResult.init();
         boolean result;
         if (!layEditDelete) {
             List<String> fileIdList = CommonUtils.splitIds(fileIds);
             Collection<File> fileList = service.fileService.listByIds(fileIdList);
-            if (logical) {
+            if (temporary) {
+                //文件设为临时状态
+                fileList.forEach(file -> file.setAvailable(File.TEMP));
+                result = service.fileService.updateBatchById(fileList);
+            } else if (logical) {
+                //文件设为删除状态
                 fileList.forEach(file -> file.setAvailable(File.DELETE));
                 result = service.fileService.updateBatchById(fileList);
             } else {
+                //文件物理删除
                 fileList.forEach(file -> {
                     java.io.File uploadFile = new java.io.File(FileUtils.uploadPath(file));
                     uploadFile.delete();
@@ -252,20 +233,11 @@ public class FileController implements BaseController {
             if (result)
                 jsonResult.data(fileIdList);
         } else {
-            result = true;
             String imagePath = request.getParameter("imgpath");
             String videoPath = request.getParameter("filepath");
             List<String> fileIdList = new ArrayList<>();
-            if (StringUtils.isNotEmpty(imagePath)) {
-                String imageId = imagePath.substring(imagePath.lastIndexOf("/") + 1);
-                FileUtils.delete(imageId);
-                fileIdList.add(imageId);
-            }
-            if (StringUtils.isNotEmpty(videoPath)) {
-                String videoId = videoPath.substring(videoPath.lastIndexOf("/") + 1);
-                FileUtils.delete(videoId);
-                fileIdList.add(videoId);
-            }
+            result = layEditDelete(temporary, true, imagePath, fileIdList);
+            result = layEditDelete(temporary, result, videoPath, fileIdList);
             jsonResult.data(fileIdList);
         }
         if (result)
@@ -273,5 +245,28 @@ public class FileController implements BaseController {
         else
             jsonResult.error(DELETE_FAILED);
         return jsonResult;
+    }
+
+    /**
+     * 编辑文件时的删除处理.在新增时,文件不使用临时删除,修改时使用
+     *
+     * @param temporary  是否设置为临时.
+     * @param result     整个操作是否成功的初始值
+     * @param filePath   文件路径
+     * @param fileIdList 文件id列表
+     * @return 是否删除成功
+     */
+    private boolean layEditDelete(@RequestParam(required = false, defaultValue = "false") Boolean temporary, boolean result, String filePath, List<String> fileIdList) {
+        if (StringUtils.isNotEmpty(filePath)) {
+            String fileId = filePath.substring(filePath.lastIndexOf("/") + 1);
+            if (temporary) {
+                result = service.fileService.setAvailable(Collections.singletonList(fileId), File.TEMP);
+                fileIdList.add(fileId);
+            } else {
+                FileUtils.delete(fileId);
+                fileIdList.add(fileId);
+            }
+        }
+        return result;
     }
 }

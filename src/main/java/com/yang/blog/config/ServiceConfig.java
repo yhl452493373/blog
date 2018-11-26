@@ -40,13 +40,15 @@ public class ServiceConfig {
     public ArticleFileService articleFileService;
     @Autowired
     public PraiseService praiseService;
+    @Autowired
+    public AboutFileService aboutFileService;
 
     @PostConstruct
     public void init() {
         serviceConfig = this;
     }
 
-    //一下：从配置文件读取一些配置
+    //以下：从配置文件读取一些配置
 
     @Value("${spring.servlet.multipart.max-file-size:1MB}")
     public DataSize maxFileSize;

@@ -1,5 +1,7 @@
 package com.yang.blog.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -36,6 +38,12 @@ public class About implements Serializable, BaseEntity {
      * 关于状态。-1-删除，0-不可见，1-可见。此表中每个用户最多有1个是可见状态
      */
     private Integer available;
+
+    /**
+     * 与关于对应的文件id，多个用逗号分隔
+     */
+    @TableField(exist = false)
+    private String fileIds;
 
     public String getId() {
         return id;
@@ -77,6 +85,14 @@ public class About implements Serializable, BaseEntity {
         this.available = available;
     }
 
+    public String getFileIds() {
+        return fileIds;
+    }
+
+    public void setFileIds(String fileIds) {
+        this.fileIds = fileIds;
+    }
+
     @Override
     public String toString() {
         return "About{" +
@@ -85,6 +101,7 @@ public class About implements Serializable, BaseEntity {
                 ", content=" + content +
                 ", createdTime=" + createdTime +
                 ", available=" + available +
+                ", fileIds=" + fileIds +
                 "}";
     }
 }
