@@ -11,7 +11,7 @@
  Target Server Version : 50722
  File Encoding         : 65001
 
- Date: 23/11/2018 10:07:43
+ Date: 26/11/2018 18:49:58
 */
 
 SET NAMES utf8mb4;
@@ -25,12 +25,31 @@ CREATE TABLE `about` (
   `id` varchar(32) NOT NULL,
   `user_id` varchar(32) DEFAULT NULL COMMENT '关于所属用户id',
   `content` text COMMENT '关于的内容',
-  `created_time` datetime DEFAULT NULL COMMENT '关于的填写时间',
   `available` int(1) DEFAULT NULL COMMENT '关于状态。-1-删除，0-不可见，1-可见。此表中每个用户最多有1个是可见状态',
+  `created_time` datetime DEFAULT NULL COMMENT '关于的填写时间',
   PRIMARY KEY (`id`),
   KEY `fk_about_user_1` (`user_id`),
   CONSTRAINT `fk_about_user_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='关于';
+
+-- ----------------------------
+-- Table structure for about_file
+-- ----------------------------
+DROP TABLE IF EXISTS `about_file`;
+CREATE TABLE `about_file` (
+  `id` varchar(32) NOT NULL,
+  `about_id` varchar(32) DEFAULT NULL COMMENT '关于id',
+  `file_id` varchar(32) DEFAULT NULL COMMENT '文件id',
+  `user_id` varchar(32) DEFAULT NULL COMMENT '关联关系所属用户id',
+  `created_time` datetime DEFAULT NULL COMMENT '关联时的时间',
+  PRIMARY KEY (`id`),
+  KEY `fk_about_file_about_1` (`about_id`),
+  KEY `fk_about_file_user_1` (`user_id`),
+  KEY `fk_about_file_file_1` (`file_id`),
+  CONSTRAINT `fk_about_file_about_1` FOREIGN KEY (`about_id`) REFERENCES `about` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_about_file_file_1` FOREIGN KEY (`file_id`) REFERENCES `file` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_about_file_user_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='关于对应的文件，主要用于删除关于时同步删除文件';
 
 -- ----------------------------
 -- Table structure for article
@@ -68,7 +87,7 @@ CREATE TABLE `article_file` (
   KEY `fk_article_file_article_1` (`article_id`),
   KEY `fk_article_file_file_1` (`file_id`),
   CONSTRAINT `fk_article_file_article_1` FOREIGN KEY (`article_id`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_article_file_file_1` FOREIGN KEY (`file_id`) REFERENCES `file` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_article_file_file_1` FOREIGN KEY (`file_id`) REFERENCES `file` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_article_file_user_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文章对应的文件，主要用于删除文章时同步删除文件';
 
@@ -142,7 +161,8 @@ CREATE TABLE `message` (
   `praise_count` int(11) DEFAULT NULL COMMENT '点赞次数',
   `created_time` datetime DEFAULT NULL COMMENT '留言时间',
   `available` int(1) DEFAULT NULL COMMENT '留言状态。-1-删除，0-不可见，1-正常',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_message_user_1` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='留言';
 
 -- ----------------------------
@@ -153,14 +173,17 @@ CREATE TABLE `praise` (
   `id` varchar(32) NOT NULL,
   `article_id` varchar(32) DEFAULT NULL COMMENT '被赞文章id，和评论id二选一，不可同时有值',
   `comment_id` varchar(32) DEFAULT NULL COMMENT '评论id，和文章id二选一，不可同时有值',
+  `message_id` varchar(32) DEFAULT NULL COMMENT '留言id',
   `user_id` varchar(32) DEFAULT NULL COMMENT '点赞人id。如果没登录则没有',
   `created_time` datetime DEFAULT NULL COMMENT '点赞时间',
   PRIMARY KEY (`id`),
   KEY `fk_praise_article_1` (`article_id`),
   KEY `fk_praise_comment_1` (`comment_id`),
+  KEY `fk_praise_message_1` (`message_id`),
   CONSTRAINT `fk_praise_article_1` FOREIGN KEY (`article_id`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_praise_comment_1` FOREIGN KEY (`comment_id`) REFERENCES `comment` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文章、评论的点赞记录表';
+  CONSTRAINT `fk_praise_comment_1` FOREIGN KEY (`comment_id`) REFERENCES `comment` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_praise_message_1` FOREIGN KEY (`message_id`) REFERENCES `message` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文章、评论、留言的点赞记录表';
 
 -- ----------------------------
 -- Table structure for tag
