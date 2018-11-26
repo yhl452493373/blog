@@ -1,7 +1,6 @@
 package com.yang.blog.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yhl452493373.bean.JSONResult;
 import com.github.yhl452493373.utils.CommonUtils;
@@ -34,9 +33,12 @@ public class AboutController implements BaseController {
      * @param about 添加对象
      * @return 添加结果
      */
+    @SuppressWarnings("Duplicates")
     @RequestMapping("/add")
     public JSONResult add(About about) {
         JSONResult jsonResult = JSONResult.init();
+        if (StringUtils.isEmpty(about.getContent()))
+            return jsonResult.error(ADD_FAILED + "内容不能为空");
         User user = ShiroUtils.getLoginUser();
         about.setId(CommonUtils.uuid());
         about.setUserId(user.getId());
@@ -46,7 +48,7 @@ public class AboutController implements BaseController {
         aboutResult = service.aboutService.saveOrUpdate(about);
         String fileIds = about.getFileIds();
         if (StringUtils.isNotEmpty(fileIds)) {
-            aboutFileResult = relateAboutAndFile(about, fileIds);
+            aboutFileResult = relateAboutAndFile(about);
         }
         if (aboutResult && aboutFileResult) {
             about.setAvailable(Article.AVAILABLE);
@@ -65,16 +67,16 @@ public class AboutController implements BaseController {
      * @param about 修改对象
      * @return 修改结果
      */
+    @SuppressWarnings("Duplicates")
     @RequestMapping("/update")
     public JSONResult update(About about) {
         JSONResult jsonResult = JSONResult.init();
         if (StringUtils.isEmpty(about.getId()))
-            return jsonResult.error(UPDATE_FAILED + ",id参数异常");
-        UpdateWrapper<About> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id", about.getId());
-        boolean aboutResult = service.aboutService.update(about, updateWrapper), aboutFileResult = true;
-        String fileIds = about.getFileIds();
-        aboutFileResult = relateAboutAndFile(about, fileIds);
+            return jsonResult.error(UPDATE_FAILED + "id参数异常");
+        if (StringUtils.isEmpty(about.getContent()))
+            return jsonResult.error(UPDATE_FAILED + "内容不能为空");
+        boolean aboutResult = service.aboutService.updateById(about), aboutFileResult;
+        aboutFileResult = relateAboutAndFile(about);
         if (aboutResult && aboutFileResult)
             jsonResult.success();
         else
@@ -85,11 +87,12 @@ public class AboutController implements BaseController {
     /**
      * 将指定id的文件和about对象关联起来
      *
-     * @param about   实体对象
-     * @param fileIds 文件id
+     * @param about 实体对象
      * @return 关联结果
      */
-    private boolean relateAboutAndFile(About about, String fileIds) {
+    @SuppressWarnings("Duplicates")
+    private boolean relateAboutAndFile(About about) {
+        String fileIds = about.getFileIds();
         boolean fileResult = true, aboutFileResult = true;
         List<String> fileIdList = CommonUtils.splitIds(fileIds);
         if (!fileIdList.isEmpty()) {

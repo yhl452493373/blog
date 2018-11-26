@@ -12,35 +12,57 @@
             background-color: #fff;
             border: 1px solid #e6e6e6;
         }
+
+        .error {
+            line-height: 300px;
+            font-size: 20px;
+            text-align: center;
+            display: block;
+            color: #aaa;
+        }
     </style>
 </head>
 <body class="lay-blog">
 <#include "include.header.ftl">
 <div class="container-wrap">
     <div class="container">
-        <form id="articleForm" class="layui-form article-form" action="${contextPath}/data/article/add" method="post">
-            <div class="layui-form-item">
-                <input name="title" type="text" class="layui-input create-title-input" placeholder="请输入文章标题">
-            </div>
-            <div class="layui-form-item">
-                <input type="hidden" id="fileIds" name="fileIds">
-                <textarea name="content" id="content" placeholder="文章内容" style="display: none;"></textarea>
-            </div>
-            <div class="layui-form-item create-tags-container">
-                <label class="layui-form-label">文章标签:</label>
-                <div class="layui-input-block">
-                    <div class="inputTags">
-                        <input type="hidden" name="tags" id="tags">
-                        <input type="text" id="inputTags" class="inputTagsInput" placeholder="输入标签">
+        <#if (code == codeMap.CODE_ID_EMPTY )>
+            <p class="error">文章id为空</p>
+        <#elseif (code == codeMap.CODE_NO_PERMISSION )>
+            <p class="error">无权编辑此文章</p>
+        <#elseif (code == codeMap.CODE_NOT_EXIST )>
+            <p class="error">文章不存在</p>
+        <#else>
+            <form id="articleForm" class="layui-form article-form" action="${contextPath}/data/article/${articleEdit.id???string("update","add")}" method="post">
+                <div class="layui-form-item">
+                    <input name="title" type="text" class="layui-input create-title-input" placeholder="请输入文章标题" value="${articleEdit.title!}">
+                </div>
+                <div class="layui-form-item">
+                    <input type="hidden" id="id" name="id" value="${articleEdit.id!}">
+                    <input type="hidden" id="fileIds" name="fileIds" value="${articleEdit.fileIds!}">
+                    <textarea name="content" id="content" placeholder="文章内容" style="display: none;">${articleEdit.content!}</textarea>
+                </div>
+                <div class="layui-form-item create-tags-container">
+                    <label class="layui-form-label">文章标签:</label>
+                    <div class="layui-input-block">
+                        <div class="inputTags">
+                            <input type="hidden" name="tags" id="tags" value="${articleEdit.tags!}">
+                            <input type="text" id="inputTags" class="inputTagsInput" placeholder="输入标签">
+                        </div>
                     </div>
                 </div>
+            </form>
+            <div class="create-button-group">
+                <#if !articleEdit.id??>
+                    <button id="publish" class="layui-btn layui-btn-normal">发布文章</button>
+                    <button id="draft" class="layui-btn layui-btn-normal">保存草稿</button>
+                    <button id="back" class="layui-btn create-button-back" onclick="window.history.go(-1)">返回</button>
+                <#else>
+                    <button id="publish" class="layui-btn layui-btn-normal">保存文章</button>
+                    <button id="back" class="layui-btn create-button-back" onclick="window.history.go(-1)">返回</button>
+                </#if>
             </div>
-        </form>
-        <div class="create-button-group">
-            <button id="publish" class="layui-btn layui-btn-normal">发布文章</button>
-            <button id="draft" class="layui-btn layui-btn-normal">保存草稿</button>
-            <button id="back" class="layui-btn create-button-back" onclick="window.history.go(-1)">返回</button>
-        </div>
+        </#if>
     </div>
 </div>
 <#include "include.footer.ftl">
@@ -106,7 +128,7 @@
             //图片： imgpath --图片路径
             //视频： filepath --视频路径 imgpath --封面路径
             , calldel: {
-                url: contextPath + '/data/file/delete?layEditDelete=true',
+                url: contextPath + '/data/file/delete?layEditDelete=true<#if articleEdit.id??>&temporary=true</#if>',
                 done: function (res) {
                     //成功后的回调
                     var $fileIds = $('#fileIds');
@@ -137,9 +159,10 @@
         });
         var layeditIndex = layedit.build('content');
 
+        var tags = $('#tags').val();
         inputTags.render({
             elem: '#inputTags',
-            content: [],
+            content: tags.trim().length > 0 ? tags.split(',') : [],
             aldaBtn: false,
             focus: false,
             done: function () {
@@ -166,7 +189,7 @@
                             window.location.href = contextPath + '/details/' + result.data;
                         });
                     } else {
-                        layer.alert('文章发布失败，请稍后再试');
+                        layer.alert(result.message);
                     }
                 }
             });

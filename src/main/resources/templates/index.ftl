@@ -32,7 +32,12 @@
 <script type="text/html" id="articleItem">
     <div class="item">
         <div class="item-box layer-photos-demo layer-photos-demo{{ d.index }}">
-            <h3><a href="${contextPath}/details/{{ d.id }}">{{ d.title }}</a></h3>
+            <h3>
+                <@shiro.user>
+                    <a class="layui-icon layui-icon-edit" href="${contextPath}/edit/{{ d.id }}"></a>
+                </@shiro.user>
+                <a href="${contextPath}/details/{{ d.id }}">{{ d.title }}</a>
+            </h3>
             <h5>发布于：<span>{{ d.publishTime }}</span></h5>
             <div class="preview-content">{{ d.content }}</div>
         </div>

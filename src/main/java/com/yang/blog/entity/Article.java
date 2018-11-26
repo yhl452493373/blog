@@ -14,6 +14,9 @@ import java.time.LocalDateTime;
  * @since 2018-11-20
  */
 public class Article implements Serializable, BaseEntity {
+    /**
+     * 以下两个为是否草稿的常量
+     */
     public static final Integer IS_DRAFT_FALSE = 0;//非草稿
     public static final Integer IS_DRAFT_TRUE = 1;//草稿
 

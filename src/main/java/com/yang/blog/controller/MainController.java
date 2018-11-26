@@ -1,11 +1,11 @@
 package com.yang.blog.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.github.yhl452493373.utils.CommonUtils;
+import com.yang.blog.bean.Constant;
 import com.yang.blog.config.ServiceConfig;
-import com.yang.blog.entity.About;
-import com.yang.blog.entity.AboutFile;
-import com.yang.blog.entity.Article;
-import com.yang.blog.entity.User;
+import com.yang.blog.entity.*;
 import com.yang.blog.shiro.ShiroUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Controller;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -48,10 +49,54 @@ public class MainController {
         return "login";
     }
 
-    @GetMapping("/create")
-    public String create(ModelMap modelMap) {
+    @GetMapping({"/create", "/edit/{articleId}"})
+    public String create(@PathVariable(required = false) String articleId, HttpServletRequest request, ModelMap modelMap) {
+        //初始时为正常状态
+        modelMap.addAttribute("code", Constant.CODE_OK);
+        modelMap.addAttribute("codeMap", Constant.getCodeMap());
+        //初始时默认article为空
+        modelMap.addAttribute("articleEdit", new Article());
+        if (request.getRequestURI().contains("/edit/")) {
+            if (StringUtils.isEmpty(articleId)) {
+                //编辑路径进入,但是没有文章id,则为错误状态
+                modelMap.addAttribute("code", Constant.CODE_ID_EMPTY);
+            } else {
+                User user = ShiroUtils.getLoginUser();
+                Article article = service.articleService.getById(articleId);
+                if (article == null) {
+                    //为空,则不存在
+                    modelMap.addAttribute("code", Constant.CODE_NOT_EXIST);
+                } else {
+                    if (!article.getUserId().equals(user.getId())) {
+                        //用户id不是登录用户id,则无权
+                        modelMap.addAttribute("code", Constant.CODE_NO_PERMISSION);
+                    } else {
+                        //正常
+                        //查找使用的文件
+                        QueryWrapper<ArticleFile> articleFileQueryWrapper = new QueryWrapper<>();
+                        articleFileQueryWrapper.eq("article_id", article.getId());
+                        articleFileQueryWrapper.eq("user_id", user.getId());
+                        Collection<ArticleFile> articleFileList = service.articleFileService.list(articleFileQueryWrapper);
+                        List<String> fileIdList = CommonUtils.convertToFieldList(articleFileList, "getFileId");
+                        article.setFileIds(String.join(",", fileIdList));
+                        //查找使用的tag
+                        QueryWrapper<ArticleTag> articleTagQueryWrapper = new QueryWrapper<>();
+                        articleTagQueryWrapper.eq("article_id", article.getId());
+                        articleTagQueryWrapper.eq("user_id", user.getId());
+                        Collection<ArticleTag> articleTagList = service.articleTagService.list(articleTagQueryWrapper);
+                        if(!articleTagList.isEmpty()){
+                            List<String> tagIdList = CommonUtils.convertToFieldList(articleTagList, "getTagId");
+                            Collection<Tag> tagList = service.tagService.listByIds(tagIdList);
+                            List<String> tagNameList = CommonUtils.convertToFieldList(tagList, "getName");
+                            article.setTags(String.join(",", tagNameList));
+                        }
+                        modelMap.put("articleEdit", article);
+                    }
+                }
+            }
+        }
         modelMap.addAttribute("create", "layui-this");
-        return "create";
+        return "details.edit";
     }
 
     @GetMapping("/message")
