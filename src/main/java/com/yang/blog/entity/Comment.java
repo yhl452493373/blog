@@ -1,6 +1,7 @@
 package com.yang.blog.entity;
 
-import java.time.LocalDateTime;
+import com.yang.blog.entity.base.BaseEntity;
+
 import java.io.Serializable;
 
 /**
@@ -11,11 +12,9 @@ import java.io.Serializable;
  * @author User
  * @since 2018-11-20
  */
-public class Comment implements Serializable, BaseEntity {
+public class Comment extends BaseEntity<Comment> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private String id;
 
     /**
      * 评论所属博文id
@@ -43,22 +42,10 @@ public class Comment implements Serializable, BaseEntity {
     private Integer praiseCount;
 
     /**
-     * 评论时间
-     */
-    private LocalDateTime createdTime;
-
-    /**
      * 评论状态。-1-删除，0-不可见，1-正常
      */
     private Integer available;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
     public String getArticleId() {
         return articleId;
     }
@@ -66,6 +53,7 @@ public class Comment implements Serializable, BaseEntity {
     public void setArticleId(String articleId) {
         this.articleId = articleId;
     }
+
     public String getUserName() {
         return userName;
     }
@@ -73,6 +61,7 @@ public class Comment implements Serializable, BaseEntity {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
     public String getUserId() {
         return userId;
     }
@@ -80,6 +69,7 @@ public class Comment implements Serializable, BaseEntity {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
     public String getContent() {
         return content;
     }
@@ -87,6 +77,7 @@ public class Comment implements Serializable, BaseEntity {
     public void setContent(String content) {
         this.content = content;
     }
+
     public Integer getPraiseCount() {
         return praiseCount;
     }
@@ -94,13 +85,7 @@ public class Comment implements Serializable, BaseEntity {
     public void setPraiseCount(Integer praiseCount) {
         this.praiseCount = praiseCount;
     }
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
 
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
     public Integer getAvailable() {
         return available;
     }
@@ -112,14 +97,12 @@ public class Comment implements Serializable, BaseEntity {
     @Override
     public String toString() {
         return "Comment{" +
-        "id=" + id +
-        ", articleId=" + articleId +
-        ", userName=" + userName +
-        ", userId=" + userId +
-        ", content=" + content +
-        ", praiseCount=" + praiseCount +
-        ", createdTime=" + createdTime +
-        ", available=" + available +
-        "}";
+                "articleId=" + articleId +
+                ", userName=" + userName +
+                ", userId=" + userId +
+                ", content=" + content +
+                ", praiseCount=" + praiseCount +
+                ", available=" + available +
+                "}";
     }
 }

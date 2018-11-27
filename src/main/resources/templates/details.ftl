@@ -39,7 +39,12 @@
         <div class="contar-wrap">
             <div class="item">
                 <div class="item-box item-content-box layer-photos-demo layer-photos-demo1">
-                    <h3>${article.title}</h3>
+                    <h3>
+                        <@shiro.user>
+                            <a class="layui-icon layui-icon-edit" href="${contextPath}/edit/${article.id}"></a>
+                        </@shiro.user>
+                        ${article.title}
+                    </h3>
                     <h5>发布于：<span>${article.publishTime}</span></h5>
                     <div class="item-content">${article.content}</div>
                 </div>

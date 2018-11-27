@@ -1,7 +1,8 @@
 package com.yang.blog.entity;
 
+import com.yang.blog.entity.base.BaseEntity;
+
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -11,11 +12,9 @@ import java.time.LocalDateTime;
  * @author User
  * @since 2018-11-21
  */
-public class ArticleTag implements Serializable {
+public class ArticleTag extends BaseEntity<ArticleTag> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private String id;
 
     /**
      * 博文id
@@ -31,19 +30,6 @@ public class ArticleTag implements Serializable {
      * 文章-标签对应关系所属用户
      */
     private String userId;
-
-    /**
-     * 关联时间
-     */
-    private LocalDateTime createdTime;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getArticleId() {
         return articleId;
@@ -69,22 +55,12 @@ public class ArticleTag implements Serializable {
         this.userId = userId;
     }
 
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
-
     @Override
     public String toString() {
         return "ArticleTag{" +
-                "id=" + id +
-                ", articleId=" + articleId +
+                "articleId=" + articleId +
                 ", tagId=" + tagId +
                 ", userId=" + userId +
-                ", createdTime=" + createdTime +
                 "}";
     }
 }

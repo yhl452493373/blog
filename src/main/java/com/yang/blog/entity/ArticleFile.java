@@ -1,6 +1,7 @@
 package com.yang.blog.entity;
 
-import java.time.LocalDateTime;
+import com.yang.blog.entity.base.BaseEntity;
+
 import java.io.Serializable;
 
 /**
@@ -11,11 +12,9 @@ import java.io.Serializable;
  * @author User
  * @since 2018-11-21
  */
-public class ArticleFile implements Serializable {
+public class ArticleFile extends BaseEntity<ArticleFile> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private String id;
 
     /**
      * 文章id
@@ -32,18 +31,6 @@ public class ArticleFile implements Serializable {
      */
     private String userId;
 
-    /**
-     * 关联时的时间
-     */
-    private LocalDateTime createdTime;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
     public String getArticleId() {
         return articleId;
     }
@@ -51,6 +38,7 @@ public class ArticleFile implements Serializable {
     public void setArticleId(String articleId) {
         this.articleId = articleId;
     }
+
     public String getFileId() {
         return fileId;
     }
@@ -58,6 +46,7 @@ public class ArticleFile implements Serializable {
     public void setFileId(String fileId) {
         this.fileId = fileId;
     }
+
     public String getUserId() {
         return userId;
     }
@@ -65,22 +54,13 @@ public class ArticleFile implements Serializable {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
 
     @Override
     public String toString() {
         return "ArticleFile{" +
-        "id=" + id +
-        ", articleId=" + articleId +
-        ", fileId=" + fileId +
-        ", userId=" + userId +
-        ", createdTime=" + createdTime +
-        "}";
+                "articleId=" + articleId +
+                ", fileId=" + fileId +
+                ", userId=" + userId +
+                "}";
     }
 }

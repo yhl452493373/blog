@@ -1,6 +1,7 @@
 package com.yang.blog.entity;
 
-import java.time.LocalDateTime;
+import com.yang.blog.entity.base.BaseEntity;
+
 import java.io.Serializable;
 
 /**
@@ -11,11 +12,9 @@ import java.io.Serializable;
  * @author User
  * @since 2018-11-23
  */
-public class Praise implements Serializable {
+public class Praise extends BaseEntity<Praise> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private String id;
 
     /**
      * 被赞文章id，和评论id，留言id，三选一，不可同时有值
@@ -37,18 +36,6 @@ public class Praise implements Serializable {
      */
     private String userId;
 
-    /**
-     * 点赞时间
-     */
-    private LocalDateTime createdTime;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
     public String getArticleId() {
         return articleId;
     }
@@ -56,6 +43,7 @@ public class Praise implements Serializable {
     public void setArticleId(String articleId) {
         this.articleId = articleId;
     }
+
     public String getCommentId() {
         return commentId;
     }
@@ -63,6 +51,7 @@ public class Praise implements Serializable {
     public void setCommentId(String commentId) {
         this.commentId = commentId;
     }
+
     public String getUserId() {
         return userId;
     }
@@ -78,23 +67,14 @@ public class Praise implements Serializable {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
 
     @Override
     public String toString() {
         return "Praise{" +
-        "id=" + id +
-        ", articleId=" + articleId +
-        ", commentId=" + commentId +
-        ", messageId=" + messageId +
-        ", userId=" + userId +
-        ", createdTime=" + createdTime +
-        "}";
+                "articleId=" + articleId +
+                ", commentId=" + commentId +
+                ", messageId=" + messageId +
+                ", userId=" + userId +
+                "}";
     }
 }

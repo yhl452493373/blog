@@ -4,6 +4,7 @@ package com.yang.blog;
 import com.github.yhl452493373.generator.CodeGenerator;
 import com.github.yhl452493373.generator.CodeGeneratorConfig;
 import com.github.yhl452493373.generator.DataSourceGeneratorConfig;
+import com.yang.blog.entity.base.BaseEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,8 @@ public class MyCodeGenerator {
                 },
                 MyCodeGenerator.class.getPackage().getName()
         );
+        cgc.setSuperEntityClass(BaseEntity.class.getPackage().getName());
+        cgc.setSuperEntityColumns("id","created_time");
         cgc.setFileOverride(false);
         cgc.setEnableCache(true);
         cgc.setEnableRedis(false);

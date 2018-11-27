@@ -1,7 +1,8 @@
 package com.yang.blog.entity;
 
+import com.yang.blog.entity.base.BaseEntity;
+
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -11,11 +12,9 @@ import java.time.LocalDateTime;
  * @author User
  * @since 2018-11-26
  */
-public class AboutFile implements Serializable, BaseEntity {
+public class AboutFile extends BaseEntity<AboutFile> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private String id;
 
     /**
      * 关于id
@@ -31,19 +30,6 @@ public class AboutFile implements Serializable, BaseEntity {
      * 关联关系所属用户id
      */
     private String userId;
-
-    /**
-     * 关联时的时间
-     */
-    private LocalDateTime createdTime;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getAboutId() {
         return aboutId;
@@ -69,22 +55,12 @@ public class AboutFile implements Serializable, BaseEntity {
         this.userId = userId;
     }
 
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
-
     @Override
     public String toString() {
         return "AboutFile{" +
-                "id=" + id +
-                ", aboutId=" + aboutId +
+                "aboutId=" + aboutId +
                 ", fileId=" + fileId +
                 ", userId=" + userId +
-                ", createdTime=" + createdTime +
                 "}";
     }
 }

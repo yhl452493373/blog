@@ -1,9 +1,10 @@
 package com.yang.blog.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.yang.blog.entity.base.BaseEntity;
 
-import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -13,11 +14,9 @@ import java.io.Serializable;
  * @author User
  * @since 2018-11-20
  */
-public class User implements Serializable, BaseEntity {
+public class User extends BaseEntity<User> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private String id;
 
     /**
      * 用户名
@@ -55,11 +54,6 @@ public class User implements Serializable, BaseEntity {
     private String email;
 
     /**
-     * 注册时间
-     */
-    private LocalDateTime createdTime;
-
-    /**
      * 修改时间
      */
     private LocalDateTime modifiedTime;
@@ -87,13 +81,6 @@ public class User implements Serializable, BaseEntity {
     @TableField(exist = false)
     private String isRememberMe;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
     public String getUsername() {
         return username;
     }
@@ -101,6 +88,7 @@ public class User implements Serializable, BaseEntity {
     public void setUsername(String username) {
         this.username = username;
     }
+
     public String getPassword() {
         return password;
     }
@@ -108,6 +96,7 @@ public class User implements Serializable, BaseEntity {
     public void setPassword(String password) {
         this.password = password;
     }
+
     public String getSalt() {
         return salt;
     }
@@ -115,6 +104,7 @@ public class User implements Serializable, BaseEntity {
     public void setSalt(String salt) {
         this.salt = salt;
     }
+
     public Integer getHashCount() {
         return hashCount;
     }
@@ -122,6 +112,7 @@ public class User implements Serializable, BaseEntity {
     public void setHashCount(Integer hashCount) {
         this.hashCount = hashCount;
     }
+
     public String getAvatarFileId() {
         return avatarFileId;
     }
@@ -129,6 +120,7 @@ public class User implements Serializable, BaseEntity {
     public void setAvatarFileId(String avatarFileId) {
         this.avatarFileId = avatarFileId;
     }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -136,6 +128,7 @@ public class User implements Serializable, BaseEntity {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
     public String getEmail() {
         return email;
     }
@@ -143,13 +136,7 @@ public class User implements Serializable, BaseEntity {
     public void setEmail(String email) {
         this.email = email;
     }
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
 
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
     public LocalDateTime getModifiedTime() {
         return modifiedTime;
     }
@@ -157,6 +144,7 @@ public class User implements Serializable, BaseEntity {
     public void setModifiedTime(LocalDateTime modifiedTime) {
         this.modifiedTime = modifiedTime;
     }
+
     public Integer getAvailable() {
         return available;
     }
@@ -192,20 +180,18 @@ public class User implements Serializable, BaseEntity {
     @Override
     public String toString() {
         return "User{" +
-        "id=" + id +
-        ", username=" + username +
-        ", password=" + password +
-        ", salt=" + salt +
-        ", hashCount=" + hashCount +
-        ", avatarFileId=" + avatarFileId +
-        ", phoneNumber=" + phoneNumber +
-        ", email=" + email +
-        ", createdTime=" + createdTime +
-        ", modifiedTime=" + modifiedTime +
-        ", available=" + available +
-        ", confirmPassword=" + confirmPassword +
-        ", captcha=" + captcha +
-        ", isRememberMe=" + isRememberMe +
-        "}";
+                "username=" + username +
+                ", password=" + password +
+                ", salt=" + salt +
+                ", hashCount=" + hashCount +
+                ", avatarFileId=" + avatarFileId +
+                ", phoneNumber=" + phoneNumber +
+                ", email=" + email +
+                ", modifiedTime=" + modifiedTime +
+                ", available=" + available +
+                ", confirmPassword=" + confirmPassword +
+                ", captcha=" + captcha +
+                ", isRememberMe=" + isRememberMe +
+                "}";
     }
 }

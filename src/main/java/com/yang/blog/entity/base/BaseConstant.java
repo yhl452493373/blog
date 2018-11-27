@@ -1,6 +1,7 @@
-package com.yang.blog.entity;
+package com.yang.blog.entity.base;
 
-public interface BaseEntity {
+@SuppressWarnings("unused")
+public interface BaseConstant {
     /**
      * 临时状态
      */

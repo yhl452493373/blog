@@ -1,6 +1,7 @@
 package com.yang.blog.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.yang.blog.entity.base.BaseEntity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
  * @author User
  * @since 2018-11-20
  */
-public class Article implements Serializable, BaseEntity {
+public class Article extends BaseEntity<Article> implements Serializable {
     /**
      * 以下两个为是否草稿的常量
      */
@@ -21,8 +22,6 @@ public class Article implements Serializable, BaseEntity {
     public static final Integer IS_DRAFT_TRUE = 1;//草稿
 
     private static final long serialVersionUID = 1L;
-
-    private String id;
 
     /**
      * 博文所属用户id
@@ -55,11 +54,6 @@ public class Article implements Serializable, BaseEntity {
     private Integer praiseCount;
 
     /**
-     * 创建时间
-     */
-    private LocalDateTime createdTime;
-
-    /**
      * 发布时间
      */
     private LocalDateTime publishTime;
@@ -85,14 +79,6 @@ public class Article implements Serializable, BaseEntity {
      */
     @TableField(exist = false)
     private String fileIds;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getUserId() {
         return userId;
@@ -142,14 +128,6 @@ public class Article implements Serializable, BaseEntity {
         this.praiseCount = praiseCount;
     }
 
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
-
     public LocalDateTime getPublishTime() {
         return publishTime;
     }
@@ -193,14 +171,12 @@ public class Article implements Serializable, BaseEntity {
     @Override
     public String toString() {
         return "Article{" +
-                "id=" + id +
-                ", userId=" + userId +
+                "userId=" + userId +
                 ", title=" + title +
                 ", content=" + content +
                 ", isDraft=" + isDraft +
                 ", readCount=" + readCount +
                 ", praiseCount=" + praiseCount +
-                ", createdTime=" + createdTime +
                 ", publishTime=" + publishTime +
                 ", modifiedTime=" + modifiedTime +
                 ", available=" + available +

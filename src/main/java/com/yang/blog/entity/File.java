@@ -1,6 +1,7 @@
 package com.yang.blog.entity;
 
-import java.time.LocalDateTime;
+import com.yang.blog.entity.base.BaseEntity;
+
 import java.io.Serializable;
 
 /**
@@ -11,11 +12,9 @@ import java.io.Serializable;
  * @author User
  * @since 2018-11-20
  */
-public class File implements Serializable, BaseEntity {
+public class File extends BaseEntity<File> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private String id;
 
     /**
      * 原始名字（不包含后缀名）
@@ -48,22 +47,10 @@ public class File implements Serializable, BaseEntity {
     private String userId;
 
     /**
-     * 上传时间
-     */
-    private LocalDateTime createdTime;
-
-    /**
      * 文件状态。-1-删除，0-不可见，1-正常，2-临时文件
      */
     private Integer available;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
     public String getOriginalName() {
         return originalName;
     }
@@ -71,6 +58,7 @@ public class File implements Serializable, BaseEntity {
     public void setOriginalName(String originalName) {
         this.originalName = originalName;
     }
+
     public String getSaveName() {
         return saveName;
     }
@@ -78,6 +66,7 @@ public class File implements Serializable, BaseEntity {
     public void setSaveName(String saveName) {
         this.saveName = saveName;
     }
+
     public String getExtensionName() {
         return extensionName;
     }
@@ -85,6 +74,7 @@ public class File implements Serializable, BaseEntity {
     public void setExtensionName(String extensionName) {
         this.extensionName = extensionName;
     }
+
     public String getFileType() {
         return fileType;
     }
@@ -92,6 +82,7 @@ public class File implements Serializable, BaseEntity {
     public void setFileType(String fileType) {
         this.fileType = fileType;
     }
+
     public Long getSize() {
         return size;
     }
@@ -99,6 +90,7 @@ public class File implements Serializable, BaseEntity {
     public void setSize(Long size) {
         this.size = size;
     }
+
     public String getUserId() {
         return userId;
     }
@@ -106,13 +98,7 @@ public class File implements Serializable, BaseEntity {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
 
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
     public Integer getAvailable() {
         return available;
     }
@@ -124,15 +110,13 @@ public class File implements Serializable, BaseEntity {
     @Override
     public String toString() {
         return "File{" +
-        "id=" + id +
-        ", originalName=" + originalName +
-        ", saveName=" + saveName +
-        ", extensionName=" + extensionName +
-        ", fileType=" + fileType +
-        ", size=" + size +
-        ", userId=" + userId +
-        ", createdTime=" + createdTime +
-        ", available=" + available +
-        "}";
+                "originalName=" + originalName +
+                ", saveName=" + saveName +
+                ", extensionName=" + extensionName +
+                ", fileType=" + fileType +
+                ", size=" + size +
+                ", userId=" + userId +
+                ", available=" + available +
+                "}";
     }
 }

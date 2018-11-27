@@ -1,11 +1,11 @@
 package com.yang.blog.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
-@Configuration
+@Component
 @ConfigurationProperties(prefix = "system")
 public class SystemConfig {
     public static SystemConfig config;
