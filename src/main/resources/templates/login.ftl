@@ -42,8 +42,9 @@
                 </div>
                 <div class="layui-form-item">
                     <button id="login" class="layui-btn layui-btn-normal layui-btn-fluid login-btn">登录</button>
-                    <a href="${contextPath}/register"
-                       class="layui-btn layui-btn-normal layui-btn-fluid register-btn">注册</a>
+                    <#if allowRegister>
+                        <a href="${contextPath}/register" class="layui-btn layui-btn-normal layui-btn-fluid register-btn">注册</a>
+                    </#if>
                 </div>
             </form>
         </div>

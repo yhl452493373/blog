@@ -2,7 +2,7 @@ package com.yang.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yhl452493373.utils.CommonUtils;
-import com.yang.blog.config.SystemConfig;
+import com.yang.blog.config.SystemProperties;
 import com.yang.blog.entity.User;
 import com.yang.blog.exception.*;
 import com.yang.blog.mapper.UserMapper;
@@ -32,23 +32,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (StringUtils.isEmpty(password)) {
             throw new PasswordNullException("密码不能为空");
         }
-        if (username.length() < SystemConfig.getUsernameLength().getMin()) {
+        if (username.length() < SystemProperties.getUsernameLength().getMin()) {
             throw new UsernameLengthException("用户名过短");
         }
-        if (username.length() > SystemConfig.getUsernameLength().getMax()) {
+        if (username.length() > SystemProperties.getUsernameLength().getMax()) {
             throw new UsernameLengthException("用户名过长");
         }
-        if (password.length() < SystemConfig.getPasswordLength().getMin()) {
+        if (password.length() < SystemProperties.getPasswordLength().getMin()) {
             throw new PasswordLengthException("密码过短");
         }
-        if (password.length() > SystemConfig.getPasswordLength().getMax()) {
+        if (password.length() > SystemProperties.getPasswordLength().getMax()) {
             throw new PasswordLengthException("密码过长");
         }
         if (!password.equals(confirmPassword)) {
             throw new PasswordNotSameException("两次输入的密码不一直");
         }
-        String salt = CommonUtils.salt(SystemConfig.getSalt().getSize());
-        Integer hashCount = SystemConfig.getSalt().getHashCount();
+        String salt = CommonUtils.salt(SystemProperties.getSalt().getSize());
+        Integer hashCount = SystemProperties.getSalt().getHashCount();
         user.setHashCount(hashCount);
         user.setPassword(CommonUtils.hashPassword(password, salt, hashCount));
         user.setSalt(salt);

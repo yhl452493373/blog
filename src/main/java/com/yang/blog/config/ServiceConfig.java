@@ -42,6 +42,8 @@ public class ServiceConfig {
     public PraiseService praiseService;
     @Autowired
     public AboutFileService aboutFileService;
+    @Autowired
+    public AnnouncementService announcementService;
 
     @PostConstruct
     public void init() {

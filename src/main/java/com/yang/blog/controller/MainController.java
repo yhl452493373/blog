@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.bean.Constant;
 import com.yang.blog.config.ServiceConfig;
+import com.yang.blog.config.SystemProperties;
 import com.yang.blog.entity.*;
 import com.yang.blog.shiro.ShiroUtils;
 import org.apache.shiro.SecurityUtils;
@@ -37,15 +38,17 @@ public class MainController {
     }
 
     @GetMapping("/register")
-    public String register() {
+    public String register(ModelMap modelMap) {
+        modelMap.addAttribute("allowRegister", SystemProperties.getAllowRegister());
         return "register";
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(ModelMap modelMap) {
         if (SecurityUtils.getSubject().isAuthenticated()) {
             return "redirect:/index";
         }
+        modelMap.addAttribute("allowRegister", SystemProperties.getAllowRegister());
         return "login";
     }
 
@@ -84,7 +87,7 @@ public class MainController {
                         articleTagQueryWrapper.eq("article_id", article.getId());
                         articleTagQueryWrapper.eq("user_id", user.getId());
                         Collection<ArticleTag> articleTagList = service.articleTagService.list(articleTagQueryWrapper);
-                        if(!articleTagList.isEmpty()){
+                        if (!articleTagList.isEmpty()) {
                             List<String> tagIdList = CommonUtils.convertToFieldList(articleTagList, "getTagId");
                             Collection<Tag> tagList = service.tagService.listByIds(tagIdList);
                             List<String> tagNameList = CommonUtils.convertToFieldList(tagList, "getName");
@@ -141,9 +144,9 @@ public class MainController {
     @GetMapping("/details/{articleId}")
     public String details(@PathVariable String articleId, ModelMap modelMap) {
         Article article = service.articleService.getById(articleId);
-        if(article==null){
+        if (article == null) {
             modelMap.addAttribute("article", new Article());
-        }else{
+        } else {
             article.setReadCount(article.getReadCount() + 1);
             service.articleService.updateById(article);
             modelMap.addAttribute("article", article);

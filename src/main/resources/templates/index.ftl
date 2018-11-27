@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>闲言轻博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<#include "include.resource.ftl">
+    <#include "include.resource.ftl">
     <style>
         .item.empty {
             line-height: 40px;
@@ -15,20 +15,43 @@
     </style>
 </head>
 <body class="lay-blog">
-		<#include "include.header.ftl">
-<div class="container-wrap">
-    <div class="container">
-        <div id="articleItemList" class="contar-wrap">
-            <h4 class="item-title">
-                <p><i class="layui-icon layui-icon-speaker"></i>公告：<span>欢迎来到我的轻博客</span></p>
-            </h4>
-        </div>
-        <div class="item-btn">
-            <button class="layui-btn layui-btn-normal">下一页</button>
+<#include "include.header.ftl">
+    <div class="container-wrap">
+        <div class="container">
+            <div id="articleItemList" class="contar-wrap"></div>
+            <div class="item-btn">
+                <button class="layui-btn layui-btn-normal">下一页</button>
+            </div>
         </div>
     </div>
-</div>
 <#include "include.footer.ftl">
+<script type="text/html" id="editAnnouncementPopupContent">
+    <form id="announcementForm" action="${contextPath}/data/announcement/add" method="post" class="layui-form layui-form-pane">
+        <div class="layui-form-item layui-form-text" style="margin: 15px 15px 0 15px">
+            <div class="layui-input-block">
+                <textarea placeholder="请输入公告内容" class="layui-textarea" name="content" style="height: 220px;max-height: 235px"></textarea>
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/html" id="announcement">
+    <h4 class="item-title announcement" style="word-break: break-all;line-height: normal;padding: 15px 35px;">
+        <p style="padding-left: 0;line-height: 30px">
+            {{# if ( d.empty ) { }}
+            <a href="javascript:void(0)" style="display: block;text-align: center" class="empty-announcement" id="editAnnouncement">编辑公告</a>
+            {{# } else { }}
+            <@shiro.user>
+                <a class="layui-icon layui-icon-edit" href="javascript:void(0);" id="editAnnouncement"></a>
+            </@shiro.user>
+            <i class="layui-icon layui-icon-speaker"></i>
+            <span>公告：</span>
+            <span>{{ d.content }}</span>
+            <br>
+            <span style="color: #aaa;font-size: 14px;display: block;text-align: right">{{ d.createdTime }}</span>
+            {{# } }}
+        </p>
+    </h4>
+</script>
 <script type="text/html" id="articleItem">
     <div class="item">
         <div class="item-box layer-photos-demo layer-photos-demo{{ d.index }}">
@@ -59,6 +82,65 @@
         var $ = layui.jquery, layer = layui.layer, laytpl = layui.laytpl;
         var blog = layui.blog;
 
+        $(document).on('click.announcement', '#editAnnouncement', function (e) {
+            e.preventDefault();
+            showEditAnnouncementPopup();
+        });
+
+        function showEditAnnouncementPopup() {
+            var view = $('#editAnnouncementPopupContent').html();
+            laytpl(view).render({}, function (html) {
+                layer.open({
+                    type: 1
+                    , title: '编辑公告'
+                    , content: html
+                    , area: function () {
+                        if (/mobile/i.test(navigator.userAgent) || $(window).width() < 500) {
+                            return ['85%', '335px']
+                        } else {
+                            return ['500px', '335px'];
+                        }
+                    }()
+                    , btn: ['更新', '取消']
+                    , btnAlign: 'c'
+                    , yes: function (index1, layero) {
+                        var $announcementForm = $('#announcementForm');
+                        $.ajax({
+                            url: $announcementForm.attr('action'),
+                            type: $announcementForm.attr('method'),
+                            data: $announcementForm.serialize(),
+                            success: function (result) {
+                                if (result.status === 'success') {
+                                    layer.alert('公告编辑成功', function (index2) {
+                                        renderAnnouncement(result.data);
+                                        layer.close(index2);
+                                        layer.close(index1);
+                                    });
+                                } else {
+                                    layer.alert(result.message);
+                                }
+                            }
+                        })
+                    }
+                });
+            });
+
+        }
+
+        function loadAnnouncement() {
+            $.ajax({
+                url: contextPath + '/data/announcement/newest',
+                type: 'post',
+                success: function (result) {
+                    if (result.status === 'success') {
+                        if (result.count === 0)
+                            result.data.empty = true;
+                        renderAnnouncement(result.data);
+                    }
+                }
+            });
+        }
+
         function loadArticle() {
             $.ajax({
                 url: contextPath + '/data/article/list',
@@ -83,6 +165,18 @@
             })
         }
 
+        function renderAnnouncement(data) {
+            var view = $('#announcement').html();
+            laytpl(view).render(data, function (html) {
+                var $announcement = $('#articleItemList').children('.item-title.announcement');
+                if ($announcement.length === 0) {
+                    $('#articleItemList').prepend(html);
+                } else {
+                    $announcement.replaceWith(html);
+                }
+            });
+        }
+
         function renderData(item) {
             var view = $('#articleItem').html();
             //模板渲染
@@ -103,6 +197,7 @@
             }
         }
 
+        loadAnnouncement();
         loadArticle();
         blog.praise('', blog.praise.paramType.articleId);
     });

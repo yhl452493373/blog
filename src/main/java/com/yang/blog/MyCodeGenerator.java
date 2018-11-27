@@ -27,11 +27,11 @@ public class MyCodeGenerator {
         CodeGeneratorConfig cgc = new CodeGeneratorConfig(
                 "blog",
                 new String[]{
-                        "about_file"
+                        "announcement"
                 },
                 MyCodeGenerator.class.getPackage().getName()
         );
-        cgc.setSuperEntityClass(BaseEntity.class.getPackage().getName());
+        cgc.setSuperEntityClass("com.yang.blog.entity.base.BaseEntity");
         cgc.setSuperEntityColumns("id","created_time");
         cgc.setFileOverride(false);
         cgc.setEnableCache(true);

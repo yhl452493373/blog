@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
 import com.yang.blog.config.ServiceConfig;
-import com.yang.blog.config.SystemConfig;
+import com.yang.blog.config.SystemProperties;
 import com.yang.blog.entity.User;
 import com.yang.blog.exception.*;
 import org.apache.shiro.SecurityUtils;
@@ -51,11 +51,11 @@ public class UserController {
         } catch (UsernameExistException e) {
             json.error("用户名已经存在");
         } catch (UsernameLengthException e) {
-            json.error("用户名长度只能在" + SystemConfig.getUsernameLength().getMin() + "到" + SystemConfig.getUsernameLength().getMax() + "之间");
+            json.error("用户名长度只能在" + SystemProperties.getUsernameLength().getMin() + "到" + SystemProperties.getUsernameLength().getMax() + "之间");
         } catch (PasswordNullException e) {
             json.error("密码不能为空");
         } catch (PasswordLengthException e) {
-            json.error("密码长度只能在" + SystemConfig.getPasswordLength().getMin() + "到" + SystemConfig.getPasswordLength().getMax() + "之间");
+            json.error("密码长度只能在" + SystemProperties.getPasswordLength().getMin() + "到" + SystemProperties.getPasswordLength().getMax() + "之间");
         } catch (PasswordNotSameException e) {
             json.error("两次输入密码不一致");
         } catch (RuntimeException e) {

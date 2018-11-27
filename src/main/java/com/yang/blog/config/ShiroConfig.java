@@ -86,6 +86,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/data/message/add", "anon");
         //获取留言列表过程
         filterChainDefinitionMap.put("/data/message/list", "anon");
+        //获取最新公告过程
+        filterChainDefinitionMap.put("/data/announcement/newest", "anon");
 
         // 配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了.退出不用写.直接访问/logout就行
         filterChainDefinitionMap.put("/logout", "logout");

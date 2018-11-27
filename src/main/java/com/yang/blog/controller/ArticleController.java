@@ -45,7 +45,7 @@ public class ArticleController implements BaseController {
         queryWrapper.setEntity(article);
         queryWrapper.orderByDesc("publish_time");
         service.articleService.page(page, queryWrapper);
-        jsonResult.success().data(page.getRecords()).count(page.getTotal());
+        jsonResult.success(QUERY_SUCCESS).data(page.getRecords()).count(page.getTotal());
         return jsonResult;
     }
 

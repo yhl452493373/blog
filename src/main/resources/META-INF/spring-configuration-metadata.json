@@ -7,6 +7,11 @@
   ],
   "properties": [
     {
+      "name": "system.allow-register",
+      "type": "java.lang.Boolean",
+      "description": "是否开放注册."
+    },
+    {
       "name": "system.username-length",
       "type": "java.lang.String",
       "description": "用户名长度."

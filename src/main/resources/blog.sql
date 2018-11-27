@@ -11,7 +11,7 @@
  Target Server Version : 50722
  File Encoding         : 65001
 
- Date: 26/11/2018 18:49:58
+ Date: 27/11/2018 18:07:31
 */
 
 SET NAMES utf8mb4;
@@ -24,9 +24,9 @@ DROP TABLE IF EXISTS `about`;
 CREATE TABLE `about` (
   `id` varchar(32) NOT NULL,
   `user_id` varchar(32) DEFAULT NULL COMMENT '关于所属用户id',
-  `content` text COMMENT '关于的内容',
-  `available` int(1) DEFAULT NULL COMMENT '关于状态。-1-删除，0-不可见，1-可见。此表中每个用户最多有1个是可见状态',
+  `content` blob COMMENT '关于的内容',
   `created_time` datetime DEFAULT NULL COMMENT '关于的填写时间',
+  `available` int(1) DEFAULT NULL COMMENT '关于状态。-1-删除，0-不可见，1-可见。此表中每个用户最多有1个是可见状态',
   PRIMARY KEY (`id`),
   KEY `fk_about_user_1` (`user_id`),
   CONSTRAINT `fk_about_user_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -43,13 +43,28 @@ CREATE TABLE `about_file` (
   `user_id` varchar(32) DEFAULT NULL COMMENT '关联关系所属用户id',
   `created_time` datetime DEFAULT NULL COMMENT '关联时的时间',
   PRIMARY KEY (`id`),
-  KEY `fk_about_file_about_1` (`about_id`),
-  KEY `fk_about_file_user_1` (`user_id`),
   KEY `fk_about_file_file_1` (`file_id`),
+  KEY `fk_about_file_user_1` (`user_id`),
+  KEY `fk_about_file_about_1` (`about_id`),
   CONSTRAINT `fk_about_file_about_1` FOREIGN KEY (`about_id`) REFERENCES `about` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_about_file_file_1` FOREIGN KEY (`file_id`) REFERENCES `file` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_about_file_user_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='关于对应的文件，主要用于删除关于时同步删除文件';
+
+-- ----------------------------
+-- Table structure for announcement
+-- ----------------------------
+DROP TABLE IF EXISTS `announcement`;
+CREATE TABLE `announcement` (
+  `id` varchar(32) NOT NULL,
+  `user_id` varchar(32) DEFAULT NULL COMMENT '公告所属用户id',
+  `content` varchar(255) DEFAULT NULL COMMENT '公告内容',
+  `created_time` datetime DEFAULT NULL COMMENT '公告创建时间（发布时间）',
+  `available` int(1) DEFAULT NULL COMMENT '公告状态：-1-删除，0-不可见，1-正常，2-临时（此状态会被定期清理）',
+  PRIMARY KEY (`id`),
+  KEY `fk_announcement_user_1` (`user_id`),
+  CONSTRAINT `fk_announcement_user_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公告信息';
 
 -- ----------------------------
 -- Table structure for article
@@ -59,7 +74,7 @@ CREATE TABLE `article` (
   `id` varchar(32) NOT NULL,
   `user_id` varchar(32) DEFAULT NULL COMMENT '博文所属用户id',
   `title` varchar(50) DEFAULT NULL COMMENT '博文标题',
-  `content` text COMMENT '博文内容',
+  `content` blob COMMENT '博文内容',
   `is_draft` int(1) DEFAULT NULL COMMENT '是否是草稿。单个用户最多只会有一个草稿。0-否，1-是',
   `read_count` int(11) DEFAULT NULL COMMENT '阅读次数',
   `praise_count` int(11) DEFAULT NULL COMMENT '点赞次数',
@@ -119,7 +134,7 @@ CREATE TABLE `comment` (
   `article_id` varchar(32) DEFAULT NULL COMMENT '评论所属博文id',
   `user_name` varchar(32) DEFAULT NULL COMMENT '评论人名字，外部用户使用，和user_id二选一',
   `user_id` varchar(32) DEFAULT NULL COMMENT '用户id，内部用户使用，和user_name二选一',
-  `content` text COMMENT '评论内容',
+  `content` blob COMMENT '评论内容',
   `praise_count` int(11) DEFAULT NULL COMMENT '点赞次数',
   `created_time` datetime DEFAULT NULL COMMENT '评论时间',
   `available` int(1) DEFAULT NULL COMMENT '评论状态。-1-删除，0-不可见，1-正常',
@@ -157,12 +172,13 @@ CREATE TABLE `message` (
   `id` varchar(32) NOT NULL,
   `user_name` varchar(32) DEFAULT NULL COMMENT '留言人名字，外部用户使用，和user_id二选一',
   `user_id` varchar(32) DEFAULT NULL COMMENT '留言人id，内部用户使用。和user_name二选一',
-  `content` text COMMENT '留言内容',
+  `content` blob COMMENT '留言内容',
   `praise_count` int(11) DEFAULT NULL COMMENT '点赞次数',
   `created_time` datetime DEFAULT NULL COMMENT '留言时间',
   `available` int(1) DEFAULT NULL COMMENT '留言状态。-1-删除，0-不可见，1-正常',
   PRIMARY KEY (`id`),
-  KEY `fk_message_user_1` (`user_id`)
+  KEY `fk_message_user_1` (`user_id`),
+  CONSTRAINT `fk_message_user_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='留言';
 
 -- ----------------------------
@@ -182,7 +198,7 @@ CREATE TABLE `praise` (
   KEY `fk_praise_message_1` (`message_id`),
   CONSTRAINT `fk_praise_article_1` FOREIGN KEY (`article_id`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_praise_comment_1` FOREIGN KEY (`comment_id`) REFERENCES `comment` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_praise_message_1` FOREIGN KEY (`message_id`) REFERENCES `message` (`id`)
+  CONSTRAINT `fk_praise_message_1` FOREIGN KEY (`message_id`) REFERENCES `message` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文章、评论、留言的点赞记录表';
 
 -- ----------------------------

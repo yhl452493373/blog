@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.bean.MultipartFileParam;
 import com.yang.blog.config.ServiceConfig;
-import com.yang.blog.config.SystemConfig;
+import com.yang.blog.config.SystemProperties;
 import com.yang.blog.entity.User;
 import com.yang.blog.shiro.ShiroUtils;
 import org.slf4j.Logger;
@@ -32,9 +32,9 @@ import java.util.Map;
 public class FileUtils {
     private static Logger logger = LoggerFactory.getLogger(FileUtils.class);
     //文件保存位置
-    private static String basePath = SystemConfig.getFileUpload().getPath();
+    private static String basePath = SystemProperties.getFileUpload().getPath();
     //是否绝对路径
-    private static Boolean absolute = SystemConfig.getFileUpload().getAbsolute();
+    private static Boolean absolute = SystemProperties.getFileUpload().getAbsolute();
 
     static {
         //basePath设置为"/"结尾

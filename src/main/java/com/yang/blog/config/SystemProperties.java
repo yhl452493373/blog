@@ -7,13 +7,22 @@ import javax.annotation.PostConstruct;
 
 @Component
 @ConfigurationProperties(prefix = "system")
-public class SystemConfig {
-    public static SystemConfig config;
+public class SystemProperties {
+    public static SystemProperties config;
 
+    private Boolean allowRegister;
     private UsernameLength usernameLength;
     private PasswordLength passwordLength;
     private Salt salt;
     private FileUpload fileUpload;
+
+    public static Boolean getAllowRegister() {
+        return config.allowRegister;
+    }
+
+    public void setAllowRegister(Boolean allowRegister) {
+        this.allowRegister = allowRegister;
+    }
 
     public static UsernameLength getUsernameLength() {
         return config.usernameLength;
