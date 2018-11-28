@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface AnnouncementService extends IService<Announcement> {
 
+    void setOtherAvailable(String userId, Integer available);
 }

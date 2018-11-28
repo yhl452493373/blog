@@ -80,7 +80,7 @@
         blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
     }).use(['blog', 'jquery', 'layer', 'laytpl'], function () {
         var $ = layui.jquery, layer = layui.layer, laytpl = layui.laytpl;
-        var blog = layui.blog;
+        var blog = layui.blog, logined = <@shiro.user>true</@shiro.user><@shiro.guest>false</@shiro.guest>;
 
         $(document).on('click.announcement', '#editAnnouncement', function (e) {
             e.preventDefault();
@@ -135,7 +135,8 @@
                     if (result.status === 'success') {
                         if (result.count === 0)
                             result.data.empty = true;
-                        renderAnnouncement(result.data);
+                        if (!result.data.empty || logined)
+                            renderAnnouncement(result.data);
                     }
                 }
             });

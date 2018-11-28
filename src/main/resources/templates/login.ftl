@@ -55,27 +55,53 @@
     layui.use(['jquery', 'layer'], function () {
         var $ = layui.jquery, layer = layui.layer;
 
+        var loginAjax, loginAlert;
         $(document).on('click', '#login', function (e) {
             e.preventDefault();
             login();
+        }).on('keydown', function (e) {
+            if (e.key === 'Enter') {
+                if (loginAjax != null || loginAlert != null) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
         });
 
         function login() {
             var $loginForm = $('#loginForm');
-            $.ajax({
+            loginAjax = $.ajax({
                 url: $loginForm.attr('action'),
                 type: $loginForm.attr('method'),
                 data: $loginForm.serialize(),
                 success: function (result) {
-                    layer.alert(result.message, function (index) {
+                    loginAlert = layer.alert(result.message, {
+                        success: function () {
+                            this.enterEsc = function (event) {
+                                if (event.key === 'Enter') {
+                                    layer.close(loginAlert);
+                                    window.location.reload();
+                                }
+                                return false;
+                            };
+                            $(document).on('keydown', this.enterEsc);	//监听键盘事件，关闭层
+                        },
+                        end: function () {
+                            $(document).off('keydown', this.enterEsc);	//解除键盘关闭事件
+                        }
+                    }, function (index, layero) {
                         if (result.status === 'success') {
                             window.location.reload();
                         } else {
                             $('.captcha').click();
                         }
+                        loginAlert = null;
                         layer.close(index);
                     });
-                    console.log(result);
+                    loginAjax = null;
+                },
+                error: function () {
+                    loginAjax = null;
                 }
             })
         }

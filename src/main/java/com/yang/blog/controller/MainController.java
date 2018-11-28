@@ -46,10 +46,16 @@ public class MainController {
     @GetMapping("/login")
     public String login(ModelMap modelMap) {
         if (SecurityUtils.getSubject().isAuthenticated()) {
-            return "redirect:/index";
+            return "redirect:/login";
         }
         modelMap.addAttribute("allowRegister", SystemProperties.getAllowRegister());
         return "login";
+    }
+
+    @GetMapping("/logout")
+    public String logout() {
+        SecurityUtils.getSubject().logout();
+        return "redirect:/index";
     }
 
     @GetMapping({"/create", "/edit/{articleId}"})

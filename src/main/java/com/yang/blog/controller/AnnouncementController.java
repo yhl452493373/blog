@@ -31,10 +31,12 @@ public class AnnouncementController implements BaseController {
     @RequestMapping("/add")
     public JSONResult add(Announcement announcement) {
         JSONResult jsonResult = JSONResult.init();
-        boolean result = service.announcementService.save(announcement);
-        announcement.setUserId(ShiroUtils.getLoginUser().getId());
+        String userId = ShiroUtils.getLoginUser().getId();
+        announcement.setUserId(userId);
         announcement.setCreatedTime(LocalDateTime.now());
         announcement.setAvailable(Announcement.AVAILABLE);
+        service.announcementService.setOtherAvailable(userId, Announcement.BLOCK);
+        boolean result = service.announcementService.save(announcement);
         if (result)
             jsonResult.success(ADD_SUCCESS).data(announcement);
         else
@@ -51,6 +53,7 @@ public class AnnouncementController implements BaseController {
     public JSONResult newest() {
         JSONResult jsonResult = JSONResult.init();
         QueryWrapper<Announcement> announcementQueryWrapper = new QueryWrapper<>();
+        announcementQueryWrapper.eq("available", Announcement.AVAILABLE);
         announcementQueryWrapper.orderByDesc("created_time");
         Announcement announcement = service.announcementService.getOne(announcementQueryWrapper);
         if (announcement != null)

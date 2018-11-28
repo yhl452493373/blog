@@ -24,9 +24,16 @@
                 <li class="layui-nav-item ${message!''}"><a href="${contextPath}/message">留言</a></li>
                 <li class="layui-nav-item ${about!''}"><a href="${contextPath}/about">关于</a></li>
             </ul>
-            <a href="${contextPath}/login" class="personal pull-left">
-                <i class="layui-icon layui-icon-username"></i>
-            </a>
+            <@shiro.user>
+                <a href="${contextPath}/logout" class="personal pull-left">
+                    <i class="layui-icon layui-icon-username"></i>
+                </a>
+            </@shiro.user>
+            <@shiro.guest>
+                <a href="${contextPath}/login" class="personal pull-left">
+                    <i class="layui-icon layui-icon-username"></i>
+                </a>
+            </@shiro.guest>
         </div>
         <div class="mobile-nav pull-right" id="mobile-nav">
             <a href="javascript:;">
@@ -41,6 +48,11 @@
         </@shiro.user>
         <li><a href="${contextPath}/message">留言</a></li>
         <li><a href="${contextPath}/about">关于</a></li>
-        <li><a href="${contextPath}/login">登录</a></li>
+        <@shiro.user>
+            <li><a href="${contextPath}/logout">退出</a></li>
+        </@shiro.user>
+        <@shiro.guest>
+            <li><a href="${contextPath}/login">登录</a></li>
+        </@shiro.guest>
     </ul>
 </div>

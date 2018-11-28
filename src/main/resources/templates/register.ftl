@@ -35,9 +35,7 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <button id="register"
-                            class="layui-btn layui-btn-normal layui-btn-fluid register-btn">注册
-                    </button>
+                    <button href="javascript:void(0)" id="register" class="layui-btn layui-btn-normal layui-btn-fluid register-btn">注册</button>
                     <a href="${contextPath}/login" class="layui-btn layui-btn-normal layui-btn-fluid login-btn">登录</a>
                 </div>
             </form>
@@ -45,8 +43,8 @@
         <#else>
         <script>
             layui.use('layer', function () {
-                layui.layer.alert('当前不允许注册',{
-                    cancel:function () {
+                layui.layer.alert('当前不允许注册', {
+                    cancel: function () {
                         window.location.href = contextPath + "/login";
                     }
                 }, function () {
@@ -62,27 +60,53 @@
     layui.use(['jquery', 'layer'], function () {
         var $ = layui.jquery, layer = layui.layer;
 
+        var registerAjax, registerAlert;
         $(document).on('click', '#register', function (e) {
             e.preventDefault();
             register();
+        }).on('keydown', function (e) {
+            if (e.key === 'Enter') {
+                if (registerAjax != null || registerAlert != null) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
         });
 
         function register() {
             var $registerForm = $('#registerForm');
-            $.ajax({
+            registerAjax = $.ajax({
                 url: $registerForm.attr('action'),
                 type: $registerForm.attr('method'),
                 data: $registerForm.serialize(),
                 success: function (result) {
-                    layer.alert(result.message, function (index) {
+                    registerAlert = layer.alert(result.message, {
+                        success:function () {
+                            this.enterEsc = function(event){
+                                if(event.key === 'Enter'){
+                                    layer.close(registerAlert);
+                                    window.location.reload();
+                                }
+                                return false;
+                            };
+                            $(document).on('keydown', this.enterEsc);	//监听键盘事件，关闭层
+                        },
+                        end:function () {
+                            $(document).off('keydown', this.enterEsc);	//解除键盘关闭事件
+                        }
+                    }, function (index) {
                         if (result.status === 'success') {
                             window.location.href = contextPath + "/login";
                         } else {
                             $('.captcha').click();
                         }
+                        registerAlert = null;
                         layer.close(index);
                     });
-                    console.log(result);
+                    registerAjax = null;
+                },
+                error: function () {
+                    registerAjax = null;
                 }
             })
         }

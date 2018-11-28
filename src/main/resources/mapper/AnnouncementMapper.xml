@@ -4,5 +4,11 @@
 
     <!-- 开启二级缓存 -->
     <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    <update id="setOtherAvailable" flushCache="true">
+        update announcement
+        set announcement.available = #{available}
+        where announcement.user_id = #{userId}
+          and announcement.available != #{available}
+    </update>
 
 </mapper>

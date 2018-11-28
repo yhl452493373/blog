@@ -1,9 +1,9 @@
 package com.yang.blog.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yang.blog.entity.Announcement;
 import com.yang.blog.mapper.AnnouncementMapper;
 import com.yang.blog.service.AnnouncementService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,4 +17,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class AnnouncementServiceImpl extends ServiceImpl<AnnouncementMapper, Announcement> implements AnnouncementService {
 
+    @Override
+    public void setOtherAvailable(String userId, Integer available) {
+        baseMapper.setOtherAvailable(userId, available);
+    }
 }
