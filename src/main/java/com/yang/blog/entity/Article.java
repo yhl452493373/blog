@@ -184,4 +184,6 @@ public class Article extends BaseEntity<Article> implements Serializable {
                 ", fileIds=" + fileIds +
                 "}";
     }
+
+
 }
