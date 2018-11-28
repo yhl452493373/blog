@@ -55,7 +55,7 @@ body {
 }
 
 .lay-blog .blog-seach {
-    padding: 30px 0 0 85px;
+    padding: 0 0 0 85px;
 }
 
 .lay-blog .blog-sewrap {
@@ -68,7 +68,7 @@ body {
     min-height: auto;
 }
 
-.lay-blog .blog-seach i {
+.lay-blog .blog-seach .blog-sebox i {
     position: absolute;
     color: #fff;
     width: 25px;
@@ -80,8 +80,9 @@ body {
     cursor: pointer;
 }
 
-.lay-blog .blog-seach input {
+.lay-blog .blog-seach .blog-sebox input {
     padding-left: 50px;
+    padding-right: 163px;
     width: 367px;
     height: 45px;
     line-height: 45px;
@@ -91,8 +92,19 @@ body {
     color: #fff;
 }
 
-.lay-blog .blog-seach input.layui-input:hover {
+.lay-blog .blog-seach .blog-sebox input.layui-input:hover {
     border-color: rgba(255, 255, 255, .5) !important;
+}
+
+.lay-blog .blog-seach .search-area {
+    margin-bottom: 0;
+    margin-right: 0;
+    line-height: normal;
+    margin-top: -16px;
+}
+
+.lay-blog .blog-seach .search-area span {
+    color: #fff;
 }
 
 .lay-blog .blog-nav ul {
@@ -528,7 +540,7 @@ body {
 
 /*start create*/
 
-.article-form,.about-form {
+.article-form, .about-form {
     margin: 0 20px;
 }
 
@@ -540,7 +552,7 @@ body {
     font-size: 16px;
 }
 
-.create-button-group,.save-button-group {
+.create-button-group, .save-button-group {
     text-align: center;
 }
 

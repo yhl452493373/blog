@@ -9,9 +9,15 @@
         </h1>
         <form class="layui-form blog-seach pull-left" action="">
             <div class="layui-form-item blog-sewrap">
-                <div class="layui-input-block blog-sebox">
-                    <i class="layui-icon layui-icon-search"></i>
-                    <input type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input">
+                <div class="layui-inline">
+                    <div class="layui-input-inline blog-sebox">
+                        <i class="layui-icon layui-icon-search"></i>
+                        <input type="text" name="content" lay-verify="title" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline search-area">
+                    <input type="checkbox" name="searchTitle" value="true" title="标题" lay-skin="primary" checked>
+                    <input type="checkbox" name="searchContent" value="true" title="内容" lay-skin="primary">
                 </div>
             </div>
         </form>

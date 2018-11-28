@@ -153,6 +153,11 @@ public class ArticleController implements BaseController {
         return jsonResult;
     }
 
+    @RequestMapping("/search")
+    public JSONResult search(String content, Boolean searchTitle, Boolean searchContent, Page<Article> page) {
+        return JSONResult.init();
+    }
+
     /**
      * 将指定id的文件和article对象关联起来
      *
