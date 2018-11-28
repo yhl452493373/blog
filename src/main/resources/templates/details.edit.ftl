@@ -153,7 +153,7 @@
             }
             , tool: [
                 'html', 'code', 'strong', 'italic', 'underline', 'del', 'addhr', '|', 'fontFomatt', 'colorpicker', 'face'
-                , '|', 'left', 'center', 'right', '|', 'link', 'unlink', 'image_alt', 'images', 'video', 'anchors'
+                , '|', 'left', 'center', 'right', '|', 'link', 'unlink', 'image_alt', 'images', 'video', 'table'
                 , '|', 'fullScreen'
             ]
         });

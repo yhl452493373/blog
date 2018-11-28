@@ -4,11 +4,22 @@
  @Author：贤心
  @Modifier:KnifeZ
  @License：MIT
- @Version: V18.11.25
+ @Version: V18.11.27
  */
 
 layui.define(['layer', 'form'], function (exports) {
     "use strict";
+
+    /**
+     * 移动端使用。获取触摸位置的元素。没有则返回null
+     * @param touchEvent 触摸事件
+     * @returns {Element} 触摸点的DOM对象
+     */
+    var getTouchElement = function (touchEvent) {
+        var myLocation = touchEvent.originalEvent.changedTouches[0];
+        return document.elementFromPoint(myLocation.clientX, myLocation.clientY);
+    };
+
 
     var $ = layui.$
         , layer = layui.layer
@@ -60,6 +71,18 @@ layui.define(['layer', 'form'], function (exports) {
             , quote: {
                 style: [],
                 js: []
+            }
+            , customTheme: {
+                video: {
+                    title: []
+                    , content: []
+                    , preview: []
+                }
+            }
+            , customlink: {
+                title: '自定义链接'
+                , href: ''
+                , onmouseup: ''
             }
             , devmode: false
             , hideTool: []
@@ -152,7 +175,6 @@ layui.define(['layer', 'form'], function (exports) {
         } else {
             $(iframeWin[0].document.body).html(content)
         }
-        ;
         this.sync(index)
     };
     //将编辑器内容同步到textarea（一般用于异步提交时）
@@ -187,13 +209,25 @@ layui.define(['layer', 'form'], function (exports) {
                     , 'a{color:#01AAED; text-decoration:none;}a:hover{color:#c00}'
                     , 'p{margin-bottom: 10px;}'
                     , 'video{max-width:400px;}'
-                    , '.anchor:after{content:"¿";background-color:yellow;color: red;font - weight: bold;}'
+                    , 'td{border: 1px solid #DDD;width:80px}'
+                    , 'table{border-collapse: collapse;}'
+                    , 'a[name]:before{content:"§";color: #01aaed;font-weight: bold;}'
                     , 'img{display: inline-block; border: none; vertical-align: middle;}'
                     , 'pre{margin: 10px 0; padding: 10px; line-height: 20px; border: 1px solid #ddd; border-left-width: 6px; background-color: #F2F2F2; color: #333; font-family: Courier New; font-size: 12px;}'
                     , '</style>'].join(''))
                     , body = conts.find('body');
-
+                var quoteStyle = function () {
+                    var content = [];
+                    layui.each(set.quote.style, function (index, item) {
+                        content.push('<link href="' + item + '" rel="stylesheet"/>');
+                    });
+                    layui.each(set.quote.js, function (index, item) {
+                        content.push('<script src="' + item + '"></script>');
+                    });
+                    return content.join('');
+                }();
                 head.append(style);
+                head.append(quoteStyle);
                 body.attr('contenteditable', 'true').css({
                     'min-height': set.height
                 }).html(textArea.value || '');
@@ -306,7 +340,7 @@ layui.define(['layer', 'form'], function (exports) {
                 elem.setAttribute(key, attr[key]);
             }
             elem.removeAttribute('text');
-            // be fix
+            // be fix by knifeZ
             if (device.ie) { //IE
                 var text = range.text || attr.text;
                 if (tagName === 'a' && !text) return;
@@ -346,6 +380,7 @@ layui.define(['layer', 'form'], function (exports) {
             $(container).parents().each(function () {
                 var tagName = this.tagName.toLowerCase()
                     , textAlign = this.style.textAlign;
+                //be fix by kinfeZ
                 //文字
                 //if (tagName === 'b' || tagName === 'strong') {
                 //    item('b').addClass(CHECK)
@@ -719,7 +754,12 @@ layui.define(['layer', 'form'], function (exports) {
                 }
                 //插入视频
                 , video: function (range) {
-                    var body = this;
+                    var body = this
+                        , customTheme = set.customTheme || {video: []}
+                        , customContent = "";
+                    if (customTheme.video.title.length > 0) {
+                        customContent = AddCustomThemes(customTheme.video.title, customTheme.video.content, customTheme.video.preview);
+                    }
                     layer.open({
                         type: 1
                         , id: 'fly-jie-video-upload'
@@ -750,23 +790,31 @@ layui.define(['layer', 'form'], function (exports) {
                             , '<button type="button" class="layui-btn" id="LayEdit_InsertImage" style="width: 110px;position: relative;z-index: 10;"> <i class="layui-icon"></i>上传封面</button>'
                             , '<input type="text" name="cover" placeholder="请选择文件" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" class="layui-input">'
                             , '</li>'
+                            , customContent
                             , '</ul>'].join('')
                         , btn: ['确定', '取消']
                         , btnAlign: 'c'
                         , yes: function (index, layero) {
-                            var video = layero.find('input[name="video"]'),
-                                cover = layero.find('input[name="cover"]');
+                            var video = layero.find('input[name="video"]')
+                                , cover = layero.find('input[name="cover"]')
+                                , theme = layero.find('select[name="theme"]');
                             if (video.val() == '') {
                                 layer.msg('请选择一个视频或输入视频地址')
                             } else {
-                                insertInline.call(iframeWin, 'p', {
-                                    text: '&nbsp;<video src="' + video.val() + '" poster="' + cover.val() + '" controls="controls" >您的浏览器不支持video播放</video>&nbsp;'
+                                var txt = '&nbsp;<video src="' + video.val() + '" poster="' + cover.val() + '" controls="controls" >您的浏览器不支持video播放</video>&nbsp;';
+                                var custclass = '';
+                                if (customTheme.video.title.length > 0 && theme.length > 0) {
+                                    //追加样式
+                                    custclass = theme[0].options[theme[0].selectedIndex].value;
+                                }
+                                insertInline.call(iframeWin, 'div', {
+                                    text: txt
+                                    , class: custclass
                                 }, range);
                                 layer.close(index);
                             }
                         }
                         , success: function (layero, index) {
-
                             layui.use('upload', function (upload) {
                                 var loding, video = layero.find('input[name="video"]'),
                                     cover = layero.find('input[name="cover"]');
@@ -805,7 +853,7 @@ layui.define(['layer', 'form'], function (exports) {
                                                 ,
                                                 offset: 't'
                                                 ,
-                                                content: res.msg + "<div><img src='" + res.data.src + "' style='max-height:100px'/></div><label class='layui-form-label'>确定使用该文件吗？</label>"
+                                                content: res.msg + "<div><img src='" + res.data.src + "' style='max-height:100px'/></div><p style='text-align:center'>确定使用该文件吗？</p>"
                                                 ,
                                                 btn: ['确定', '取消']
                                                 ,
@@ -851,7 +899,7 @@ layui.define(['layer', 'form'], function (exports) {
                                                 ,
                                                 offset: 't'
                                                 ,
-                                                content: res.msg + "<div><video src='" + res.data.src + "' style='max-height:100px' controls='controls'/></div>确定使用该文件吗？"
+                                                content: res.msg + "<div><video src='" + res.data.src + "' style='max-height:100px' controls='controls'/></div><p style='text-align:center'>确定使用该文件吗？</p>"
                                                 ,
                                                 btn: ['确定', '取消']
                                                 ,
@@ -866,21 +914,13 @@ layui.define(['layer', 'form'], function (exports) {
                                         }
                                     }
                                 });
-                                layero.find('.layui-btn-primary').on('click', function () {
-                                    layer.close(index);
-                                });
-                                layero.find('.layedit-btn-yes').on('click', function () {
-
-                                    var container = getContainer(range)
-                                        , parentNode = $(container).parent();
-                                    insertInline.call(iframeWin, 'p', {
-                                        text: '<video src="' + video.val() + '" poster="' + cover.val() + '" controls="controls" >您的浏览器不支持video播放</video>'
-                                    }, range);
-                                    setTimeout(function () {
-                                        body.focus();
-                                    }, 100);
-                                    layer.close(index);
-                                });
+                                debugger;
+                                var theme = layero.find('select[name="theme"]');
+                                if (customTheme.video.title.length > 0 && theme.length > 0) {
+                                    layero.find('select[name="theme"]').on('change mouseover', function () {
+                                        layer.tips("<img src='" + theme[0].options[theme[0].selectedIndex].attributes["data-img"].value + "' />", this);
+                                    })
+                                }
                             })
 
                         }
@@ -976,12 +1016,50 @@ layui.define(['layer', 'form'], function (exports) {
                         }, 100);
                     });
                 }
+                , customlink: function (range) {
+                    var container = getContainer(range)
+                        , parentNode = $(container).parent();
+                    customlink.call(body, {title: set.customlink.title}, function (field) {
+                        var parent = parentNode[0];
+                        if (parent.tagName === 'A') {
+                            parent.href = field.url;
+                            parent.rel = field.rel;
+                        } else {
+                            insertInline.call(iframeWin, 'a', {
+                                target: "_blank"
+                                , href: set.customlink.href
+                                , rel: "nofollow"
+                                , text: field.text
+                                , onmouseup: set.customlink.onmouseup
+                            }, range);
+                        }
+                    });
+                }
                 , anchors: function (range) {
                     anchors.call(body, {}, function (field) {
                         insertInline.call(iframeWin, 'a', {
                             name: "#" + field.text
-                            , text: " ", class: 'anchor'
+                            , text: " "
                         }, range);
+                    });
+                }
+                , table: function (range) {
+                    table.call(this, function (opts) {
+                        var tbody = "<tr>";
+                        for (var i = 0; i < opts.cells; i++) {
+                            tbody += "<td></td>";
+                        }
+                        tbody += "</tr>";
+                        var tmptr = tbody;
+                        for (var i = 0; i < opts.rows; i++) {
+                            tbody += tmptr;
+                        }
+                        insertInline.call(iframeWin, 'table', {
+                            text: tbody
+                        }, range);
+                        setTimeout(function () {
+                            body.focus();
+                        }, 10);
                     });
                 }
                 , addhr: function (range) {
@@ -1014,7 +1092,7 @@ layui.define(['layer', 'form'], function (exports) {
                 body.focus();
 
                 var range = Range(iframeDOM)
-                    , container = range.commonAncestorContainer
+                    , container = range.commonAncestorContainer;
 
                 if (command) {
                     if (/justifyLeft|justifyCenter|justifyRight/.test(command)) {
@@ -1032,7 +1110,7 @@ layui.define(['layer', 'form'], function (exports) {
                 toolCheck.call(iframeWin, tools, othis);
             }
 
-                , isClick = /image/
+                , isClick = /image/;
 
             tools.find('>i').on('mousedown', function () {
                 var othis = $(this)
@@ -1050,15 +1128,22 @@ layui.define(['layer', 'form'], function (exports) {
             body.on('click', function () {
                 toolCheck.call(iframeWin, tools);
                 layer.close(face.index);
+                layer.close(table.index);
                 layer.close(colorpicker.index);
                 layer.close(fontFomatt.index);
             });
             //右键菜单自定义
-            body.on('contextmenu', function (event) {
+            var rbtnIndex = null;
+            var contextmenu = function (event) {
                 if (event != null) {
-                    switch (event.target.tagName) {
+                    layer.close(rbtnIndex);
+                    var currenNode, parentNode;
+
+                    currenNode = event.target;
+                    parentNode = currenNode.parentNode;
+                    switch (currenNode.tagName) {
                         case "IMG":
-                            layer.open({
+                            rbtnIndex = layer.open({
                                 type: 1,
                                 id: 'fly-jie-image-upload',
                                 title: '图片管理',
@@ -1076,8 +1161,8 @@ layui.define(['layer', 'form'], function (exports) {
                                         return '100px'
                                     }
                                 }(),
-                                shade: 0.05,
-                                shadeClose: true,
+                                shade: 0,
+                                closeBtn: false,
                                 content: ['<ul class="layui-form layui-form-pane" style="margin: 20px 20px 0 20px">'
                                     , '<li class="layui-form-item" style="position: relative">'
                                     , '<button type="button" class="layui-btn" id="LayEdit_UpdateImage" style="width: 110px;position: relative;z-index: 10;"> <i class="layui-icon"></i>上传图片</button>'
@@ -1181,23 +1266,83 @@ layui.define(['layer', 'form'], function (exports) {
                                                 }
                                             }
                                         });
-                                    })
+                                    });
                                     return false;
                                 }
-                            })
+                            });
+                            break;
+                        case "TD":
+                            rbtnIndex = layer.open({
+                                type: 1
+                                , title: false
+                                , shade: 0
+                                , offset: [event.clientY + "px", event.clientX + "px"]
+                                , skin: 'layui-box layui-util-face'
+                                , content: function () {
+                                    var content = [
+                                        , '<li  style="float: initial;width:100%;"><a type="button"  style="width:100%" lay-command="addnewtr"> 新增行 </a></li>'
+                                        , '<li  style="float: initial;width:100%;"><a type="button" style="width:100%" lay-command="deltr"> 删除行 </a></li>'].join('');
+                                    return '<ul class="layui-clear" style="width: max-content;">' + content + '</ul>';
+                                }()
+                                , success: function (layero, index) {
+
+                                    layero.find('a').on('click', function () {
+                                        var othis = $(this), command = othis.attr('lay-command');
+                                        if (command) {
+                                            switch (command) {
+                                                case 'deltr':
+                                                    parentNode.remove();
+                                                    break;
+                                                case 'addnewtr':
+                                                    var html = "<tr>";
+                                                    for (var i = 0; i < parentNode.children.length; i++) {
+                                                        html += "<td></td>";
+                                                    }
+                                                    html += "</tr>";
+                                                    $(parentNode).after(html)
+                                                    break;
+                                            }
+                                        }
+                                        layer.close(index);
+                                    });
+                                }
+                            });
                             break;
                         default:
-                            var currenNode = event.toElement, parentNode = event.toElement.parentNode;
-                            layer.open({
+                            rbtnIndex = layer.open({
                                 type: 1,
                                 title: false,
-                                offset: [event.clientY + "px", event.clientX + "px"],
+                                closeBtn: false,
+                                offset: function () {
+                                    if (/mobile/i.test(navigator.userAgent)) {
+                                        return 'auto'
+                                    } else {
+                                        return [event.clientY + parent.document.getElementsByClassName('layui-layedit')[0].getBoundingClientRect().y + "px", function () {
+                                            var x = event.clientX;
+                                            if (x + 100 + 30 > parent.document.getElementsByClassName('layui-layedit')[0].getBoundingClientRect().width) {
+                                                x = x - 100 - 30;
+                                            }
+                                            return x + "px";
+                                        }];
+                                    }
+                                }(),
+                                shade: function () {
+                                    if (/mobile/i.test(navigator.userAgent)) {
+                                        return 0.1
+                                    }
+                                    return 0;
+                                },
                                 shadeClose: true,
-                                content: ['<ul style="width:100px">'
-                                    , '<li><a type="button" class="layui-btn layui-btn-primary layui-btn-sm" style="width:80%" lay-command="left"> 居左 </a></li>'
-                                    , '<li><a type="button" class="layui-btn layui-btn-primary layui-btn-sm" style="width:80%" lay-command="center"> 居中 </a></li>'
-                                    , '<li><a type="button" class="layui-btn layui-btn-primary layui-btn-sm" style="width:80%" lay-command="right"> 居右 </a></li>'
-                                    , '<li><a type="button" class="layui-btn layui-btn-danger layui-btn-sm"  style="width:80%"> 删除 </a></li>'
+                                content: ['<style>'
+                                    , 'ul.context-menu > li > a{border: none;border-bottom: 1px solid rgba(0,0,0,.2);border-radius: 0}'
+                                    , 'ul.context-menu > li > a:hover{border-color: rgba(0,0,0,.2);background:#eaeaea}'
+                                    , 'ul.context-menu > li:last-child > a{border: none;}'
+                                    , '</style>'
+                                    , '<ul style="width:100px" class="context-menu">'
+                                    , '<li><a type="button" class="layui-btn layui-btn-primary layui-btn-sm" style="width:100%" lay-command="left"> 居左 </a></li>'
+                                    , '<li><a type="button" class="layui-btn layui-btn-primary layui-btn-sm" style="width:100%" lay-command="center"> 居中 </a></li>'
+                                    , '<li><a type="button" class="layui-btn layui-btn-primary layui-btn-sm" style="width:100%" lay-command="right"> 居右 </a></li>'
+                                    , '<li><a type="button" class="layui-btn layui-btn-primary layui-btn-sm context-menu-delete" style="width:100%" lay-command="right"> 删除 </a></li>'
                                     , '</ul>'].join(''),
                                 success: function (layero, index) {
                                     var callDel = set.calldel;
@@ -1212,11 +1357,10 @@ layui.define(['layer', 'form'], function (exports) {
                                         }
                                         layer.close(index);
                                     });
-                                    layero.find('.layui-btn-danger').on('click', function () {
+                                    layero.find('.context-menu-delete').on('click', function () {
                                         if (currenNode.tagName == "BODY") {
                                             layer.msg("不能再删除了")
-                                        }
-                                        else if (currenNode.tagName == "VIDEO") {
+                                        } else if (currenNode.tagName == "VIDEO") {
                                             if (callDel.url != "") {
                                                 $.post(callDel.url, {
                                                     "filepath": event.target.src,
@@ -1228,10 +1372,9 @@ layui.define(['layer', 'form'], function (exports) {
                                             } else {
                                                 parentNode.remove();
                                             }
-                                        }
-                                        else if (currenNode.tagName == "IMG") {
+                                        } else if (currenNode.tagName == "IMG") {
                                             if (callDel.url != "") {
-                                                $.post(callDel.url, {para: event.target.src}, function (r) {
+                                                $.post(callDel.url, {para: event.target.src}, function (res) {
                                                     currenNode.remove();
                                                     callDel.done(res);
                                                 })
@@ -1244,12 +1387,36 @@ layui.define(['layer', 'form'], function (exports) {
                                         layer.close(index);
                                     });
                                 }
-                            })
+                            });
                             break;
                     }
                 }
-                return false;
-            })
+            };
+            if (/mobile/i.test(navigator.userAgent)) {
+                var timeOutEvent;
+                body.on({
+                    touchstart: function (e) {
+                        // 长按事件触发
+                        timeOutEvent = setTimeout(function () {
+                            contextmenu(e);
+                            clearTimeout(timeOutEvent);
+                        }, 300);
+                        //长按300毫秒
+                        e.preventDefault();
+                    },
+                    touchmove: function () {
+                        clearTimeout(timeOutEvent);
+                    },
+                    touchend: function () {
+                        clearTimeout(timeOutEvent);
+                    }
+                });
+            } else {
+                body.on('contextmenu', function (event) {
+                    contextmenu(event);
+                    return false;
+                })
+            }
         }
         //超链接面板
         , link = function (options, callback) {
@@ -1331,12 +1498,75 @@ layui.define(['layer', 'form'], function (exports) {
             });
             link.index = index;
         }
+
+        , customlink = function (options, callback) {
+            var body = this, index = layer.open({
+                type: 1
+                , id: 'LAY_layedit_customlink'
+                , area: function () {
+                    if (/mobile/i.test(navigator.userAgent) || $(window).width() <= 350) {
+                        return ['90%']
+                    } else {
+                        return ['350px']
+                    }
+                }()
+                , offset: function () {
+                    if (/mobile/i.test(navigator.userAgent)) {
+                        return 'auto'
+                    } else {
+                        return '100px'
+                    }
+                }()
+                , shade: 0.05
+                , shadeClose: true
+                , moveType: 1
+                , title: options.title
+                , skin: 'layui-layer-msg'
+                , content: ['<ul class="layui-form" style="margin: 15px;">'
+                    , '<li class="layui-form-item">'
+                    , '<label class="layui-form-label" style="width: 60px;">名称</label>'
+                    , '<div class="layui-input-block" style="margin-left: 90px">'
+                    , '<input name="text" value="" autofocus="true" autocomplete="off" class="layui-input">'
+                    , '</div>'
+                    , '</li>'
+                    , '<li class="layui-form-item" style="display:none">'
+                    , '<button type="button" lay-submit lay-filter="layedit-link-yes" id="layedit-link-yes"> 确定 </button>'
+                    , '</li>'
+                    , '</ul>'].join('')
+                , btn: ['确定', '取消']
+                , btnAlign: 'c'
+                , yes: function (index, layero) {
+                    $('#layedit-link-yes').click();
+                }
+                , success: function (layero, index) {
+                    var eventFilter = 'submit(layedit-link-yes)';
+                    form.render('radio');
+                    form.on(eventFilter, function (data) {
+                        callback && callback(data.field);
+                        layer.close(customlink.index);
+                    });
+                }
+            });
+            customlink.index = index;
+        }
         , anchors = function (options, callback) {
             var body = this, index = layer.open({
                 type: 1
                 , id: 'LAY_layedit_addmd'
-                , area: '300px'
-                , offset: '100px'
+                , area: function () {
+                    if (/mobile/i.test(navigator.userAgent) || $(window).width() <= 350) {
+                        return ['90%']
+                    } else {
+                        return ['350px']
+                    }
+                }()
+                , offset: function () {
+                    if (/mobile/i.test(navigator.userAgent)) {
+                        return 'auto'
+                    } else {
+                        return '100px'
+                    }
+                }()
                 , shade: 0.05
                 , shadeClose: true
                 , moveType: 1
@@ -1359,12 +1589,6 @@ layui.define(['layer', 'form'], function (exports) {
                 , success: function (layero, index) {
                     var eventFilter = 'submit(layedit-link-yes)';
                     form.render('radio');
-                    layero.find('.layui-btn-primary').on('click', function () {
-                        layer.close(index);
-                        setTimeout(function () {
-                            body.focus();
-                        }, 10);
-                    });
                     form.on(eventFilter, function (data) {
                         layer.close(anchors.index);
                         callback && callback(data.field);
@@ -1372,6 +1596,108 @@ layui.define(['layer', 'form'], function (exports) {
                 }
             });
             anchors.index = index;
+        }
+        , table = function (callback) {
+            if (!/mobile/i.test(navigator.userAgent)) {
+                return table.index = layer.tips(function () {
+                    return '<div style="padding: 5px;border: 1px solid #e6e6e6;"><span id="laytable_label" class="layui-label">0列 x 0行</span>'
+                        + '<table class="layui-table" lay-size="sm">'
+                        + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                        + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                        + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                        + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                        + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                        + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                        + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                        + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                        + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                        + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                        + '</table ></div></div > ';
+                }(), this, {
+                    tips: 1
+                    , time: 0
+                    , skin: 'layui-box layui-util-face'
+                    , maxWidth: 500
+                    , success: function (layero, index) {
+                        layero.find('td').on('mouseover', function () {
+                            layero.find('#laytable_label')[0].innerText = (this.cellIndex + 1) + "列X" + (this.parentElement.rowIndex + 1) + "行";
+                            layero.find('td').removeAttr("style");
+
+                            $(this).attr('style', 'background-color:linen;');
+                            $(this).prevAll().attr('style', 'background-color:linen;');
+                            for (var i = 0; i < $(this.parentElement).prevAll().length; i++) {
+                                for (var j = 0; j < $(this.parentElement).prevAll()[i].childNodes.length; j++) {
+                                    if (j <= this.cellIndex) {
+                                        $(this.parentElement).prevAll()[i].children[j].style = "background-color:linen;";
+                                    }
+                                }
+                            }
+                        });
+                        layero.find('td').on('click', function () {
+                            callback && callback({
+                                cells: this.cellIndex + 1
+                                , rows: this.parentElement.rowIndex
+                            });
+                            layer.close(index);
+                        });
+                        $(document).off('click', table.hide).on('click', table.hide);
+                    }
+                });
+            } else {
+                return table.index = layer.open({
+                    type: 1
+                    , title: false
+                    , closeBtn: 0
+                    , shade: 0.05
+                    , shadeClose: true
+                    , content: function () {
+                        return '<div style="padding: 5px;border: 1px solid #e6e6e6;"><span id="laytable_label" class="layui-label">0列 x 0行</span>'
+                            + '<table class="layui-table" lay-size="sm">'
+                            + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                            + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                            + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                            + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                            + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                            + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                            + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                            + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                            + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                            + '<tr style="height: 20px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'
+                            + '</table ></div></div > ';
+                    }()
+                    , area: ['85%']
+                    , skin: 'layui-box layui-util-face'
+                    , success: function (layero, index) {
+                        layero.find('td').on('touchmove', function (e) {
+                            var realTarget = getTouchElement(e);
+                            if (realTarget != null && realTarget.tagName.toUpperCase() === 'TD') {
+                                layero.find('#laytable_label')[0].innerText = (realTarget.cellIndex + 1) + "列X" + (realTarget.parentElement.rowIndex + 1) + "行";
+                                layero.find('td').removeAttr("style");
+
+                                $(realTarget).attr('style', 'background-color:linen;');
+                                $(realTarget).prevAll().attr('style', 'background-color:linen;');
+                                for (var i = 0; i < $(realTarget.parentElement).prevAll().length; i++) {
+                                    for (var j = 0; j < $(realTarget.parentElement).prevAll()[i].childNodes.length; j++) {
+                                        if (j <= realTarget.cellIndex) {
+                                            $(realTarget.parentElement).prevAll()[i].children[j].style = "background-color:linen;";
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        layero.find('td').on('touchend', function (e) {
+                            var realTarget = getTouchElement(e);
+                            if (realTarget != null && realTarget.tagName.toUpperCase() === 'TD') {
+                                callback && callback({
+                                    cells: realTarget.cellIndex + 1
+                                    , rows: realTarget.parentElement.rowIndex
+                                });
+                                layer.close(index);
+                            }
+                        });
+                    }
+                });
+            }
         }
         //表情面板
         , face = function (callback) {
@@ -1516,13 +1842,13 @@ layui.define(['layer', 'form'], function (exports) {
             fontFomatt.index = layer.tips(function () {
                 var content = [];
                 layui.each(options.fonts, function (index, item) {
-                    content.push('<li title="' + options.fonts[index] + '"><' + options.fonts[index] + '>' + options.texts[index] + '</' + options.fonts[index] + '></li>');
+                    content.push('<li title="' + options.fonts[index] + '" style="float: initial;width:100%;"><' + options.fonts[index] + '>' + options.texts[index] + '</' + options.fonts[index] + '></li>');
                 });
                 return '<ul class="layui-clear" style="width: max-content;">' + content.join('') + '</ul>';
             }(), this, {
                 tips: 1
                 , time: 0
-                , skin: 'layui-box layui-util-font'
+                , skin: 'layui-box layui-util-face'
                 , success: function (layero, index) {
                     layero.css({marginTop: -4, marginLeft: -10}).find('.layui-clear>li').on('click', function () {
                         callback && callback(this.title, options.fonts);
@@ -1619,6 +1945,10 @@ layui.define(['layer', 'form'], function (exports) {
         , tools = {
             html: '<i class="layui-icon layedit-tool-html" title="HTML源代码"  layedit-event="html"">&#xe64b;</i><span class="layedit-tool-mid"></span>'
             ,
+            undo: '<i class="layui-icon layedit-tool-undo" title="撤销" lay-command="undo" layedit-event="undo"">&#xe603;</i>'
+            ,
+            redo: '<i class="layui-icon layedit-tool-redo" title="重做" lay-command="redo" layedit-event="redo"">&#xe602;</i>'
+            ,
             strong: '<i class="layui-icon layedit-tool-b" title="加粗" lay-command="Bold" layedit-event="b"">&#xe62b;</i>'
             ,
             italic: '<i class="layui-icon layedit-tool-i" title="斜体" lay-command="italic" layedit-event="i"">&#xe644;</i>'
@@ -1648,7 +1978,7 @@ layui.define(['layer', 'form'], function (exports) {
             code: '<i class="layui-icon layedit-tool-code" title="插入代码" layedit-event="code" style="font-size:18px">&#xe64e;</i>'
 
             ,
-            images: '<i class="layui-icon layedit-tool-images" title="多图上传" layedit-event="images" style="font-size:18px">&#xe60d;</i>'
+            images: '<i class="layui-icon layedit-tool-images" title="多图上传" layedit-event="images" style="font-size:18px">&#xe634;</i>'
             ,
             image_alt: '<i class="layui-icon layedit-tool-image_alt" title="图片" layedit-event="image_alt" style="font-size:18px">&#xe64a;</i>'
             ,
@@ -1667,7 +1997,10 @@ layui.define(['layer', 'form'], function (exports) {
             addhr: '<i class="layui-icon layui-icon-chart layedit-tool-addhr" title="添加水平线" layedit-event="addhr" style="font-size:18px"></i>'
             ,
             anchors: '<i class="layui-icon layedit-tool-anchors" title="添加锚点" layedit-event="anchors" style="font-size:18px">&#xe60b;</i>'
-
+            ,
+            customlink: '<i class="layui-icon layedit-tool-customlink" title="添加自定义链接" layedit-event="customlink" style="font-size:18px">&#xe606;</i>'
+            ,
+            table: '<i class="layui-icon layedit-tool-table" title="插入表格" layedit-event="table" style="font-size:18px">&#xe62d;</i>'
             ,
             help: '<i class="layui-icon layedit-tool-help" title="帮助" layedit-event="help">&#xe607;</i>'
         }
@@ -1675,6 +2008,20 @@ layui.define(['layer', 'form'], function (exports) {
     form.render();
     exports(MOD_NAME, edit);
 });
+
+//Custom Theme Add
+function AddCustomThemes(list, contents, pimgs) {
+    var content = [];
+    layui.each(list, function (index, item) {
+        content.push('<option value="' + contents[index] + '"  data-img="' + pimgs[index] + '">' + item + '</option>');
+    });
+    return ['<li class="layui-form-item" style="position: relative">'
+        , '<label class="layui-form-label">主题选择</label>'
+        , '<div class="layui-input-block">'
+        , '<select name="theme" style="display:block;height:38px;width:100%;">' + content.join('') + '</select>'
+        , '</div>'
+        , '</li>'].join('');
+}
 
 //HTML 格式化
 function style_html(html_source, indent_size, indent_character, max_char) {
@@ -1721,16 +2068,14 @@ function style_html(html_source, indent_size, indent_character, max_char) {
                     }
                     this.line_char_count--;
                     continue;
-                }
-                else if (space) {
+                } else if (space) {
                     if (this.line_char_count >= this.max_char) {
                         content.push('\n');
                         for (var i = 0; i < this.indent_level; i++) {
                             content.push(this.indent_string);
                         }
                         this.line_char_count = 0;
-                    }
-                    else {
+                    } else {
                         content.push(' ');
                         this.line_char_count++;
                     }
@@ -1767,8 +2112,7 @@ function style_html(html_source, indent_size, indent_character, max_char) {
             if (this.tags[tag + 'count']) {
                 this.tags[tag + 'count']++;
                 this.tags[tag + this.tags[tag + 'count']] = this.indent_level;
-            }
-            else {
+            } else {
                 this.tags[tag + 'count'] = 1;
                 this.tags[tag + this.tags[tag + 'count']] = this.indent_level;
             }
@@ -1793,8 +2137,7 @@ function style_html(html_source, indent_size, indent_character, max_char) {
                 delete this.tags[tag + this.tags[tag + 'count']];
                 if (this.tags[tag + 'count'] == 1) {
                     delete this.tags[tag + 'count'];
-                }
-                else {
+                } else {
                     this.tags[tag + 'count']--;
                 }
             }
@@ -1829,8 +2172,7 @@ function style_html(html_source, indent_size, indent_character, max_char) {
                     if (this.line_char_count >= this.max_char) {
                         this.print_newline(false, content);
                         this.line_char_count = 0;
-                    }
-                    else {
+                    } else {
                         content.push(' ');
                         this.line_char_count++;
                     }
@@ -1843,52 +2185,43 @@ function style_html(html_source, indent_size, indent_character, max_char) {
             var tag_index;
             if (tag_complete.indexOf(' ') != -1) {
                 tag_index = tag_complete.indexOf(' ');
-            }
-            else {
+            } else {
                 tag_index = tag_complete.indexOf('>');
             }
             var tag_check = tag_complete.substring(1, tag_index).toLowerCase();
             if (tag_complete.charAt(tag_complete.length - 2) === '/' ||
                 this.Utils.in_array(tag_check, this.Utils.single_token)) {
                 this.tag_type = 'SINGLE';
-            }
-            else if (tag_check === 'script') {
+            } else if (tag_check === 'script') {
                 this.record_tag(tag_check);
                 this.tag_type = 'SCRIPT';
-            }
-            else if (tag_check === 'style') {
+            } else if (tag_check === 'style') {
                 this.record_tag(tag_check);
                 this.tag_type = 'STYLE';
-            }
-            else if (tag_check.charAt(0) === '!') {
+            } else if (tag_check.charAt(0) === '!') {
                 if (tag_check.indexOf('[if') != -1) {
                     if (tag_complete.indexOf('!IE') != -1) {
                         var comment = this.get_unformatted('-->', tag_complete);
                         content.push(comment);
                     }
                     this.tag_type = 'START';
-                }
-                else if (tag_check.indexOf('[endif') != -1) {
+                } else if (tag_check.indexOf('[endif') != -1) {
                     this.tag_type = 'END';
                     this.unindent();
-                }
-                else if (tag_check.indexOf('[cdata[') != -1) {
+                } else if (tag_check.indexOf('[cdata[') != -1) {
                     var comment = this.get_unformatted(']]>', tag_complete);
                     content.push(comment);
                     this.tag_type = 'SINGLE';
-                }
-                else {
+                } else {
                     var comment = this.get_unformatted('-->', tag_complete);
                     content.push(comment);
                     this.tag_type = 'SINGLE';
                 }
-            }
-            else {
+            } else {
                 if (tag_check.charAt(0) === '/') {
                     this.retrieve_tag(tag_check.substring(1));
                     this.tag_type = 'END';
-                }
-                else {
+                } else {
                     this.record_tag(tag_check);
                     this.tag_type = 'START';
                 }
@@ -1945,8 +2278,7 @@ function style_html(html_source, indent_size, indent_character, max_char) {
                 token = this.get_content();
                 if (typeof token !== 'string') {
                     return token;
-                }
-                else {
+                } else {
                     return [token, 'TK_CONTENT'];
                 }
             }
@@ -1954,8 +2286,7 @@ function style_html(html_source, indent_size, indent_character, max_char) {
                 token = this.get_tag();
                 if (typeof token !== 'string') {
                     return token;
-                }
-                else {
+                } else {
                     var tag_name_type = 'TK_TAG_' + this.tag_type;
                     return [token, tag_name_type];
                 }
@@ -2048,6 +2379,7 @@ function style_html(html_source, indent_size, indent_character, max_char) {
     return multi_parser.output.join('');
 }
 
+//JS 格式化
 function js_beautify(js_source_text, indent_size, indent_character, indent_level) {
 
     var input, output, token_text, last_type, last_text, last_word, current_mode, modes, indent_string;
