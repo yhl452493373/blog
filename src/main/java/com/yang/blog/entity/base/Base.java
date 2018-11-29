@@ -8,25 +8,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-@SuppressWarnings("unused")
+/**
+ * 基类的公共接口.给每个实现此方法的对象赋予公共的update方法.
+ *
+ * @param <Entity> 实体对象
+ */
+@SuppressWarnings({"unused", "Duplicates", "unchecked"})
 public interface Base<Entity> {
-    /**
-     * 临时状态
-     */
-    Integer TEMP = 2;
-    /**
-     * 可用状态
-     */
-    Integer AVAILABLE = 1;
-    /**
-     * 禁用状态
-     */
-    Integer BLOCK = 0;
-    /**
-     * 删除状态
-     */
-    Integer DELETE = -1;
-
     /**
      * 默认的update方法
      *
@@ -45,7 +33,7 @@ public interface Base<Entity> {
                     continue;
                 try {
                     String fieldName = field.getName();
-                    executeSetter(entity, clazz, field, fieldName, ignoreNull);
+                    executeGetterAndSetter(entity, clazz, field, fieldName, ignoreNull);
                 } catch (Exception e) {
                     e.printStackTrace();
                     return false;
@@ -73,7 +61,7 @@ public interface Base<Entity> {
                     //设置了调用update方法时跳过,则不更新
                     if (fieldUpdate != null && fieldUpdate.exclude())
                         continue;
-                    executeSetter(entity, clazz, field, fieldName, ignoreNull);
+                    executeGetterAndSetter(entity, clazz, field, fieldName, ignoreNull);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -83,15 +71,14 @@ public interface Base<Entity> {
         return true;
     }
 
-    @SuppressWarnings("unchecked")
-    default void executeSetter(Entity entity, Class clazz, Field field, String fieldName, boolean ignoreNull) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    default void executeGetterAndSetter(Entity entity, Class clazz, Field field, String fieldName, boolean ignoreNull) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         fieldName = StringUtils.capitalize(fieldName);
         String get = "get" + fieldName;
         String set = "set" + fieldName;
         Method getMethod = clazz.getDeclaredMethod(get);
         Method setMethod = clazz.getDeclaredMethod(set, field.getType());
         Object getResult = getMethod.invoke(entity);
-        if (getResult != null || ignoreNull)
+        if (getResult != null || !ignoreNull)
             setMethod.invoke(this, getResult);
     }
 }

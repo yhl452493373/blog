@@ -80,7 +80,9 @@
                             this.enterEsc = function (event) {
                                 if (event.key === 'Enter') {
                                     layer.close(loginAlert);
-                                    window.location.reload();
+                                    if (result.status === 'success') {
+                                        window.location.reload();
+                                    }
                                 }
                                 return false;
                             };

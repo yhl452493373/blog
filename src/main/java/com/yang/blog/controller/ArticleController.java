@@ -8,8 +8,11 @@ import com.github.yhl452493373.bean.JSONResult;
 import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.*;
+import com.yang.blog.es.doc.EsArticle;
 import com.yang.blog.shiro.ShiroUtils;
 import com.yang.blog.util.FileUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -89,6 +92,8 @@ public class ArticleController implements BaseController {
         if (articleResult && articleTagResult && articleFileResult) {
             article.setAvailable(Article.AVAILABLE);
             service.articleService.updateById(article);
+            //同步写入到es数据库
+            service.esArticleService.save(new EsArticle().update(true, article));
             //添加博客成功,返回其id作为data的值,通过id跳转
             jsonResult.success(ADD_SUCCESS).data(article.getId());
         } else {
@@ -114,9 +119,15 @@ public class ArticleController implements BaseController {
         if (StringUtils.isEmpty(article.getContent()))
             return jsonResult.error(UPDATE_FAILED + "内容不能为空");
         article.setModifiedTime(LocalDateTime.now());
-        boolean articleResult = service.articleService.updateById(article),
-                articleFileResult = relateArticleAndFile(article),
-                articleTagResult = relateArticleAndTag(article);
+        Article old = service.articleService.getById(article.getId());
+        if (old == null)
+            return jsonResult.error(UPDATE_FAILED + "记录id不正确");
+        old.update(true, article);
+        boolean articleResult = service.articleService.updateById(old),
+                articleFileResult = relateArticleAndFile(old),
+                articleTagResult = relateArticleAndTag(old);
+        //将数据同步更新到es中
+        service.esArticleService.save(new EsArticle().update(true, old));
         if (articleResult && articleFileResult && articleTagResult) {
             jsonResult.success(UPDATE_SUCCESS).data(article.getId());
         } else {
@@ -154,8 +165,14 @@ public class ArticleController implements BaseController {
     }
 
     @RequestMapping("/search")
-    public JSONResult search(String content, Boolean searchTitle, Boolean searchContent, Page<Article> page) {
-        return JSONResult.init();
+    public JSONResult search(String content, Boolean searchTitle, Boolean searchContent, Page<EsArticle> page) {
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
+        if (searchTitle)
+            queryBuilder.should(QueryBuilders.matchQuery("title", content));
+        if (searchContent)
+            queryBuilder.should(QueryBuilders.matchQuery("content", content));
+        service.esArticleService.search(page, queryBuilder);
+        return JSONResult.init().success(QUERY_SUCCESS).data(page.getRecords()).count(page.getTotal());
     }
 
     /**

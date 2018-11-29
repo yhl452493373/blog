@@ -46,7 +46,7 @@ public class MainController {
     @GetMapping("/login")
     public String login(ModelMap modelMap) {
         if (SecurityUtils.getSubject().isAuthenticated()) {
-            return "redirect:/login";
+            return "redirect:/index";
         }
         modelMap.addAttribute("allowRegister", SystemProperties.getAllowRegister());
         return "login";

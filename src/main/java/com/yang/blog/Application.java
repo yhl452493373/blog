@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan({
         "com.github.yhl452493373.config",
+        "com.yang.blog.es.service",
         "com.yang.blog.config",
         "com.yang.blog.mapper",
         "com.yang.blog.service",

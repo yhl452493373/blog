@@ -1,28 +1,23 @@
-package com.yang.blog.entity;
+package com.yang.blog.es.doc;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.yang.blog.entity.base.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.yang.blog.es.doc.base.EsBaseDoc;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Mapping;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * <p>
- * 博文内容
- * </p>
- *
- * @author User
- * @since 2018-11-20
- */
-public class Article extends BaseEntity<Article> implements Serializable,Cloneable {
-    /**
-     * 以下两个为是否草稿的常量
-     */
-    public static final Integer IS_DRAFT_FALSE = 0;//非草稿
-    public static final Integer IS_DRAFT_TRUE = 1;//草稿
 
-    private static final long serialVersionUID = 1L;
-
+//index-传统数据库的数据库,必须全小写
+//type-传统数据库的表,必须全小写
+@Mapping(mappingPath = "es-mapping/EsArticleMapping.json")
+@Document(indexName = "blog", type = "article")
+public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
     /**
      * 博文所属用户id
      */
@@ -54,31 +49,25 @@ public class Article extends BaseEntity<Article> implements Serializable,Cloneab
     private Integer praiseCount;
 
     /**
-     * 发布时间
+     * 发布时间.这三个注解是为了前台序列化java8 LocalDateTime使用的，需要引入jsr310的包才可以使用
      */
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime publishTime;
 
     /**
      * 修改时间
      */
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime modifiedTime;
 
     /**
      * 博文状态。-1-删除，0-不可见，1-正常
      */
     private Integer available;
-
-    /**
-     * 用户设置的标签列表,逗号分隔,同一用户的标签不可同名
-     */
-    @TableField(exist = false)
-    private String tags;
-
-    /**
-     * 与文章对应的文件id，多个用逗号分隔
-     */
-    @TableField(exist = false)
-    private String fileIds;
 
     public String getUserId() {
         return userId;
@@ -150,38 +139,5 @@ public class Article extends BaseEntity<Article> implements Serializable,Cloneab
 
     public void setAvailable(Integer available) {
         this.available = available;
-    }
-
-    public String getTags() {
-        return tags;
-    }
-
-    public void setTags(String tags) {
-        this.tags = tags;
-    }
-
-    public String getFileIds() {
-        return fileIds;
-    }
-
-    public void setFileIds(String fileIds) {
-        this.fileIds = fileIds;
-    }
-
-    @Override
-    public String toString() {
-        return "Article{" +
-                "userId=" + userId +
-                ", title=" + title +
-                ", content=" + content +
-                ", isDraft=" + isDraft +
-                ", readCount=" + readCount +
-                ", praiseCount=" + praiseCount +
-                ", publishTime=" + publishTime +
-                ", modifiedTime=" + modifiedTime +
-                ", available=" + available +
-                ", tags=" + tags +
-                ", fileIds=" + fileIds +
-                "}";
     }
 }

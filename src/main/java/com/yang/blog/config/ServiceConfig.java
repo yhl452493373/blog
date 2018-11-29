@@ -1,6 +1,7 @@
 package com.yang.blog.config;
 
 import com.github.yhl452493373.shiro.ShiroCaptcha;
+import com.yang.blog.es.service.EsArticleService;
 import com.yang.blog.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +45,8 @@ public class ServiceConfig {
     public AboutFileService aboutFileService;
     @Autowired
     public AnnouncementService announcementService;
+    @Autowired
+    public EsArticleService esArticleService;
 
     @PostConstruct
     public void init() {

@@ -81,17 +81,19 @@
                 data: $registerForm.serialize(),
                 success: function (result) {
                     registerAlert = layer.alert(result.message, {
-                        success:function () {
-                            this.enterEsc = function(event){
-                                if(event.key === 'Enter'){
+                        success: function () {
+                            this.enterEsc = function (event) {
+                                if (event.key === 'Enter') {
                                     layer.close(registerAlert);
-                                    window.location.reload();
+                                    if (result.status === 'success') {
+                                        window.location.reload();
+                                    }
                                 }
                                 return false;
                             };
                             $(document).on('keydown', this.enterEsc);	//监听键盘事件，关闭层
                         },
-                        end:function () {
+                        end: function () {
                             $(document).off('keydown', this.enterEsc);	//解除键盘关闭事件
                         }
                     }, function (index) {

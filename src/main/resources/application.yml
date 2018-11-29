@@ -10,6 +10,12 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 100MB
+  data:
+    elasticsearch:
+      cluster-nodes: 127.0.0.1:9300
+      cluster-name: elasticsearch
+      repositories:
+        enabled: true
 server:
   port: 8080
 logging:
