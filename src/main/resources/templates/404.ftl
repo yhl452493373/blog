@@ -5,7 +5,7 @@
         <title>404 - 闲言轻博客</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="../res/layui/css/layui.css">
-        <link rel="stylesheet" href="../res/static/css/mian.css">
+        <link rel="stylesheet" href="../res/static/css/main.css">
     </head>
     <body class="lay-blog">
         <div class="header">
@@ -16,7 +16,7 @@
                         <img src="../res/static/images/logo-text.png" alt="" class="logo-text">
                     </a>
                 </h1>
-                <form class="layui-form blog-seach pull-left" action="">
+                <form class="layui-form blog-search pull-left" action="">
                     <div class="layui-form-item blog-sewrap">
                         <div class="layui-input-block blog-sebox">
                             <i class="layui-icon layui-icon-search"></i>

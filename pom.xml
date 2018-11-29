@@ -7,8 +7,8 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Web Module</name>
-    <description>Web Module project for Spring Boot.Depended on code-generator</description>
+    <name>My Blog</name>
+    <description>My Simple Blog</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

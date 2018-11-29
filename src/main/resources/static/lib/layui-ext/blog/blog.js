@@ -165,6 +165,28 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl'], function (expor
 
     // end 图片遮罩
 
+    $(document).on('keydown', '#search', function (e) {
+        e.preventDefault();
+        if (e.key === 'Enter')
+            search();
+    });
+
+    function search() {
+        var $searchForm = $('#searchForm');
+        $.ajax({
+            url: $searchForm.attr('action'),
+            type: $searchForm.attr('method'),
+            data: $searchForm.serialize(),
+            success: function (result) {
+                layer.alert(result.message + '请看控制台');
+                console.log(result);
+            },
+            error: function (result) {
+                layer.alert('搜索出错，请稍后再试');
+            }
+        });
+    }
+
     //输出test接口
     exports('blog', {
         praise: praise,

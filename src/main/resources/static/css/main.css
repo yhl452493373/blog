@@ -54,7 +54,7 @@ body {
     padding-right: 10px;
 }
 
-.lay-blog .blog-seach {
+.lay-blog .blog-search {
     padding: 0 0 0 85px;
 }
 
@@ -68,7 +68,7 @@ body {
     min-height: auto;
 }
 
-.lay-blog .blog-seach .blog-sebox i {
+.lay-blog .blog-search .blog-sebox i {
     position: absolute;
     color: #fff;
     width: 25px;
@@ -80,9 +80,9 @@ body {
     cursor: pointer;
 }
 
-.lay-blog .blog-seach .blog-sebox input {
+.lay-blog .blog-search .blog-sebox input {
     padding-left: 50px;
-    padding-right: 163px;
+    padding-right: 115px;
     width: 367px;
     height: 45px;
     line-height: 45px;
@@ -92,18 +92,18 @@ body {
     color: #fff;
 }
 
-.lay-blog .blog-seach .blog-sebox input.layui-input:hover {
+.lay-blog .blog-search .blog-sebox input.layui-input:hover {
     border-color: rgba(255, 255, 255, .5) !important;
 }
 
-.lay-blog .blog-seach .search-area {
+.lay-blog .blog-search .search-area {
     margin-bottom: 0;
     margin-right: 0;
     line-height: normal;
     margin-top: -16px;
 }
 
-.lay-blog .blog-seach .search-area span {
+.lay-blog .blog-search .search-area span {
     color: #fff;
 }
 
@@ -176,17 +176,17 @@ body {
 }
 
 @media only screen and (max-width: 1100px) {
-    .lay-blog .blog-seach {
+    .lay-blog .blog-search {
         padding-left: 50px;
     }
 
-    .lay-blog .blog-seach input {
+    .lay-blog .blog-search input {
         width: 200px;
     }
 }
 
 @media only screen and (max-width: 980px) {
-    .lay-blog .blog-seach {
+    .lay-blog .blog-search {
         display: none;
     }
 

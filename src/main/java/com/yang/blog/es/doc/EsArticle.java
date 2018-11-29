@@ -7,6 +7,8 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.yang.blog.es.doc.base.EsBaseDoc;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Mapping;
 
 import java.io.Serializable;
@@ -15,7 +17,6 @@ import java.time.LocalDateTime;
 
 //index-传统数据库的数据库,必须全小写
 //type-传统数据库的表,必须全小写
-@Mapping(mappingPath = "es-mapping/EsArticleMapping.json")
 @Document(indexName = "blog", type = "article")
 public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
     /**
@@ -26,11 +27,13 @@ public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
     /**
      * 博文标题
      */
+    @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp", analyzer = "hanlp-index")
     private String title;
 
     /**
      * 博文内容
      */
+    @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp", analyzer = "hanlp-index")
     private String content;
 
     /**
@@ -53,7 +56,8 @@ public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
      */
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Field(type = FieldType.Text, fielddata = true)
     private LocalDateTime publishTime;
 
     /**
@@ -61,7 +65,7 @@ public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
      */
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifiedTime;
 
     /**

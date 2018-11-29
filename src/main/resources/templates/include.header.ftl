@@ -7,17 +7,16 @@
                 <img src="${contextPath}/static/images/logo-text.png" alt="" class="logo-text">
             </a>
         </h1>
-        <form class="layui-form blog-seach pull-left" action="">
+        <form id="searchForm" class="layui-form blog-search pull-left" action="${contextPath}/data/article/search" method="post">
             <div class="layui-form-item blog-sewrap">
-                <div class="layui-inline">
+                <div class="layui-inline" style="width: 250px">
                     <div class="layui-input-inline blog-sebox">
                         <i class="layui-icon layui-icon-search"></i>
-                        <input type="text" name="content" lay-verify="title" autocomplete="off" class="layui-input">
+                        <input type="text" name="content" lay-verify="title" autocomplete="off" class="layui-input" id="search">
                     </div>
                 </div>
                 <div class="layui-inline search-area">
-                    <input type="checkbox" name="searchTitle" value="true" title="标题" lay-skin="primary" checked>
-                    <input type="checkbox" name="searchContent" value="true" title="内容" lay-skin="primary">
+                    <input type="checkbox" name="includeContent" value="true" title="包括内容" lay-skin="primary" checked>
                 </div>
             </div>
         </form>

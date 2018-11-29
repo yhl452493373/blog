@@ -165,12 +165,12 @@ public class ArticleController implements BaseController {
     }
 
     @RequestMapping("/search")
-    public JSONResult search(String content, Boolean searchTitle, Boolean searchContent, Page<EsArticle> page) {
+    public JSONResult search(String content, @RequestParam(defaultValue = "false") Boolean includeContent, Page<EsArticle> page) {
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
-        if (searchTitle)
-            queryBuilder.should(QueryBuilders.matchQuery("title", content));
-        if (searchContent)
+        queryBuilder.should(QueryBuilders.matchQuery("title", content));
+        if (includeContent)
             queryBuilder.should(QueryBuilders.matchQuery("content", content));
+        page.setDesc("publishTime");
         service.esArticleService.search(page, queryBuilder);
         return JSONResult.init().success(QUERY_SUCCESS).data(page.getRecords()).count(page.getTotal());
     }

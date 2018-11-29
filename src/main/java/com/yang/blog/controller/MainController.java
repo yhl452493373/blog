@@ -55,7 +55,7 @@ public class MainController {
     @GetMapping("/logout")
     public String logout() {
         SecurityUtils.getSubject().logout();
-        return "redirect:/index";
+        return "redirect:/login";
     }
 
     @GetMapping({"/create", "/edit/{articleId}"})
