@@ -9,7 +9,6 @@ import com.yang.blog.es.doc.base.EsBaseDoc;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-import org.springframework.data.elasticsearch.annotations.Mapping;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -22,33 +21,37 @@ public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
     /**
      * 博文所属用户id
      */
+    @Field(index = false, type = FieldType.Keyword)
     private String userId;
 
     /**
      * 博文标题
      */
-    @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp", analyzer = "hanlp-index")
+    @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp-smart", analyzer = "hanlp-index")
     private String title;
 
     /**
      * 博文内容
      */
-    @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp", analyzer = "hanlp-index")
+    @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp-smart", analyzer = "hanlp-index")
     private String content;
 
     /**
      * 是否是草稿。单个用户最多只会有一个草稿。0-否，1-是
      */
+    @Field(index = false, type = FieldType.Integer)
     private Integer isDraft;
 
     /**
      * 阅读次数
      */
+    @Field(index = false, type = FieldType.Integer)
     private Integer readCount;
 
     /**
      * 点赞次数
      */
+    @Field(index = false, type = FieldType.Integer)
     private Integer praiseCount;
 
     /**
@@ -66,11 +69,13 @@ public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Field(type = FieldType.Text, fielddata = true)
     private LocalDateTime modifiedTime;
 
     /**
      * 博文状态。-1-删除，0-不可见，1-正常
      */
+    @Field(type = FieldType.Integer)
     private Integer available;
 
     public String getUserId() {

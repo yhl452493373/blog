@@ -166,9 +166,10 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl'], function (expor
     // end 图片遮罩
 
     $(document).on('keydown', '#search', function (e) {
-        e.preventDefault();
-        if (e.key === 'Enter')
+        if (e.key === 'Enter'){
+            e.preventDefault();
             search();
+        }
     });
 
     function search() {
