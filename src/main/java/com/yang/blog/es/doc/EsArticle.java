@@ -39,7 +39,7 @@ public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
     /**
      * 是否是草稿。单个用户最多只会有一个草稿。0-否，1-是
      */
-    @Field(index = false, type = FieldType.Integer)
+    @Field(type = FieldType.Integer)
     private Integer isDraft;
 
     /**

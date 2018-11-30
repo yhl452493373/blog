@@ -11,7 +11,7 @@
  Target Server Version : 50722
  File Encoding         : 65001
 
- Date: 27/11/2018 18:07:31
+ Date: 30/11/2018 18:11:58
 */
 
 SET NAMES utf8mb4;
@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `about`;
 CREATE TABLE `about` (
   `id` varchar(32) NOT NULL,
   `user_id` varchar(32) DEFAULT NULL COMMENT '关于所属用户id',
-  `content` blob COMMENT '关于的内容',
+  `content` text COMMENT '关于的内容',
   `created_time` datetime DEFAULT NULL COMMENT '关于的填写时间',
   `available` int(1) DEFAULT NULL COMMENT '关于状态。-1-删除，0-不可见，1-可见。此表中每个用户最多有1个是可见状态',
   PRIMARY KEY (`id`),
@@ -74,7 +74,7 @@ CREATE TABLE `article` (
   `id` varchar(32) NOT NULL,
   `user_id` varchar(32) DEFAULT NULL COMMENT '博文所属用户id',
   `title` varchar(50) DEFAULT NULL COMMENT '博文标题',
-  `content` blob COMMENT '博文内容',
+  `content` text COMMENT '博文内容',
   `is_draft` int(1) DEFAULT NULL COMMENT '是否是草稿。单个用户最多只会有一个草稿。0-否，1-是',
   `read_count` int(11) DEFAULT NULL COMMENT '阅读次数',
   `praise_count` int(11) DEFAULT NULL COMMENT '点赞次数',
@@ -134,7 +134,7 @@ CREATE TABLE `comment` (
   `article_id` varchar(32) DEFAULT NULL COMMENT '评论所属博文id',
   `user_name` varchar(32) DEFAULT NULL COMMENT '评论人名字，外部用户使用，和user_id二选一',
   `user_id` varchar(32) DEFAULT NULL COMMENT '用户id，内部用户使用，和user_name二选一',
-  `content` blob COMMENT '评论内容',
+  `content` text COMMENT '评论内容',
   `praise_count` int(11) DEFAULT NULL COMMENT '点赞次数',
   `created_time` datetime DEFAULT NULL COMMENT '评论时间',
   `available` int(1) DEFAULT NULL COMMENT '评论状态。-1-删除，0-不可见，1-正常',
@@ -172,7 +172,7 @@ CREATE TABLE `message` (
   `id` varchar(32) NOT NULL,
   `user_name` varchar(32) DEFAULT NULL COMMENT '留言人名字，外部用户使用，和user_id二选一',
   `user_id` varchar(32) DEFAULT NULL COMMENT '留言人id，内部用户使用。和user_name二选一',
-  `content` blob COMMENT '留言内容',
+  `content` text COMMENT '留言内容',
   `praise_count` int(11) DEFAULT NULL COMMENT '点赞次数',
   `created_time` datetime DEFAULT NULL COMMENT '留言时间',
   `available` int(1) DEFAULT NULL COMMENT '留言状态。-1-删除，0-不可见，1-正常',

@@ -166,7 +166,7 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl'], function (expor
     // end 图片遮罩
 
     $(document).on('keydown', '#search', function (e) {
-        if (e.key === 'Enter'){
+        if (e.key === 'Enter') {
             e.preventDefault();
             search();
         }
@@ -179,8 +179,42 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl'], function (expor
             type: $searchForm.attr('method'),
             data: $searchForm.serialize(),
             success: function (result) {
-                layer.alert(result.message + '请看控制台');
-                console.log(result);
+                if (result.count === 0) {
+                    layer.alert('未找到相关记录,换个词试试');
+                } else {
+                    layer.open({
+                        type: 1,
+                        title: '搜索结果 -- ' + $searchForm.get(0).content.value,
+                        area: ['800px', '600px'],
+                        skin: 'search-popup',
+                        content: function () {
+                            var resultHtml = ['<div class="search-item-box">'];
+                            result.data.forEach(function (item, index) {
+                                item.index = index;
+                                resultHtml.push(laytpl([
+                                    '<a href="' + contextPath + '/details/{{ d.id }}" target="_self">',
+                                    '   <div class="search-item">',
+                                    '      <div class="search-item-content layer-photos-demo layer-photos-demo{{ d.index }}">',
+                                    '          <h3>',
+                                    '              <span>{{ d.title }}</span>',
+                                    '          </h3>',
+                                    '          <h5>发布于：<span>{{ d.publishTime }}</span></h5>',
+                                    '          <div class="preview-content">{{ d.content }}</div>',
+                                    '      </div>',
+                                    '      <div class="search-item-info">',
+                                    '          <span>阅读{{ d.readCount }}</span>',
+                                    '          <span>点赞{{ d.praiseCount }}</span>',
+                                    '      </div>',
+                                    '   </div>',
+                                    '</a>'
+                                ].join('')).render(item));
+                            });
+                            resultHtml.push('</div>');
+                            return resultHtml.join('');
+                        }(),
+                        shadeClose: true
+                    })
+                }
             },
             error: function (result) {
                 layer.alert('搜索出错，请稍后再试');

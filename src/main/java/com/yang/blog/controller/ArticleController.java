@@ -166,7 +166,10 @@ public class ArticleController implements BaseController {
 
     @RequestMapping("/search")
     public JSONResult search(String content, @RequestParam(defaultValue = "false") Boolean includeContent, Page<EsArticle> page) {
+        if (StringUtils.isEmpty(content) || content.trim().length() < 2)
+            return JSONResult.init().error(QUERY_FAILED + "搜索关键词过短");
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
+        queryBuilder.must(QueryBuilders.termQuery("isDraft", Article.IS_DRAFT_FALSE));
         queryBuilder.should(QueryBuilders.matchQuery("title", content));
         if (includeContent)
             queryBuilder.should(QueryBuilders.matchQuery("content", content));
