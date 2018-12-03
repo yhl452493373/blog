@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.yang.blog.annotation.FieldUpdate;
 import com.yang.blog.es.doc.base.EsBaseDoc;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -16,12 +17,19 @@ import java.time.LocalDateTime;
 
 //index-传统数据库的数据库,必须全小写
 //type-传统数据库的表,必须全小写
-@Document(indexName = "blog", type = "article")
+@Document(indexName = "article", type = "doc")
 public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
+    /**
+     * article对应的type,用于过滤.
+     */
+    @FieldUpdate(exclude = true)
+    @Field(type = FieldType.Keyword)
+    private String docType = "blog";
+
     /**
      * 博文所属用户id
      */
-    @Field(index = false, type = FieldType.Keyword)
+    @Field(type = FieldType.Keyword)
     private String userId;
 
     /**
@@ -66,7 +74,7 @@ public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Field(type = FieldType.Text, fielddata = true)
+    @Field(type = FieldType.Keyword, fielddata = true)
     private LocalDateTime publishTime;
 
     /**
@@ -75,7 +83,7 @@ public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Field(type = FieldType.Text, fielddata = true)
+    @Field(type = FieldType.Keyword, fielddata = true)
     private LocalDateTime modifiedTime;
 
     /**
@@ -83,6 +91,14 @@ public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
      */
     @Field(type = FieldType.Integer)
     private Integer available;
+
+    public String getDocType() {
+        return docType;
+    }
+
+    public void setDocType(String docType) {
+        this.docType = docType;
+    }
 
     public String getUserId() {
         return userId;

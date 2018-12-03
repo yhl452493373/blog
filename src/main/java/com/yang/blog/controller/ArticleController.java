@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author User
@@ -203,36 +201,71 @@ public class ArticleController implements BaseController {
     private boolean relateArticleAndFile(Article article) {
         String fileIds = article.getFileIds();
         boolean fileResult = true, articleFileResult = true;
+        User user = ShiroUtils.getLoginUser();
+        //与当前文章相关文件关系表的查询条件
+        QueryWrapper<ArticleFile> articleQueryWrapper = new QueryWrapper<>();
+        articleQueryWrapper.eq("article_id", article.getId());
+        //传入的所有文件id
         List<String> fileIdList = CommonUtils.splitIds(fileIds);
         if (!fileIdList.isEmpty()) {
-            User user = ShiroUtils.getLoginUser();
-            fileResult = service.fileService.setAvailable(fileIdList, File.AVAILABLE);
-            if (fileResult) {
-                //将文件和文章关联
-                List<ArticleFile> articleFileList = new ArrayList<>();
-                fileIdList.forEach(fileId -> {
+            //数据库已有的对应关系
+            List<ArticleFile> oldArticleFileList = service.articleFileService.list(articleQueryWrapper);
+            List<String> oldFileIdList = CommonUtils.convertToFieldList(oldArticleFileList, "getFileId");
+            Set<String> addFileIdSet = new HashSet<>();
+            Set<String> deleteFileIdSet = new HashSet<>();
+            //获取需要删除的文件:旧文件id不存在于新的id集合中
+            oldFileIdList.forEach(oldFileId -> {
+                if (fileIdList.indexOf(oldFileId) == -1) {
+                    deleteFileIdSet.add(oldFileId);
+                }
+            });
+            //获取新增的文件
+            fileIdList.forEach(fileId -> {
+                if (oldFileIdList.indexOf(fileId) == -1)
+                    addFileIdSet.add(fileId);
+            });
+            //删除旧文件
+            if (!deleteFileIdSet.isEmpty()) {
+                articleQueryWrapper.in("file_id", deleteFileIdSet);
+                articleFileResult = service.articleFileService.remove(articleQueryWrapper);
+                FileUtils.delete(new ArrayList<>(deleteFileIdSet));
+                fileResult = service.fileService.removeByIds(deleteFileIdSet);
+            }
+            if (articleFileResult) {
+                //保存新文件
+                List<ArticleFile> newArticleFileList = new ArrayList<>();
+                addFileIdSet.forEach(fileId -> {
                     ArticleFile articleFile = new ArticleFile();
                     articleFile.setArticleId(article.getId());
                     articleFile.setFileId(fileId);
-                    articleFile.setCreatedTime(LocalDateTime.now());
                     articleFile.setUserId(user.getId());
-                    articleFileList.add(articleFile);
+                    articleFile.setCreatedTime(LocalDateTime.now());
+                    newArticleFileList.add(articleFile);
                 });
-                articleFileResult = service.articleFileService.saveBatch(articleFileList);
+                articleFileResult = service.articleFileService.saveBatch(newArticleFileList);
+                if (articleFileResult) {
+                    //将文件状态改为正常
+                    QueryWrapper<ArticleFile> articleFileQueryWrapper = new QueryWrapper<>();
+                    articleFileQueryWrapper.eq("article_id", article.getId());
+                    List<ArticleFile> savedFileList = service.articleFileService.list(articleFileQueryWrapper);
+                    List<String> savedFileIdList = CommonUtils.convertToFieldList(savedFileList, "getFileId");
+                    Collection<File> fileList = service.fileService.listByIds(savedFileIdList);
+                    fileList.forEach(file -> file.setAvailable(File.AVAILABLE));
+                    fileResult = service.fileService.updateBatchById(fileList);
+                }
             }
-        }
-
-        if (fileResult) {
-            //清理临时状态的文件.此一步操作稍作修改可作为定时任务一部分
-            QueryWrapper<ArticleFile> aboutQueryWrapper = new QueryWrapper<>();
-            aboutQueryWrapper.eq("article_id", article.getId());
-            List<ArticleFile> aboutFileList = service.articleFileService.list(aboutQueryWrapper);
-            List<String> aboutFileIdList = CommonUtils.convertToFieldList(aboutFileList, "getFileId");
-            QueryWrapper<File> fileQueryWrapper = new QueryWrapper<>();
-            fileQueryWrapper.in("id", aboutFileIdList);
-            fileQueryWrapper.eq("available", File.TEMP);
-            List<File> tempFileList = service.fileService.list(fileQueryWrapper);
-            articleFileResult = FileUtils.delete(CommonUtils.convertToIdList(tempFileList));
+        } else {
+            //如果新传入文件id为空,则删除所有对应文件
+            QueryWrapper<ArticleFile> articleFileQueryWrapper = new QueryWrapper<>();
+            articleFileQueryWrapper.eq("article_id", article.getId());
+            List<ArticleFile> savedFileList = service.articleFileService.list(articleFileQueryWrapper);
+            if(!savedFileList.isEmpty()){
+                List<String> savedFileIdList = CommonUtils.convertToFieldList(savedFileList, "getFileId");
+                FileUtils.delete(savedFileIdList);
+                fileResult = service.fileService.removeByIds(savedFileIdList);
+                //删除对应
+                articleFileResult = service.articleFileService.remove(articleQueryWrapper);
+            }
         }
         return fileResult && articleFileResult;
     }
