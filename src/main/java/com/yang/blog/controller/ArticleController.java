@@ -15,6 +15,8 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -168,13 +170,19 @@ public class ArticleController implements BaseController {
     public JSONResult search(String content, @RequestParam(defaultValue = "false") Boolean includeContent, Page<EsArticle> page) {
         if (StringUtils.isEmpty(content) || content.trim().length() < 2)
             return JSONResult.init().error(QUERY_FAILED + "搜索关键词过短");
+        //过滤
+        BoolQueryBuilder filterBuilder = QueryBuilders.boolQuery();
+        filterBuilder.filter(QueryBuilders.termQuery("isDraft", Article.IS_DRAFT_FALSE));
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
-        queryBuilder.must(QueryBuilders.termQuery("isDraft", Article.IS_DRAFT_FALSE));
+        //从title或者content中搜索
+        //由于article是从基础数据库同步的数据,所以数据是一样的
         queryBuilder.should(QueryBuilders.matchQuery("title", content));
         if (includeContent)
             queryBuilder.should(QueryBuilders.matchQuery("content", content));
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withFilter(filterBuilder).withQuery(queryBuilder).build();
+        //排序
         page.setDesc("publishTime");
-        service.esArticleService.search(page, queryBuilder);
+        service.esArticleService.search(page, searchQuery);
         return JSONResult.init().success(QUERY_SUCCESS).data(page.getRecords()).count(page.getTotal());
     }
 
