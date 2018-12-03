@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  * @author User
  * @since 2018-11-20
  */
-public class Article extends BaseEntity<Article> implements Serializable,Cloneable {
+public class Article extends BaseEntity<Article> implements Serializable, Cloneable {
     /**
      * 以下两个为是否草稿的常量
      */
@@ -37,6 +37,11 @@ public class Article extends BaseEntity<Article> implements Serializable,Cloneab
      * 博文内容
      */
     private String content;
+
+    /**
+     * 博文摘要
+     */
+    private String summary;
 
     /**
      * 是否是草稿。单个用户最多只会有一个草稿。0-否，1-是
@@ -102,6 +107,14 @@ public class Article extends BaseEntity<Article> implements Serializable,Cloneab
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     public Integer getIsDraft() {
@@ -174,6 +187,7 @@ public class Article extends BaseEntity<Article> implements Serializable,Cloneab
                 "userId=" + userId +
                 ", title=" + title +
                 ", content=" + content +
+                ", summary=" + summary +
                 ", isDraft=" + isDraft +
                 ", readCount=" + readCount +
                 ", praiseCount=" + praiseCount +

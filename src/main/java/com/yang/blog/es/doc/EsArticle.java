@@ -37,6 +37,12 @@ public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
     private String content;
 
     /**
+     * 博文摘要
+     */
+    @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp-smart", analyzer = "hanlp-index")
+    private String summary;
+
+    /**
      * 是否是草稿。单个用户最多只会有一个草稿。0-否，1-是
      */
     @Field(type = FieldType.Integer)
@@ -100,6 +106,14 @@ public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     public Integer getIsDraft() {

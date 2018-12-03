@@ -199,7 +199,7 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl'], function (expor
                                     '              <span>{{ d.title }}</span>',
                                     '          </h3>',
                                     '          <h5>发布于：<span>{{ d.publishTime }}</span></h5>',
-                                    '          <div class="preview-content">{{ d.content }}</div>',
+                                    '          <div class="preview-content">{{ d.summary }}</div>',
                                     '      </div>',
                                     '      <div class="search-item-info">',
                                     '          <span>阅读{{ d.readCount }}</span>',

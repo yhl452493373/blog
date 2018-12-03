@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
 import com.github.yhl452493373.utils.CommonUtils;
+import com.hankcs.hanlp.HanLP;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.*;
 import com.yang.blog.es.doc.EsArticle;
@@ -50,7 +51,9 @@ public class ArticleController implements BaseController {
         queryWrapper.setEntity(article);
         queryWrapper.orderByDesc("publish_time");
         service.articleService.page(page, queryWrapper);
-        jsonResult.success(QUERY_SUCCESS).data(page.getRecords()).count(page.getTotal());
+        jsonResult.success(QUERY_SUCCESS)
+                .data(page.getRecords(), JSONResult.Pattern.INCLUDE, "id", "title", "summary", "publishTime")
+                .count(page.getTotal());
         return jsonResult;
     }
 
@@ -72,6 +75,7 @@ public class ArticleController implements BaseController {
         article.setId(CommonUtils.uuid());
         article.setUserId(user.getId());
         article.setIsDraft(isDraft ? Article.IS_DRAFT_TRUE : Article.IS_DRAFT_FALSE);
+        article.setSummary(HanLP.getSummary(article.getContent(), 255));
         article.setReadCount(0);
         article.setPraiseCount(0);
         article.setCreatedTime(LocalDateTime.now());
@@ -121,6 +125,7 @@ public class ArticleController implements BaseController {
         if (StringUtils.isEmpty(article.getContent()))
             return jsonResult.error(UPDATE_FAILED + "内容不能为空");
         article.setModifiedTime(LocalDateTime.now());
+        article.setSummary(HanLP.getSummary(article.getContent(), 255));
         Article old = service.articleService.getById(article.getId());
         if (old == null)
             return jsonResult.error(UPDATE_FAILED + "记录id不正确");
@@ -183,7 +188,9 @@ public class ArticleController implements BaseController {
         //排序
         page.setDesc("publishTime");
         service.esArticleService.search(page, searchQuery);
-        return JSONResult.init().success(QUERY_SUCCESS).data(page.getRecords()).count(page.getTotal());
+        return JSONResult.init().success(QUERY_SUCCESS)
+                .data(page.getRecords(), JSONResult.Pattern.INCLUDE, "id", "title", "summary", "publishTime", "readCount", "praiseCount")
+                .count(page.getTotal());
     }
 
     /**

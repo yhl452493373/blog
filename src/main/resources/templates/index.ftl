@@ -62,7 +62,7 @@
                 <a href="${contextPath}/details/{{ d.id }}">{{ d.title }}</a>
             </h3>
             <h5>发布于：<span>{{ d.publishTime }}</span></h5>
-            <div class="preview-content">{{ d.content }}</div>
+            <div class="preview-content">{{ d.summary }}</div>
         </div>
         <div class="comment count">
             <a href="${contextPath}/comment/{{ d.id }}">评论</a>
