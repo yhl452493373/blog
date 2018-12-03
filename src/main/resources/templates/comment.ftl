@@ -39,7 +39,7 @@
                     <textarea name="content" class="layui-textarea" style="resize:none" placeholder="写点什么啊"></textarea>
                 </div>
                 <div class="btnbox">
-                    <a id="comment" class="layui-btn layui-btn-normal">确定</a>
+                    <a id="comment" class="layui-btn layui-btn-normal">写好了</a>
                 </div>
             </form>
         </div>

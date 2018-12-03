@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>文章-闲言轻博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<#include "include.resource.ftl">
+    <#include "include.resource.ftl">
     <style>
         .info-item {
             margin-bottom: 0 !important;
@@ -60,19 +60,20 @@
                 <a href="${contextPath}/comment/${article.id}" class="pull-right">写评论</a>
             </div>
             <div id="commentItemList"></div>
+            <div id="page"></div>
         </div>
     </div>
 </div>
 <#include "include.footer.ftl">
 <script type="text/html" id="commentItem">
     <div class="info-item">
-    <#--头像-->
-    <#--<img class="info-img" src="../res/static/images/info-img.png" alt="">-->
+        <#--头像-->
+        <#--<img class="info-img" src="../res/static/images/info-img.png" alt="">-->
         <div class="info-text" style="padding-left: 0">
             <p class="title count" style="margin-top: 0">
                 <span class="name">{{ d.userName }} 于 {{ d.createdTime }} 评论:</span>
                 <span class="info-img like" data-id="{{ d.id }}"><i class="layui-icon layui-icon-praise"></i><span
-                        class="count">{{ d.praiseCount }}</span></span>
+                            class="count">{{ d.praiseCount }}</span></span>
             </p>
             <p class="info-intr">{{ d.content }}</p>
         </div>
@@ -88,19 +89,45 @@
 
     layui.extend({
         blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
-    }).use(['blog', 'jquery', 'laytpl'], function () {
-        var $ = layui.jquery, laytpl = layui.laytpl;
+    }).use(['blog', 'jquery', 'laytpl', 'laypage'], function () {
+        var $ = layui.jquery, laytpl = layui.laytpl, laypage = layui.laypage;
         var blog = layui.blog;
 
-        function loadComment() {
+        /**
+         * 加载评论列表
+         * @param size 每页条数
+         * @param current 当前页数
+         */
+        function loadComment(size=10, current=1) {
             $.ajax({
                 url: contextPath + '/data/comment/list',
                 type: 'post',
                 data: {
-                    articleId: articleId
+                    articleId: articleId,
+                    size: size,
+                    current: current
                 },
                 success: function (result) {
                     if (result.status === 'success') {
+                        //渲染一个laypage实例
+                        laypage.render({
+                            elem: 'page' //注意，这里的 elem 是 ID，不用加 # 号
+                            , limit: size
+                            , count: result.count //数据总数，从服务端得到
+                            , curr: current
+                            , layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+                            , jump: function (obj, first) {
+                                //obj包含了当前分页的所有参数，比如：
+                                //console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                                //console.log(obj.limit); //得到每页显示的条数
+                                //首次不执行
+                                if (!first) {
+                                    //do something
+                                    loadComment(obj.limit, obj.curr);
+                                }
+                            }
+                        });
+                        $('#commentItemList > .info-item').remove();
                         if (result.data.length > 0) {
                             result.data.forEach(function (item) {
                                 renderData(item);

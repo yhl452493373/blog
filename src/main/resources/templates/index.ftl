@@ -145,7 +145,7 @@
          * @param size 每页条数
          * @param current 当前页数
          */
-        function loadArticle(size=1, current=1) {
+        function loadArticle(size=10, current=1) {
             $.ajax({
                 url: contextPath + '/data/article/list',
                 type: 'post',

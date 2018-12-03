@@ -46,7 +46,7 @@
                 </div>
             </form>
             <div class="item-btn">
-                <button class="layui-btn layui-btn-normal" id="leaveMessage">提交</button>
+                <button class="layui-btn layui-btn-normal" id="leaveMessage">写好了</button>
             </div>
 
             <div id="LAY-msg-box">
@@ -55,15 +55,15 @@
                 </div>
             </div>
 
-            <div id="test1" class="paging"></div>
+            <div id="page"></div>
         </div>
     </div>
 </div>
 <#include "include.footer.ftl">
 <script type="text/html" id="messageItem">
     <div class="info-item">
-    <#--头像,未处理-->
-    <#--<img class="info-img" src="${contextPath}/static/images/info-img.png" alt="">-->
+        <#--头像,未处理-->
+        <#--<img class="info-img" src="${contextPath}/static/images/info-img.png" alt="">-->
         <div class="info-text" style="padding-left: 0">
             <p class="title count">
                 <span class="name">{{ d.userName }} 于 {{ d.createdTime }} 留言:</span>
@@ -81,8 +81,8 @@
 <script>
     layui.extend({
         blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
-    }).use(['blog', 'jquery', 'laytpl'], function () {
-        var $ = layui.jquery, laytpl = layui.laytpl;
+    }).use(['blog', 'jquery', 'laytpl', 'laypage'], function () {
+        var $ = layui.jquery, laytpl = layui.laytpl, laypage = layui.laypage;
         var blog = layui.blog;
 
         $(document).on('click', '#leaveMessage', function (e) {
@@ -90,12 +90,40 @@
             leaveMessage();
         });
 
-        function loadMessage() {
+        /**
+         * 加载留言列表
+         * @param size 每页条数
+         * @param current 当前页数
+         */
+        function loadMessage(size=10, current=1) {
             $.ajax({
                 url: contextPath + '/data/message/list',
                 type: 'post',
+                data: {
+                    size: size,
+                    current: current
+                },
                 success: function (result) {
                     if (result.status === 'success') {
+                        //渲染一个laypage实例
+                        laypage.render({
+                            elem: 'page' //注意，这里的 elem 是 ID，不用加 # 号
+                            , limit: size
+                            , count: result.count //数据总数，从服务端得到
+                            , curr: current
+                            , layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+                            , jump: function (obj, first) {
+                                //obj包含了当前分页的所有参数，比如：
+                                //console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                                //console.log(obj.limit); //得到每页显示的条数
+                                //首次不执行
+                                if (!first) {
+                                    //do something
+                                    loadMessage(obj.limit, obj.curr);
+                                }
+                            }
+                        });
+                        $('#messageItemList > .info-item').remove();
                         if (result.data.length > 0) {
                             result.data.forEach(function (item) {
                                 renderData(item);
