@@ -34,33 +34,33 @@
             <p class="error">文章不存在</p>
         <#else>
             <form id="articleForm" class="layui-form article-form" action="${contextPath}/data/article/${articleEdit.id???string("update","add")}" method="post">
-                <div class="layui-form-item">
-                    <input name="title" type="text" class="layui-input create-title-input" placeholder="请输入文章标题" value="${articleEdit.title!}">
-                </div>
-                <div class="layui-form-item">
-                    <input type="hidden" id="id" name="id" value="${articleEdit.id!}">
-                    <input type="hidden" id="fileIds" name="fileIds" value="${articleEdit.fileIds!}">
-                    <textarea name="content" id="content" placeholder="文章内容" style="display: none;">${articleEdit.content!}</textarea>
-                </div>
-                <div class="layui-form-item create-tags-container">
-                    <label class="layui-form-label">文章标签:</label>
-                    <div class="layui-input-block">
-                        <div class="inputTags">
-                            <input type="hidden" name="tags" id="tags" value="${articleEdit.tags!}">
-                            <input type="text" id="inputTags" class="inputTagsInput" placeholder="输入标签">
-                        </div>
-                    </div>
-                </div>
+            <div class="layui-form-item">
+        <input name="title" type="text" class="layui-input create-title-input" placeholder="请输入文章标题" value="${articleEdit.title!}">
+            </div>
+            <div class="layui-form-item">
+        <input type="hidden" id="id" name="id" value="${articleEdit.id!}">
+        <input type="hidden" id="fileIds" name="fileIds" value="${articleEdit.fileIds!}">
+            <textarea name="content" id="content" placeholder="文章内容" style="display: none;">${articleEdit.content!}</textarea>
+            </div>
+            <div class="layui-form-item create-tags-container">
+        <label class="layui-form-label">文章标签:</label>
+            <div class="layui-input-block">
+            <div class="inputTags">
+        <input type="hidden" name="tags" id="tags" value="${articleEdit.tags!}">
+            <input type="text" id="inputTags" class="inputTagsInput" placeholder="输入标签">
+            </div>
+            </div>
+            </div>
             </form>
             <div class="create-button-group">
-                <#if !articleEdit.id??>
-                    <button id="publish" class="layui-btn layui-btn-normal">发布文章</button>
-                    <button id="draft" class="layui-btn layui-btn-normal">保存草稿</button>
-                    <button id="back" class="layui-btn create-button-back" onclick="window.history.go(-1)">返回</button>
-                <#else>
-                    <button id="publish" class="layui-btn layui-btn-normal">保存文章</button>
-                    <button id="back" class="layui-btn create-button-back" onclick="window.history.go(-1)">返回</button>
-                </#if>
+            <#if !articleEdit.id??>
+                <button id="publish" class="layui-btn layui-btn-normal">发布文章</button>
+                <button id="draft" class="layui-btn layui-btn-normal">保存草稿</button>
+                <button id="back" class="layui-btn create-button-back" onclick="window.history.go(-1)">返回</button>
+            <#else>
+                <button id="publish" class="layui-btn layui-btn-normal">保存文章</button>
+                <button id="back" class="layui-btn create-button-back" onclick="window.history.go(-1)">返回</button>
+            </#if>
             </div>
         </#if>
     </div>
@@ -123,6 +123,26 @@
                     $fileIds.val(fileIds.join(','));
                 }
             }
+            , uploadFiles: {
+                url: contextPath + '/data/file/upload?layEditUpload=true',
+                field: 'file',//上传时的文件参数字段名
+                accept: 'file',
+                acceptMime: 'file/*',
+                exts: '',
+                size: 0, //单位为KB
+                done: function (res) {//文件上传接口返回code为0时的回调
+                    //成功后的回调
+                    var $fileIds = $('#fileIds');
+                    var fileIds = $fileIds.val();
+                    if (fileIds.trim() === '') {
+                        fileIds = [];
+                    } else {
+                        fileIds = fileIds.split(',');
+                    }
+                    fileIds.push(res.data['fileId']);
+                    $fileIds.val(fileIds.join(','));
+                }
+            }
             //右键删除图片/视频时的回调参数，post到后台删除服务器文件等操作，
             //传递参数：
             //图片： imgpath --图片路径
@@ -153,7 +173,7 @@
             }
             , tool: [
                 'html', 'code', 'strong', 'italic', 'underline', 'del', 'addhr', '|', 'fontFomatt', 'colorpicker', 'face'
-                , '|', 'left', 'center', 'right', '|', 'link', 'unlink', 'image_alt', 'images', 'video', 'table'
+                , '|', 'left', 'center', 'right', '|', 'link', 'unlink', 'image_alt', 'images', 'video', 'attachment', 'table'
                 , '|', 'fullScreen'
             ]
         });

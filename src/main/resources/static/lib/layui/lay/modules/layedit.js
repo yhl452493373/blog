@@ -4,7 +4,7 @@
  @Author：贤心
  @Modifier:KnifeZ
  @License：MIT
- @Version: V18.11.27
+ @Version: V18.12.01
  */
 
 layui.define(['layer', 'form'], function (exports) {
@@ -63,6 +63,16 @@ layui.define(['layer', 'form'], function (exports) {
                 done: function (data) {//文件上传接口返回code为0时的回调
                 }
             }
+            , uploadFiles: {
+                url: '',
+                field: 'file',//上传时的文件参数字段名
+                accept: 'file',
+                acceptMime: 'file/*',
+                exts: '',
+                size: 1024 * 20, //单位为KB
+                done: function (data) {//文件上传接口返回code为0时的回调
+                }
+            }
             , calldel: {
                 url: '',
                 done: function (data) {
@@ -84,6 +94,7 @@ layui.define(['layer', 'form'], function (exports) {
                 , href: ''
                 , onmouseup: ''
             }
+            , facePath: layui.cache.dir
             , devmode: false
             , hideTool: []
             , height: 280 //默认高
@@ -116,6 +127,7 @@ layui.define(['layer', 'form'], function (exports) {
 
             , tool = function () {
             var node = [], hideTools = {};
+            set._elem = textArea;
             layui.each(set.hideTool, function (_, item) {
                 hideTools[item] = true;
             });
@@ -358,6 +370,11 @@ layui.define(['layer', 'form'], function (exports) {
                 }
                 range.deleteContents();
                 range.insertNode(elem);
+                setTimeout(function () {
+                    iframeDOM.documentElement.focus();
+                    iframeDOM.documentElement.getElementsByTagName("span")[0].focus()
+                    //elem.focus();
+                }, 10);
             }
         }
 
@@ -450,7 +467,7 @@ layui.define(['layer', 'form'], function (exports) {
                 }
                 //表情
                 , face: function (range) {
-                    face.call(this, function (img) {
+                    face.call(this, {facePath: set.facePath}, function (img) {
                         insertInline.call(iframeWin, 'img', {
                             src: img.src
                             , alt: img.alt
@@ -601,6 +618,10 @@ layui.define(['layer', 'form'], function (exports) {
                                     }
                                     , done: function (res, input, upload) {
                                         if (res.code == 0) {
+                                            res.data = res.data || {};
+                                            $("#imgsPrev img:last")[0].src = res.data.src;
+                                            uploadImage.done(res);
+                                        } else if (res.code == 2) {
                                             res.data = res.data || {};
                                             $("#imgsPrev img:last")[0].src = res.data.src;
                                             uploadImage.done(res);
@@ -914,7 +935,6 @@ layui.define(['layer', 'form'], function (exports) {
                                         }
                                     }
                                 });
-                                debugger;
                                 var theme = layero.find('select[name="theme"]');
                                 if (customTheme.video.title.length > 0 && theme.length > 0) {
                                     layero.find('select[name="theme"]').on('change mouseover', function () {
@@ -923,6 +943,119 @@ layui.define(['layer', 'form'], function (exports) {
                                 }
                             })
 
+                        }
+                    });
+                }
+                //上传附件
+                , attachment: function (range) {
+                    var that = this;
+                    layer.open({
+                        type: 1
+                        , id: 'fly-jie-image-upload'
+                        , title: '附件上传'
+                        , shade: 0.05
+                        , shadeClose: true
+                        , area: function () {
+                            if (/mobile/i.test(navigator.userAgent) || $(window).width() <= 485) {
+                                return ['90%']
+                            } else {
+                                return ['485px']
+                            }
+                        }()
+                        , offset: function () {
+                            if (/mobile/i.test(navigator.userAgent)) {
+                                return 'auto'
+                            } else {
+                                return '100px'
+                            }
+                        }()
+                        , skin: 'layui-layer-border'
+                        , content: ['<ul class="layui-form layui-form-pane" style="margin: 20px 20px 0 20px;">'
+                            , '<li class="layui-form-item">'
+                            , '<div class="layui-upload">'
+                            , '<button type="button" class="layui-btn" id="LayEdit_InsertFiles"><i class="layui-icon"></i>上传附件</button> '
+                            , '<blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;min-height: 116px">'
+                            , '  上传列表：<div class="layui-upload-list" id="filesPrev"></div>'
+                            , '</blockquote>'
+                            , '</div>'
+                            , '</li>'
+                            , '</ul>'].join('')
+                        , btn: ['确定', '取消']
+                        , btnAlign: 'c'
+                        , yes: function (index, layero) {
+                            if (layero.find('#filesPrev').find('a').length === 0) {
+                                layer.msg('请选择要上传的附件');
+                            } else {
+                                insertInline.call(iframeWin, 'p', {
+                                    text: layero.find('#filesPrev').html()
+                                }, range);
+                                layer.close(index);
+                            }
+                        }
+                        , success: function (layero, index) {
+                            layui.use('upload', function () {
+                                var upload = layui.upload;
+                                var uploadFiles = set.uploadFiles || {};
+                                var errorIndex = [];//上传接口出错的文件索引
+                                //执行实例
+                                upload.render({
+                                    elem: '#LayEdit_InsertFiles'
+                                    , url: uploadFiles.url
+                                    , field: uploadFiles.field
+                                    , method: uploadFiles.type
+                                    , accept: uploadFiles.accept
+                                    , acceptMime: uploadFiles.acceptMime
+                                    , exts: uploadFiles.exts
+                                    , size: uploadFiles.size
+                                    , multiple: true
+                                    , before: function (obj) {
+                                        obj.preview(function (index, file, result) {
+                                            //由于有时预览会在allDone之后回调，此时所有单个文件的error已经执行，即已经出错的文件id以有，因此需要判断此预览文件id是否是上传出错文件的id，不是才预览
+                                            if (errorIndex.indexOf(index) === -1)
+                                                $('#filesPrev').append('<a data-index="' + index + '" target="_blank" href="' + result + '" alt="' + file.name + '" >' + file.name + '</a>&nbsp;')
+                                        });
+                                    }
+                                    , allDone: function () {
+                                        //所有上传操作完成后，删除出错的文件
+                                        for (var i = 0; i < errorIndex.length; i++) {
+                                            $('#filesPrev').find('a[data-index="' + errorIndex[i] + '"]').remove();
+                                        }
+                                    }
+                                    , error: function (index, upload) {
+                                        //某文件上传接口返回错误时，将其错误index记录下来
+                                        errorIndex.push(index);
+                                    }
+                                    , done: function (res, input, upload) {
+                                        if (res.code == 0) {
+                                            res.data = res.data || {};
+                                            $("#filesPrev a:last")[0].href = res.data.src;
+                                            uploadFiles.done(res);
+                                        } else if (res.code == 2) {
+                                            layer.msg(res.msg || '上传失败');
+                                            res.data = res.data || {};
+                                            $("#filesPrev a:last")[0].href = res.data.src;
+                                        } else {
+                                            layer.msg(res.msg || '上传失败');
+                                        }
+
+                                        layero.find('.layui-upload-img').on('click', function () {
+                                            layer.confirm('是否删除该附件?', {icon: 3, title: '提示'}, function (index) {
+                                                var callDel = set.calldel;
+                                                if (callDel.url != "") {
+                                                    $.post(callDel.url, {"imgpath": this.src}, function (res) {
+                                                        $("#filesPrev a:last")[0].remove();
+                                                        callDel.done(res);
+                                                    })
+                                                } else {
+                                                    layer.msg("没有配置回调参数");
+                                                    $("#filesPrev a:last")[0].remove();
+                                                }
+                                                layer.close(index);
+                                            });
+                                        });
+                                    }
+                                });
+                            })
                         }
                     });
                 }
@@ -1013,7 +1146,33 @@ layui.define(['layer', 'form'], function (exports) {
                         iframeDOM.execCommand('formatBlock', false, "<" + value + ">");
                         setTimeout(function () {
                             body.focus();
-                        }, 100);
+                        }, 1);
+                    });
+                }
+                , fontfamily: function (range) {
+                    var alt = set.fontfamily || {
+                        code: ["font-family:宋体,SimSun", "font-family:微软雅黑,Microsoft YaHei", "font-family:黑体, SimHei", "font-family:楷体,楷体_GB2312, SimKai", "font-family:arial, helvetica,sans-serif", "font-family:arial black,avant garde", "font-family:times new roman"],
+                        text: ["宋体", "微软雅黑", "黑体", "楷体", "arial", "arial black", "times new roman"]
+                    }, arr = {}, arr2 = {};
+                    var codes = alt.code;
+                    var texts = alt.text;
+                    var fonts = function () {
+                        layui.each(codes, function (index, item) {
+                            arr[index] = item;
+                        });
+                        return arr;
+                    }();
+                    var fonttexts = function () {
+                        layui.each(texts, function (index, item) {
+                            arr2[index] = item;
+                        });
+                        return arr2;
+                    }();
+                    fontfamily.call(this, {fonts: fonts, texts: fonttexts}, function (value) {
+                        insertInline.call(iframeWin, 'span', {
+                            style: value
+                        }, range);
+
                     });
                 }
                 , customlink: function (range) {
@@ -1038,7 +1197,7 @@ layui.define(['layer', 'form'], function (exports) {
                 , anchors: function (range) {
                     anchors.call(body, {}, function (field) {
                         insertInline.call(iframeWin, 'a', {
-                            name: "#" + field.text
+                            name: field.text
                             , text: " "
                         }, range);
                     });
@@ -1271,6 +1430,194 @@ layui.define(['layer', 'form'], function (exports) {
                                 }
                             });
                             break;
+                        case "VIDEO":
+                            var customTheme = set.customTheme || {video: []}
+                                , customContent = "";
+                            if (customTheme.video.title.length > 0) {
+                                customContent = AddCustomThemes(customTheme.video.title, customTheme.video.content, customTheme.video.preview);
+                            }
+                            rbtnIndex = layer.open({
+                                type: 1
+                                , id: 'fly-jie-video-upload'
+                                , title: '视频管理'
+                                , shade: 0.05
+                                , shadeClose: true
+                                , area: function () {
+                                    if (/mobile/i.test(navigator.userAgent) || $(window).width() <= 485) {
+                                        return ['90%']
+                                    } else {
+                                        return ['485px']
+                                    }
+                                }()
+                                , offset: function () {
+                                    if (/mobile/i.test(navigator.userAgent)) {
+                                        return 'auto'
+                                    } else {
+                                        return '100px'
+                                    }
+                                }()
+                                , skin: 'layui-layer-border'
+                                , content: ['<ul class="layui-form layui-form-pane" style="margin: 20px 20px 0 20px">'
+                                    , '<li class="layui-form-item" style="position: relative">'
+                                    , '<button type="button" class="layui-btn" id="LayEdit_InsertVideo" style="width: 110px;position: relative;z-index: 10;"> <i class="layui-icon"></i>上传视频</button>'
+                                    , '<input type="text" name="video" value="' + event.target.src + '" placeholder="请选择文件" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" class="layui-input">'
+                                    , '</li>'
+                                    , '<li class="layui-form-item" style="position: relative">'
+                                    , '<button type="button" class="layui-btn" id="LayEdit_InsertImage" style="width: 110px;position: relative;z-index: 10;"> <i class="layui-icon"></i>上传封面</button>'
+                                    , '<input type="text" name="cover" value="' + event.target.poster + '" placeholder="请选择文件" style="position: absolute;width: 100%;padding-left: 120px;left: 0;top:0" class="layui-input">'
+                                    , '</li>'
+                                    , customContent
+                                    , '</ul>'].join('')
+                                , btn: ['确定', '取消', '<span style="color:red">删除</span>']
+                                , btnAlign: 'c'
+                                , yes: function (index, layero) {
+                                    var video = layero.find('input[name="video"]')
+                                        , cover = layero.find('input[name="cover"]')
+                                        , theme = layero.find('select[name="theme"]');
+                                    if (video.val() == '') {
+                                        layer.msg('请选择一个视频或输入视频地址')
+                                    } else {
+                                        var txt = '&nbsp;<video src="' + video.val() + '" poster="' + cover.val() + '" controls="controls" >您的浏览器不支持video播放</video>&nbsp;';
+                                        var custclass = '';
+                                        if (customTheme.video.title.length > 0 && theme.length > 0) {
+                                            //追加样式
+                                            custclass = theme[0].options[theme[0].selectedIndex].value;
+                                        }
+                                        insertInline.call(iframeWin, 'div', {
+                                            text: txt
+                                            , class: custclass
+                                        }, range);
+                                        layer.close(index);
+                                    }
+                                }
+                                , btn2: function (index, layero) {
+                                }
+                                , btn3: function (index, layero) {
+                                    var callDel = set.calldel;
+                                    if (callDel.url != "") {
+                                        $.post(callDel.url, {
+                                            "filepath": event.target.src,
+                                            "imgpath": event.target.poster
+                                        }, function (res) {
+                                            parentNode.remove();
+                                            callDel.done(res);
+                                        })
+                                    } else {
+                                        event.toElement.remove();
+                                    }
+                                    layer.close(index);
+                                }
+                                , success: function (layero, index) {
+                                    layui.use('upload', function (upload) {
+                                        var loding, video = layero.find('input[name="video"]'),
+                                            cover = layero.find('input[name="cover"]');
+                                        var upload = layui.upload;
+                                        var uploadImage = set.uploadImage || {};
+                                        var uploadfile = set.uploadVideo || {};
+                                        //执行实例
+                                        upload.render({
+                                            elem: '#LayEdit_InsertImage'
+                                            , url: uploadImage.url
+                                            , field: uploadImage.field
+                                            , accept: uploadImage.accept
+                                            , acceptMime: uploadImage.acceptMime
+                                            , exts: uploadImage.exts
+                                            , size: uploadImage.size
+                                            , before: function (obj) {
+                                                loding = layer.msg('文件上传中,请稍等哦', {icon: 16, shade: 0.3, time: 0});
+                                            }
+                                            , done: function (res, input, upload) {
+                                                layer.close(loding);
+                                                if (res.code == 0) {
+                                                    res.data = res.data || {};
+                                                    cover.val(res.data.src);
+                                                    uploadImage.done(res);
+                                                } else if (res.code == 2) {
+                                                    var curIndex = layer.open({
+                                                        type: 1
+                                                        ,
+                                                        anim: 2
+                                                        ,
+                                                        icon: 5
+                                                        ,
+                                                        title: '提示'
+                                                        ,
+                                                        area: ['390px', '260px']
+                                                        ,
+                                                        offset: 't'
+                                                        ,
+                                                        content: res.msg + "<div><img src='" + res.data.src + "' style='max-height:100px'/></div><p style='text-align:center'>确定使用该文件吗？</p>"
+                                                        ,
+                                                        btn: ['确定', '取消']
+                                                        ,
+                                                        yes: function () {
+                                                            res.data = res.data || {};
+                                                            cover.val(res.data.src);
+                                                            layer.close(curIndex);
+                                                        }
+                                                    });
+                                                } else {
+                                                    layer.msg(res.msg || "上传失败");
+                                                }
+                                            }
+                                        });
+                                        upload.render({
+                                            elem: '#LayEdit_InsertVideo'
+                                            , url: uploadfile.url
+                                            , field: uploadfile.field
+                                            , accept: uploadfile.accept
+                                            , acceptMime: uploadfile.acceptMime
+                                            , exts: uploadfile.exts
+                                            , size: uploadfile.size
+                                            , before: function (obj) {
+                                                loding = layer.msg('文件上传中,请稍等哦', {icon: 16, shade: 0.3, time: 0});
+                                            }
+                                            , done: function (res, input, upload) {
+                                                layer.close(loding);
+                                                if (res.code == 0) {
+                                                    res.data = res.data || {};
+                                                    video.val(res.data.src);
+                                                    uploadfile.done(res);
+                                                } else if (res.code == 2) {
+                                                    var curIndex = layer.open({
+                                                        type: 1
+                                                        ,
+                                                        anim: 2
+                                                        ,
+                                                        icon: 5
+                                                        ,
+                                                        title: '提示'
+                                                        ,
+                                                        area: ['390px', '260px']
+                                                        ,
+                                                        offset: 't'
+                                                        ,
+                                                        content: res.msg + "<div><video src='" + res.data.src + "' style='max-height:100px' controls='controls'/></div><p style='text-align:center'>确定使用该文件吗？</p>"
+                                                        ,
+                                                        btn: ['确定', '取消']
+                                                        ,
+                                                        yes: function () {
+                                                            res.data = res.data || {};
+                                                            video.val(res.data.src);
+                                                            layer.close(curIndex);
+                                                        }
+                                                    });
+                                                } else {
+                                                    layer.msg(res.msg || "上传失败");
+                                                }
+                                            }
+                                        });
+                                        var theme = layero.find('select[name="theme"]');
+                                        if (customTheme.video.title.length > 0 && theme.length > 0) {
+                                            layero.find('select[name="theme"]').on('change mouseover', function () {
+                                                layer.tips("<img src='" + theme[0].options[theme[0].selectedIndex].attributes["data-img"].value + "' />", this);
+                                            })
+                                        }
+                                    })
+
+                                }
+                            });
+                            break;
                         case "TD":
                             rbtnIndex = layer.open({
                                 type: 1
@@ -1317,13 +1664,11 @@ layui.define(['layer', 'form'], function (exports) {
                                     if (/mobile/i.test(navigator.userAgent)) {
                                         return 'auto'
                                     } else {
-                                        return [event.clientY + parent.document.getElementsByClassName('layui-layedit')[0].getBoundingClientRect().y + "px", function () {
-                                            var x = event.clientX;
-                                            if (x + 100 + 30 > parent.document.getElementsByClassName('layui-layedit')[0].getBoundingClientRect().width) {
-                                                x = x - 100 - 30;
-                                            }
-                                            return x + "px";
-                                        }];
+                                        var frame = set._elem.next().find('iframe').get(0);
+                                        return [
+                                            frame.offsetTop + event.clientY + parentNode.getBoundingClientRect().y + "px",
+                                            frame.offsetLeft + event.clientX + parentNode.getBoundingClientRect().x + 'px'
+                                        ];
                                     }
                                 }(),
                                 shade: function () {
@@ -1700,13 +2045,13 @@ layui.define(['layer', 'form'], function (exports) {
             }
         }
         //表情面板
-        , face = function (callback) {
+        , face = function (options, callback) {
             //表情库
             var faces = function () {
                 var alt = ["[微笑]", "[嘻嘻]", "[哈哈]", "[可爱]", "[可怜]", "[挖鼻]", "[吃惊]", "[害羞]", "[挤眼]", "[闭嘴]", "[鄙视]", "[爱你]", "[泪]", "[偷笑]", "[亲亲]", "[生病]", "[太开心]", "[白眼]", "[右哼哼]", "[左哼哼]", "[嘘]", "[衰]", "[委屈]", "[吐]", "[哈欠]", "[抱抱]", "[怒]", "[疑问]", "[馋嘴]", "[拜拜]", "[思考]", "[汗]", "[困]", "[睡]", "[钱]", "[失望]", "[酷]", "[色]", "[哼]", "[鼓掌]", "[晕]", "[悲伤]", "[抓狂]", "[黑线]", "[阴险]", "[怒骂]", "[互粉]", "[心]", "[伤心]", "[猪头]", "[熊猫]", "[兔子]", "[ok]", "[耶]", "[good]", "[NO]", "[赞]", "[来]", "[弱]", "[草泥马]", "[神马]", "[囧]", "[浮云]", "[给力]", "[围观]", "[威武]", "[奥特曼]", "[礼物]", "[钟]", "[话筒]", "[蜡烛]", "[蛋糕]"],
                     arr = {};
                 layui.each(alt, function (index, item) {
-                    arr[item] = layui.cache.dir + 'images/face/' + index + '.gif';
+                    arr[item] = options.facePath + 'images/face/' + index + '.gif';
                 });
                 return arr;
             }();
@@ -1835,7 +2180,8 @@ layui.define(['layer', 'form'], function (exports) {
         }
         , fontFomatt = function (options, callback) {
             fontFomatt.hide = fontFomatt.hide || function (e) {
-                if ($(e.target).attr('layedit-event') !== 'fontFomatt') {
+                if ($(e.target).attr('layedit-event') == 'fontFomatt' || $(e.target).attr('layedit-event') == 'fontfamily') {
+                } else {
                     layer.close(fontFomatt.index);
                 }
             }
@@ -1843,6 +2189,32 @@ layui.define(['layer', 'form'], function (exports) {
                 var content = [];
                 layui.each(options.fonts, function (index, item) {
                     content.push('<li title="' + options.fonts[index] + '" style="float: initial;width:100%;"><' + options.fonts[index] + '>' + options.texts[index] + '</' + options.fonts[index] + '></li>');
+                });
+                return '<ul class="layui-clear" style="width: max-content;">' + content.join('') + '</ul>';
+            }(), this, {
+                tips: 1
+                , time: 0
+                , skin: 'layui-box layui-util-face'
+                , success: function (layero, index) {
+                    layero.css({marginTop: -4, marginLeft: -10}).find('.layui-clear>li').on('click', function () {
+                        callback && callback(this.title, options.fonts);
+                        layer.close(index);
+                    });
+                    $(document).off('click', fontFomatt.hide).on('click', fontFomatt.hide);
+                }
+            });
+        }
+        , fontfamily = function (options, callback) {
+            fontFomatt.hide = fontFomatt.hide || function (e) {
+                if ($(e.target).attr('layedit-event') == 'fontFomatt' || $(e.target).attr('layedit-event') == 'fontfamily') {
+                } else {
+                    layer.close(fontFomatt.index);
+                }
+            }
+            fontFomatt.index = layer.tips(function () {
+                var content = [];
+                layui.each(options.fonts, function (index, item) {
+                    content.push('<li title="' + options.fonts[index] + '" style="float: initial;width:100%;' + options.fonts[index] + '"><' + options.fonts[index] + '>' + options.texts[index] + '</' + options.fonts[index] + '></li>');
                 });
                 return '<ul class="layui-clear" style="width: max-content;">' + content.join('') + '</ul>';
             }(), this, {
@@ -2001,6 +2373,10 @@ layui.define(['layer', 'form'], function (exports) {
             customlink: '<i class="layui-icon layedit-tool-customlink" title="添加自定义链接" layedit-event="customlink" style="font-size:18px">&#xe606;</i>'
             ,
             table: '<i class="layui-icon layedit-tool-table" title="插入表格" layedit-event="table" style="font-size:18px">&#xe62d;</i>'
+            ,
+            attachment: '<i class="layui-icon layedit-tool-attachment" title="插入附件" layedit-event="attachment" style="font-size:18px">&#xe62f;</i>'
+            ,
+            fontfamily: '<i class="layui-icon layedit-tool-fontfamily" title="字体大小" layedit-event="fontfamily" style="font-size:18px">&#xe642;</i>'
             ,
             help: '<i class="layui-icon layedit-tool-help" title="帮助" layedit-event="help">&#xe607;</i>'
         }
