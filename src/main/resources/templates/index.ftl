@@ -19,9 +19,7 @@
     <div class="container-wrap">
         <div class="container">
             <div id="articleItemList" class="contar-wrap"></div>
-            <div class="item-btn">
-                <button class="layui-btn layui-btn-normal">下一页</button>
-            </div>
+            <div id="page"></div>
         </div>
     </div>
 <#include "include.footer.ftl">
@@ -78,8 +76,8 @@
 <script>
     layui.extend({
         blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
-    }).use(['blog', 'jquery', 'layer', 'laytpl'], function () {
-        var $ = layui.jquery, layer = layui.layer, laytpl = layui.laytpl;
+    }).use(['blog', 'jquery', 'layer', 'laytpl', 'laypage'], function () {
+        var $ = layui.jquery, layer = layui.layer, laytpl = layui.laytpl, laypage = layui.laypage;
         var blog = layui.blog, logined = <@shiro.user>true</@shiro.user><@shiro.guest>false</@shiro.guest>;
 
         $(document).on('click.announcement', '#editAnnouncement', function (e) {
@@ -142,15 +140,41 @@
             });
         }
 
-        function loadArticle() {
+        /**
+         * 加载文章列表
+         * @param size 每页条数
+         * @param current 当前页数
+         */
+        function loadArticle(size=1, current=1) {
             $.ajax({
                 url: contextPath + '/data/article/list',
                 type: 'post',
                 data: {
-                    isDraft: 0//查询非草稿文章
+                    isDraft: 0,//查询非草稿文章
+                    size: size,
+                    current: current
                 },
                 success: function (result) {
                     if (result.status === 'success') {
+                        //渲染一个laypage实例
+                        laypage.render({
+                            elem: 'page' //注意，这里的 elem 是 ID，不用加 # 号
+                            , limit: size
+                            , count: result.count //数据总数，从服务端得到
+                            , curr: current
+                            , layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+                            , jump: function (obj, first) {
+                                //obj包含了当前分页的所有参数，比如：
+                                //console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                                //console.log(obj.limit); //得到每页显示的条数
+                                //首次不执行
+                                if (!first) {
+                                    //do something
+                                    loadArticle(obj.limit, obj.curr);
+                                }
+                            }
+                        });
+                        $('#articleItemList > .item').remove();
                         if (result.data.length > 0) {
                             result.data.forEach(function (item, index) {
                                 item.index = index + 1;

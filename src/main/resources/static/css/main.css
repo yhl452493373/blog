@@ -614,3 +614,50 @@ body {
 }
 
 /*end create*/
+
+/*start page*/
+#page{
+    background: #fff;
+    text-align: center;
+}
+
+.layui-laypage a:hover{
+    color: #1e9fff;
+}
+
+.layui-laypage .layui-laypage-curr .layui-laypage-em{
+    background-color: #1e9fff;
+    border-radius: 0;
+}
+
+.layui-laypage input:focus, .layui-laypage select:focus{
+    border-color: #1e9fff!important;
+}
+
+.layui-laypage a, .layui-laypage span{
+    margin: 0 -1px 0 0;
+    display: inline-block;
+    height: 30px;
+    box-sizing: border-box;
+    line-height: 30px;
+    border-radius: 2px;
+}
+
+.layui-laypage select{
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 0;
+    background: #fff;
+    vertical-align: top;
+}
+
+.layui-laypage .layui-laypage-limits, .layui-laypage .layui-laypage-refresh{
+    border: 1px solid #e2e2e2;
+}
+
+.layui-laypage .layui-laypage-refresh{
+    display: inline-block;
+    width: 30px;
+}
+/*end page*/
