@@ -20,12 +20,14 @@ import java.time.LocalDateTime;
 //type-传统数据库的表,必须全小写
 @Document(indexName = "article", type = "doc")
 public class EsArticle extends EsBaseDoc<EsArticle, Article> implements Serializable {
+    public static final String DOC_TYPE = "blog";
+
     /**
-     * article对应的type,用于过滤.
+     * article对应的type,用于过滤.注意,如果有和这个字段重名的,需要单独取名字.如果用到了logstash同步mysql数据到es,此处名字则需要和logstash中的type一致
      */
     @FieldNotUpdate
     @Field(type = FieldType.Keyword)
-    private String docType = "blog";
+    private String type = DOC_TYPE;
 
     /**
      * 博文所属用户id
@@ -93,12 +95,15 @@ public class EsArticle extends EsBaseDoc<EsArticle, Article> implements Serializ
     @Field(type = FieldType.Integer)
     private Integer available;
 
-    public String getDocType() {
-        return docType;
+    public String getType() {
+        return type;
     }
 
-    public void setDocType(String docType) {
-        this.docType = docType;
+    /**
+     * 此字段用于es的文档分类,更新时不需要更新
+     */
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getUserId() {

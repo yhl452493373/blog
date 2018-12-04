@@ -14,13 +14,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <code-generator.version>1.1.7</code-generator.version>
     </properties>
 
     <parent>
         <groupId>com.github.yhl452493373</groupId>
         <artifactId>code-generator-dependencies</artifactId>
-        <version>1.1.6</version>
+        <version>1.1.7</version>
     </parent>
 
     <dependencies>

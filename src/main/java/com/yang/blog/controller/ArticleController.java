@@ -176,6 +176,7 @@ public class ArticleController implements BaseController {
         //过滤
         BoolQueryBuilder filterBuilder = QueryBuilders.boolQuery();
         filterBuilder.filter(QueryBuilders.termQuery("isDraft", Article.IS_DRAFT_FALSE));
+        filterBuilder.filter(QueryBuilders.termQuery("type", EsArticle.DOC_TYPE));
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
         //从title或者content中搜索
         //由于article是从基础数据库同步的数据,所以数据是一样的
@@ -204,6 +205,7 @@ public class ArticleController implements BaseController {
         User user = ShiroUtils.getLoginUser();
         //与当前文章相关文件关系表的查询条件
         QueryWrapper<ArticleFile> articleQueryWrapper = new QueryWrapper<>();
+        articleQueryWrapper.eq("user_id", user.getId());
         articleQueryWrapper.eq("article_id", article.getId());
         //传入的所有文件id
         List<String> fileIdList = CommonUtils.splitIds(fileIds);
@@ -246,6 +248,7 @@ public class ArticleController implements BaseController {
                 if (articleFileResult) {
                     //将文件状态改为正常
                     QueryWrapper<ArticleFile> articleFileQueryWrapper = new QueryWrapper<>();
+                    articleFileQueryWrapper.eq("user_id", user.getId());
                     articleFileQueryWrapper.eq("article_id", article.getId());
                     List<ArticleFile> savedFileList = service.articleFileService.list(articleFileQueryWrapper);
                     List<String> savedFileIdList = CommonUtils.convertToFieldList(savedFileList, "getFileId");
@@ -257,6 +260,7 @@ public class ArticleController implements BaseController {
         } else {
             //如果新传入文件id为空,则删除所有对应文件
             QueryWrapper<ArticleFile> articleFileQueryWrapper = new QueryWrapper<>();
+            articleFileQueryWrapper.eq("user_id", user.getId());
             articleFileQueryWrapper.eq("article_id", article.getId());
             List<ArticleFile> savedFileList = service.articleFileService.list(articleFileQueryWrapper);
             if (!savedFileList.isEmpty()) {
@@ -288,9 +292,23 @@ public class ArticleController implements BaseController {
         relateTagName.remove("");
         tagNameList = new ArrayList<>(relateTagName);
 
+        if (tagNameList.isEmpty()) {
+            QueryWrapper<ArticleTag> removeQueryWrapper = new QueryWrapper<>();
+            removeQueryWrapper.eq("user_id", user.getId());
+            removeQueryWrapper.eq("article_id", article.getId());
+            service.articleTagService.remove(removeQueryWrapper);
+        }
+
+        QueryWrapper<Tag> oldTagQueryWrapper = new QueryWrapper<>();
+        oldTagQueryWrapper.eq("user_id", user.getId());
+        oldTagQueryWrapper.in("name", tagNameList);
+        List<Tag> oldTagList = service.tagService.list(oldTagQueryWrapper);
+
         QueryWrapper<ArticleTag> articleTagQueryWrapper = new QueryWrapper<>();
         articleTagQueryWrapper.eq("user_id", user.getId());
         articleTagQueryWrapper.eq("article_id", article.getId());
+        articleTagQueryWrapper.notIn("tag_id", CommonUtils.convertToIdList(oldTagList));
+
         result = service.articleTagService.remove(articleTagQueryWrapper);
         if (!result)
             return false;
@@ -327,21 +345,28 @@ public class ArticleController implements BaseController {
             if (!result)
                 return false;
         }
-        //所有新增标签保存后,查询问斩关联的对应标签记录
+        //所有新增标签保存后,查询文章关联的对应标签记录
         tagQueryWrapper = new QueryWrapper<>();
         tagQueryWrapper.eq("user_id", user.getId());
         tagQueryWrapper.in("name", relateTagName);
         tagList = service.tagService.list(tagQueryWrapper);
-        List<ArticleTag> articleTagList = new ArrayList<>();
+        articleTagQueryWrapper = new QueryWrapper<>();
+        articleTagQueryWrapper.eq("user_id", user.getId());
+        articleTagQueryWrapper.eq("article_id", article.getId());
+        List<ArticleTag> articleTagList = service.articleTagService.list(articleTagQueryWrapper);
+        List<String> relatedTagIdList = CommonUtils.convertToFieldList(articleTagList, "getTagId");
+        List<ArticleTag> newArticleTagList = new ArrayList<>();
         //标签与文章关联
         tagList.forEach(tag -> {
-            ArticleTag articleTag = new ArticleTag();
-            articleTag.setUserId(user.getId());
-            articleTag.setArticleId(article.getId());
-            articleTag.setCreatedTime(LocalDateTime.now());
-            articleTag.setTagId(tag.getId());
-            articleTagList.add(articleTag);
+            if (relatedTagIdList.indexOf(tag.getId()) == -1) {
+                ArticleTag articleTag = new ArticleTag();
+                articleTag.setUserId(user.getId());
+                articleTag.setArticleId(article.getId());
+                articleTag.setCreatedTime(LocalDateTime.now());
+                articleTag.setTagId(tag.getId());
+                newArticleTagList.add(articleTag);
+            }
         });
-        return service.articleTagService.saveBatch(articleTagList);
+        return service.articleTagService.saveBatch(newArticleTagList);
     }
 }
