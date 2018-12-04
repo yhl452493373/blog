@@ -160,6 +160,7 @@ public class ArticleController implements BaseController {
             result = service.articleService.update(article, updateWrapper);
             Article old = service.articleService.getById(article.getId());
             old.setAvailable(Article.DELETE);
+            old.setModifiedTime(LocalDateTime.now());
             service.esArticleService.save(new EsArticle().update(true, old, EsArticle.class));
         } else {
             QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
