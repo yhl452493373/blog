@@ -76,7 +76,7 @@ public class EsArticle extends EsBaseDoc<EsArticle, Article> implements Constant
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Field(type = FieldType.Keyword, fielddata = true)
+    @Field(type = FieldType.Keyword)
     private LocalDateTime publishTime;
 
     /**
@@ -85,7 +85,7 @@ public class EsArticle extends EsBaseDoc<EsArticle, Article> implements Constant
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Field(type = FieldType.Keyword, fielddata = true)
+    @Field(type = FieldType.Keyword)
     private LocalDateTime modifiedTime;
 
     /**

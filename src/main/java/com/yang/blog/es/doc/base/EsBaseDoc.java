@@ -21,7 +21,7 @@ public abstract class EsBaseDoc<Doc, Entity> implements EsBase<Doc, Entity>, Clo
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Field(type = FieldType.Keyword, fielddata = true)
+    @Field(type = FieldType.Keyword)
     protected LocalDateTime createdTime;
 
     public String getId() {
