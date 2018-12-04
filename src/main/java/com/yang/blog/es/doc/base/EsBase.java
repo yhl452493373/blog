@@ -7,6 +7,8 @@ import java.lang.reflect.Field;
 
 @SuppressWarnings({"Duplicates", "unchecked"})
 public interface EsBase<Doc, Entity> extends Base<Entity> {
+    String DOC_TYPE = "blog";
+
     /**
      * 从传统数据库的对象获取数据并set到es数据库的对象.注意,默认使用的反射,字段过多时,此法效率较低,建议按照需要在每个实体中重写该方法
      *

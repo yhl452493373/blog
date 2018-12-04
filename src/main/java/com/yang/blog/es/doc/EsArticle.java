@@ -21,8 +21,6 @@ import java.time.LocalDateTime;
 //type-传统数据库的表,必须全小写
 @Document(indexName = "article", type = "doc")
 public class EsArticle extends EsBaseDoc<EsArticle, Article> implements Constant, Serializable {
-    public static final String DOC_TYPE = "blog";
-
     /**
      * article对应的type,用于过滤.注意,如果有和这个字段重名的,需要单独取名字.如果用到了logstash同步mysql数据到es,此处名字则需要和logstash中的type一致
      */
