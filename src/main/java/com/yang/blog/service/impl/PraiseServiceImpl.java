@@ -1,9 +1,9 @@
 package com.yang.blog.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yang.blog.entity.Praise;
 import com.yang.blog.mapper.PraiseMapper;
 import com.yang.blog.service.PraiseService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

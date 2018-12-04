@@ -1,17 +1,18 @@
 package com.yang.blog.controller;
-import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
-
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
- *
  * @author User
  * @since 2018-11-20
  */
@@ -24,8 +25,8 @@ public class TagController {
     /**
      * 分页查询数据
      *
-     * @param page  分页信息
-     * @param tag 查询对象
+     * @param page 分页信息
+     * @param tag  查询对象
      * @return 查询结果
      */
     @RequestMapping("/list")
@@ -72,7 +73,7 @@ public class TagController {
         //TODO 根据需要设置需要更新的列，字段值从tag获取。以下注释部分为指定更新列示例，使用时需要注释或删除updateWrapper.setEntity(tag);
         //updateWrapper.set("数据库字段1","字段值");
         //updateWrapper.set("数据库字段2","字段值");
-        updateWrapper.eq("表示主键的字段","tag中表示主键的值");
+        updateWrapper.eq("表示主键的字段", "tag中表示主键的值");
         boolean result = service.tagService.update(tag, updateWrapper);
         if (result)
             jsonResult.success();
@@ -84,7 +85,7 @@ public class TagController {
     /**
      * 删除数据
      *
-     * @param tag 删除对象
+     * @param tag     删除对象
      * @param logical 是否逻辑删除。默认false，使用物理删除
      * @return 删除结果
      */
@@ -95,8 +96,8 @@ public class TagController {
         if (logical) {
             UpdateWrapper<Tag> updateWrapper = new UpdateWrapper<>();
             //TODO 根据需要修改表示逻辑删除的列和值。
-            updateWrapper.set("表示逻辑删除的字段","表示逻辑删除的值");
-            result = service.tagService.update(tag,updateWrapper);
+            updateWrapper.set("表示逻辑删除的字段", "表示逻辑删除的值");
+            result = service.tagService.update(tag, updateWrapper);
         } else {
             QueryWrapper<Tag> queryWrapper = new QueryWrapper<>();
             queryWrapper.setEntity(tag);

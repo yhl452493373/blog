@@ -30,7 +30,7 @@ public class DataSourceConfig {
         DataSourceProperties dataSourceProperties = null;
         if (dataSourceGroup.getDataSourceProperties() != null) {
             dataSourceProperties = dataSourceGroup.getDataSourceProperties();
-        } 
+        }
         if (dataSourceProperties == null)
             throw new NullPointerException("数据源未配置");
         return dataSourceProperties;

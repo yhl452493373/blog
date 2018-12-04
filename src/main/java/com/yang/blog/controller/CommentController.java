@@ -1,19 +1,20 @@
 package com.yang.blog.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.yang.blog.shiro.ShiroUtils;
-import org.apache.shiro.SecurityUtils;
-import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
-
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.Comment;
+import com.yang.blog.shiro.ShiroUtils;
+import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 
@@ -41,8 +42,8 @@ public class CommentController implements BaseController {
         queryWrapper.setEntity(comment);
         queryWrapper.orderByDesc("created_time");
         service.commentService.page(page, queryWrapper);
-        page.getRecords().forEach(record->{
-            if(StringUtils.isNotEmpty(record.getUserId()))
+        page.getRecords().forEach(record -> {
+            if (StringUtils.isNotEmpty(record.getUserId()))
                 record.setUserName(service.userService.findUsernameById(record.getUserId()));
         });
         jsonResult.success().data(page.getRecords()).count(page.getTotal());

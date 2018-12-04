@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.yang.blog.annotation.FieldUpdate;
+import com.yang.blog.annotation.FieldNotUpdate;
+import com.yang.blog.entity.Article;
 import com.yang.blog.es.doc.base.EsBaseDoc;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -18,11 +19,11 @@ import java.time.LocalDateTime;
 //index-传统数据库的数据库,必须全小写
 //type-传统数据库的表,必须全小写
 @Document(indexName = "article", type = "doc")
-public class EsArticle extends EsBaseDoc<EsArticle> implements Serializable {
+public class EsArticle extends EsBaseDoc<EsArticle, Article> implements Serializable {
     /**
      * article对应的type,用于过滤.
      */
-    @FieldUpdate(exclude = true)
+    @FieldNotUpdate
     @Field(type = FieldType.Keyword)
     private String docType = "blog";
 

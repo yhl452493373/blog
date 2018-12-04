@@ -38,6 +38,7 @@ public class Announcement extends BaseEntity<Announcement> implements Serializab
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
     public String getContent() {
         return content;
     }
@@ -45,6 +46,7 @@ public class Announcement extends BaseEntity<Announcement> implements Serializab
     public void setContent(String content) {
         this.content = content;
     }
+
     public Integer getAvailable() {
         return available;
     }
@@ -56,9 +58,9 @@ public class Announcement extends BaseEntity<Announcement> implements Serializab
     @Override
     public String toString() {
         return "Announcement{" +
-        "userId=" + userId +
-        ", content=" + content +
-        ", available=" + available +
-        "}";
+                "userId=" + userId +
+                ", content=" + content +
+                ", available=" + available +
+                "}";
     }
 }

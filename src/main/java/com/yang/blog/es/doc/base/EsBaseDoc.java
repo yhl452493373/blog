@@ -11,7 +11,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.time.LocalDateTime;
 
 @SuppressWarnings({"unchecked", "WeakerAccess"})
-public abstract class EsBaseDoc<Doc> implements EsBase<Doc>, Cloneable {
+public abstract class EsBaseDoc<Doc, Entity> implements EsBase<Doc, Entity>, Cloneable {
     @Field(type = FieldType.Keyword)
     protected String id;
 

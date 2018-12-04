@@ -55,7 +55,7 @@ public class PraiseController {
             service.commentService.updateById(comment);
             comment = service.commentService.getById(comment.getId());
             countJSON.put("praiseCount", comment.getPraiseCount());
-        }else if (StringUtils.isNotEmpty(praise.getMessageId())) {
+        } else if (StringUtils.isNotEmpty(praise.getMessageId())) {
             Message message = service.messageService.getById(praise.getMessageId());
             message.setPraiseCount(message.getPraiseCount() + 1);
             service.messageService.updateById(message);

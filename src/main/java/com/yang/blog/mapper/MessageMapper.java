@@ -1,7 +1,7 @@
 package com.yang.blog.mapper;
 
-import com.yang.blog.entity.Message;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.yang.blog.entity.Message;
 
 /**
  * <p>

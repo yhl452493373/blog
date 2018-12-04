@@ -41,8 +41,8 @@ public class MessageController implements BaseController {
         queryWrapper.setEntity(message);
         queryWrapper.orderByDesc("created_time");
         service.messageService.page(page, queryWrapper);
-        page.getRecords().forEach(record->{
-            if(StringUtils.isNotEmpty(record.getUserId()))
+        page.getRecords().forEach(record -> {
+            if (StringUtils.isNotEmpty(record.getUserId()))
                 record.setUserName(service.userService.findUsernameById(record.getUserId()));
         });
         jsonResult.success().data(page.getRecords()).count(page.getTotal());

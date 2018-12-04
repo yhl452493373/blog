@@ -7,5 +7,5 @@ import com.yang.blog.es.service.base.EsBaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EsArticleServiceImpl extends EsBaseServiceImpl<EsArticle,String, EsArticleDao> implements EsArticleService {
+public class EsArticleServiceImpl extends EsBaseServiceImpl<EsArticle, String, EsArticleDao> implements EsArticleService {
 }

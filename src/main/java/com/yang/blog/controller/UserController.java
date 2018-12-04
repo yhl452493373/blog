@@ -106,7 +106,7 @@ public class UserController {
             json.error("未知错误，请联系管理员");
         }
         if (!subject.isAuthenticated()) {
-            logger.info("{}->登录失败",user.getUsername());
+            logger.info("{}->登录失败", user.getUsername());
         } else {
             logger.info("{}->登录成功", user.getUsername());
             json.success("登录成功");

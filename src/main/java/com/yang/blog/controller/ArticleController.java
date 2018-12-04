@@ -97,7 +97,7 @@ public class ArticleController implements BaseController {
             article.setAvailable(Article.AVAILABLE);
             service.articleService.updateById(article);
             //同步写入到es数据库
-            service.esArticleService.save(new EsArticle().update(true, article));
+            service.esArticleService.save(new EsArticle().update(true, article, EsArticle.class));
             //添加博客成功,返回其id作为data的值,通过id跳转
             jsonResult.success(ADD_SUCCESS).data(article.getId());
         } else {
@@ -132,7 +132,7 @@ public class ArticleController implements BaseController {
                 articleFileResult = relateArticleAndFile(old),
                 articleTagResult = relateArticleAndTag(old);
         //将数据同步更新到es中
-        service.esArticleService.save(new EsArticle().update(true, old));
+        service.esArticleService.save(new EsArticle().update(true, old, EsArticle.class));
         if (articleResult && articleFileResult && articleTagResult) {
             jsonResult.success(UPDATE_SUCCESS).data(article.getId());
         } else {
@@ -259,7 +259,7 @@ public class ArticleController implements BaseController {
             QueryWrapper<ArticleFile> articleFileQueryWrapper = new QueryWrapper<>();
             articleFileQueryWrapper.eq("article_id", article.getId());
             List<ArticleFile> savedFileList = service.articleFileService.list(articleFileQueryWrapper);
-            if(!savedFileList.isEmpty()){
+            if (!savedFileList.isEmpty()) {
                 List<String> savedFileIdList = CommonUtils.convertToFieldList(savedFileList, "getFileId");
                 FileUtils.delete(savedFileIdList);
                 fileResult = service.fileService.removeByIds(savedFileIdList);

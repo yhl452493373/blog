@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
-    public JSONObject defaultHandler(HttpServletRequest request , Exception e) {
+    public JSONObject defaultHandler(HttpServletRequest request, Exception e) {
         Boolean layEditUpload = Boolean.valueOf(request.getParameter("layEditUpload"));
         JSONResult jsonResult = JSONResult.init();
         JSONObject jsonObject = new JSONObject();

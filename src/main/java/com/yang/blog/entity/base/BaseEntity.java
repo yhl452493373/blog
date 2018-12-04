@@ -1,5 +1,7 @@
 package com.yang.blog.entity.base;
 
+import com.yang.blog.annotation.FieldNotUpdate;
+
 import java.time.LocalDateTime;
 
 /**
@@ -13,11 +15,13 @@ public abstract class BaseEntity<Entity> implements Base<Entity>, Constant, Clon
     /**
      * 记录的id
      */
+    @FieldNotUpdate
     private String id;
 
     /**
      * 记录创建时间
      */
+    @FieldNotUpdate
     private LocalDateTime createdTime;
 
     public String getId() {
