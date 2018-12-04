@@ -11,7 +11,7 @@
  Target Server Version : 50722
  File Encoding         : 65001
 
- Date: 30/11/2018 18:11:58
+ Date: 04/12/2018 16:22:06
 */
 
 SET NAMES utf8mb4;
@@ -75,6 +75,7 @@ CREATE TABLE `article` (
   `user_id` varchar(32) DEFAULT NULL COMMENT '博文所属用户id',
   `title` varchar(50) DEFAULT NULL COMMENT '博文标题',
   `content` text COMMENT '博文内容',
+  `summary` varchar(255) DEFAULT NULL COMMENT '内容摘要。保存，修改时自动生成',
   `is_draft` int(1) DEFAULT NULL COMMENT '是否是草稿。单个用户最多只会有一个草稿。0-否，1-是',
   `read_count` int(11) DEFAULT NULL COMMENT '阅读次数',
   `praise_count` int(11) DEFAULT NULL COMMENT '点赞次数',
