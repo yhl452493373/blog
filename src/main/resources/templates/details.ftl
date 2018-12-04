@@ -42,10 +42,16 @@
                     <h3>
                         <@shiro.user>
                             <a class="layui-icon layui-icon-edit" href="${contextPath}/edit/${article.id}"></a>
+                            <a class="layui-icon layui-icon-delete article-delete" href="${contextPath}/data/article/delete?id=${article.id}"></a>
                         </@shiro.user>
                         ${article.title}
                     </h3>
                     <h5>发布于：<span>${article.publishTime}</span></h5>
+                    <h6 style="font-size: 12px">
+                        <#list tagList as tag>
+                            <a href="#" title="${tag.name}相关文章" style="color: #999">${tag.name}</a>
+                        </#list>
+                    </h6>
                     <div class="item-content">${article.content}</div>
                 </div>
                 <div class="count article-count layui-clear">
@@ -92,6 +98,31 @@
     }).use(['blog', 'jquery', 'laytpl', 'laypage'], function () {
         var $ = layui.jquery, laytpl = layui.laytpl, laypage = layui.laypage;
         var blog = layui.blog;
+
+        $(document).on('click.article-delete', '.article-delete', function (e) {
+            e.preventDefault();
+            deleteArticle.call(this);
+        });
+
+        function deleteArticle() {
+            var href = this.getAttribute('href');
+            layer.confirm('确定删除这篇文章?', function (index) {
+                $.ajax({
+                    url: href,
+                    success: function (result) {
+                        if (result.status === 'success') {
+                            layer.alert('删除成功', function () {
+                                window.location.href = contextPath + "/index";
+                            })
+                        } else {
+                            layer.alert(result.message);
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+
+        }
 
         /**
          * 加载评论列表

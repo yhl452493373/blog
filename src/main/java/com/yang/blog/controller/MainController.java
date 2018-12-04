@@ -152,10 +152,19 @@ public class MainController {
         Article article = service.articleService.getById(articleId);
         if (article == null) {
             modelMap.addAttribute("article", new Article());
+            modelMap.addAttribute("tagList", new ArrayList<>());
         } else {
             article.setReadCount(article.getReadCount() + 1);
             service.articleService.updateById(article);
+            QueryWrapper<ArticleTag> articleTagQueryWrapper = new QueryWrapper<>();
+            articleTagQueryWrapper.eq("article_id", articleId);
+            List<ArticleTag> articleTagList = service.articleTagService.list(articleTagQueryWrapper);
             modelMap.addAttribute("article", article);
+            QueryWrapper<Tag> tagQueryWrapper = new QueryWrapper<>();
+            tagQueryWrapper.in("id", CommonUtils.convertToFieldList(articleTagList, "getTagId"));
+            tagQueryWrapper.orderByAsc("name");
+            Collection<Tag> tagList = service.tagService.list(tagQueryWrapper);
+            modelMap.addAttribute("tagList", tagList);
         }
         modelMap.addAttribute("index", "layui-this");
         return "details";

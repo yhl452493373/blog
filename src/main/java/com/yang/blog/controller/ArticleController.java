@@ -47,6 +47,7 @@ public class ArticleController implements BaseController {
         JSONResult jsonResult = JSONResult.init();
         QueryWrapper<Article> queryWrapper = new QueryWrapper<>(article);
         queryWrapper.setEntity(article);
+        queryWrapper.eq("available", Article.AVAILABLE);
         queryWrapper.orderByDesc("publish_time");
         service.articleService.page(page, queryWrapper);
         jsonResult.success(QUERY_SUCCESS)
@@ -149,23 +150,26 @@ public class ArticleController implements BaseController {
      * @return 删除结果
      */
     @RequestMapping("/delete")
-    public JSONResult delete(Article article, @RequestParam(required = false, defaultValue = "false") Boolean logical) {
+    public JSONResult delete(Article article, @RequestParam(required = false, defaultValue = "true") Boolean logical) {
         JSONResult jsonResult = JSONResult.init();
         boolean result;
         if (logical) {
             UpdateWrapper<Article> updateWrapper = new UpdateWrapper<>();
-            //TODO 根据需要修改表示逻辑删除的列和值。
-            updateWrapper.set("表示逻辑删除的字段", "表示逻辑删除的值");
+            updateWrapper.set("available", Article.DELETE);
+            updateWrapper.eq("id", article.getId());
             result = service.articleService.update(article, updateWrapper);
+            Article old = service.articleService.getById(article.getId());
+            old.setAvailable(Article.DELETE);
+            service.esArticleService.save(new EsArticle().update(true, old, EsArticle.class));
         } else {
             QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
             queryWrapper.setEntity(article);
             result = service.articleService.remove(queryWrapper);
         }
         if (result)
-            jsonResult.success();
+            jsonResult.success(DELETE_SUCCESS);
         else
-            jsonResult.error();
+            jsonResult.error(DELETE_FAILED);
         return jsonResult;
     }
 
@@ -177,6 +181,7 @@ public class ArticleController implements BaseController {
         BoolQueryBuilder filterBuilder = QueryBuilders.boolQuery();
         filterBuilder.filter(QueryBuilders.termQuery("isDraft", Article.IS_DRAFT_FALSE));
         filterBuilder.filter(QueryBuilders.termQuery("type", EsArticle.DOC_TYPE));
+        filterBuilder.filter(QueryBuilders.termQuery("available", EsArticle.AVAILABLE));
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
         //从title或者content中搜索
         //由于article是从基础数据库同步的数据,所以数据是一样的

@@ -56,6 +56,7 @@
             <h3>
                 <@shiro.user>
                     <a class="layui-icon layui-icon-edit" href="${contextPath}/edit/{{ d.id }}"></a>
+                    <a class="layui-icon layui-icon-delete article-delete" href="${contextPath}/data/article/delete?id={{ d.id }}"></a>
                 </@shiro.user>
                 <a href="${contextPath}/details/{{ d.id }}">{{ d.title }}</a>
             </h3>
@@ -83,7 +84,30 @@
         $(document).on('click.announcement', '#editAnnouncement', function (e) {
             e.preventDefault();
             showEditAnnouncementPopup();
+        }).on('click.article-delete', '.article-delete', function (e) {
+            e.preventDefault();
+            deleteArticle.call(this);
         });
+
+        function deleteArticle() {
+            var href = this.getAttribute('href');
+            layer.confirm('确定删除这篇文章?', function (index) {
+                $.ajax({
+                    url: href,
+                    success: function (result) {
+                        if (result.status === 'success') {
+                            layer.alert('删除成功', function () {
+                                window.location.reload();
+                            })
+                        } else {
+                            layer.alert(result.message);
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+
+        }
 
         function showEditAnnouncementPopup() {
             var view = $('#editAnnouncementPopupContent').html();
