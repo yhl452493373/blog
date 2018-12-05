@@ -5,7 +5,7 @@
     <!-- 开启二级缓存 -->
     <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
 
-    <select id="findByUsername" resultType="com.yang.blog.entity.User">
+    <select id="findByUsername" resultType="com.yang.blog.entity.User" flushCache="true">
         select * from user where user.username = #{username}
     </select>
     <select id="findUsernameById" resultType="java.lang.String">
