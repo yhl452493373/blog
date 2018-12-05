@@ -87,6 +87,8 @@
                                     layer.close(registerAlert);
                                     if (result.status === 'success') {
                                         window.location.reload();
+                                    }else{
+                                        $('.captcha').click();
                                     }
                                 }
                                 return false;
