@@ -7,8 +7,7 @@
     <update id="setOtherAvailable" flushCache="true">
         update announcement
         set announcement.available = #{available}
-        where announcement.user_id = #{userId}
-          and announcement.available != #{available}
+        where announcement.available != #{available}
     </update>
 
 </mapper>

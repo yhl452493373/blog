@@ -79,6 +79,13 @@
         function comment() {
             var $commentForm = $('#commentForm');
             var formData = new FormData($commentForm.get(0));
+            if(formData.get("userName").trim().length===0){
+                layer.msg('昵称不能为空');
+                return;
+            }else if(formData.get("content").trim().length===0){
+                layer.msg('评论内容不能为空');
+                return;
+            }
             $.ajax({
                 url: $commentForm.attr('action'),
                 type: $commentForm.attr('method'),

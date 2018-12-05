@@ -22,11 +22,6 @@ public class Tag extends BaseEntity<Tag> implements Serializable {
     private String name;
 
     /**
-     * 标签所属用户
-     */
-    private String userId;
-
-    /**
      * 标签是否可用。-1-删除，0-禁用，1-正常
      */
     private Integer available;
@@ -37,14 +32,6 @@ public class Tag extends BaseEntity<Tag> implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public Integer getAvailable() {
@@ -59,7 +46,6 @@ public class Tag extends BaseEntity<Tag> implements Serializable {
     public String toString() {
         return "Tag{" +
                 " name=" + name +
-                ", userId=" + userId +
                 ", available=" + available +
                 "}";
     }

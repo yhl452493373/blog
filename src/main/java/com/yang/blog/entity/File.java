@@ -42,11 +42,6 @@ public class File extends BaseEntity<File> implements Serializable {
     private Long size;
 
     /**
-     * 上传用户id
-     */
-    private String userId;
-
-    /**
      * 文件状态。-1-删除，0-不可见，1-正常，2-临时文件
      */
     private Integer available;
@@ -91,14 +86,6 @@ public class File extends BaseEntity<File> implements Serializable {
         this.size = size;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public Integer getAvailable() {
         return available;
     }
@@ -115,7 +102,6 @@ public class File extends BaseEntity<File> implements Serializable {
                 ", extensionName=" + extensionName +
                 ", fileType=" + fileType +
                 ", size=" + size +
-                ", userId=" + userId +
                 ", available=" + available +
                 "}";
     }

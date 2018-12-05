@@ -39,6 +39,7 @@ public class MessageController implements BaseController {
         JSONResult jsonResult = JSONResult.init();
         QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(message);
+        queryWrapper.eq("available", Message.AVAILABLE);
         queryWrapper.orderByDesc("created_time");
         service.messageService.page(page, queryWrapper);
         page.getRecords().forEach(record -> {
@@ -65,7 +66,11 @@ public class MessageController implements BaseController {
         message.setAvailable(Message.AVAILABLE);
         message.setCreatedTime(LocalDateTime.now());
         message.setPraiseCount(0);
+        message.setFloor(service.messageService.count() + 1);
         boolean result = service.messageService.save(message);
+        if (SecurityUtils.getSubject().isAuthenticated()) {
+            message.setUserName(ShiroUtils.getLoginUser().getUsername());
+        }
         if (result)
             jsonResult.success(ADD_SUCCESS).data(message);
         else
@@ -103,13 +108,14 @@ public class MessageController implements BaseController {
      * @return 删除结果
      */
     @RequestMapping("/delete")
-    public JSONResult delete(Message message, @RequestParam(required = false, defaultValue = "false") Boolean logical) {
+    public JSONResult delete(Message message, @RequestParam(required = false, defaultValue = "true") Boolean logical) {
         JSONResult jsonResult = JSONResult.init();
         boolean result;
         if (logical) {
             UpdateWrapper<Message> updateWrapper = new UpdateWrapper<>();
             //TODO 根据需要修改表示逻辑删除的列和值。
-            updateWrapper.set("表示逻辑删除的字段", "表示逻辑删除的值");
+            updateWrapper.set("available", Message.DELETE);
+            updateWrapper.eq("id", message.getId());
             result = service.messageService.update(message, updateWrapper);
         } else {
             QueryWrapper<Message> queryWrapper = new QueryWrapper<>();

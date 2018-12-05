@@ -13,5 +13,5 @@ import com.yang.blog.entity.Announcement;
  */
 public interface AnnouncementService extends IService<Announcement> {
 
-    void setOtherAvailable(String userId, Integer available);
+    void setOtherAvailable(Integer available);
 }

@@ -26,11 +26,6 @@ public class AboutFile extends BaseEntity<AboutFile> implements Serializable {
      */
     private String fileId;
 
-    /**
-     * 关联关系所属用户id
-     */
-    private String userId;
-
     public String getAboutId() {
         return aboutId;
     }
@@ -47,20 +42,11 @@ public class AboutFile extends BaseEntity<AboutFile> implements Serializable {
         this.fileId = fileId;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     @Override
     public String toString() {
         return "AboutFile{" +
                 "aboutId=" + aboutId +
                 ", fileId=" + fileId +
-                ", userId=" + userId +
                 "}";
     }
 }

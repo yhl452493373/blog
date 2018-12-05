@@ -7,7 +7,6 @@ import com.yang.blog.bean.Constant;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.config.SystemProperties;
 import com.yang.blog.entity.*;
-import com.yang.blog.shiro.ShiroUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -65,43 +64,39 @@ public class MainController {
         modelMap.addAttribute("codeMap", Constant.getCodeMap());
         //初始时默认article为空
         modelMap.addAttribute("articleEdit", new Article());
+        //初始时默认不是草稿
+        modelMap.addAttribute("isDraft", false);
         if (request.getRequestURI().contains("/edit/")) {
             if (StringUtils.isEmpty(articleId)) {
                 //编辑路径进入,但是没有文章id,则为错误状态
                 modelMap.addAttribute("code", Constant.CODE_ID_EMPTY);
             } else {
-                User user = ShiroUtils.getLoginUser();
                 Article article = service.articleService.getById(articleId);
                 if (article == null) {
                     //为空,则不存在
                     modelMap.addAttribute("code", Constant.CODE_NOT_EXIST);
                 } else {
-                    if (!article.getUserId().equals(user.getId())) {
-                        //用户id不是登录用户id,则无权
-                        modelMap.addAttribute("code", Constant.CODE_NO_PERMISSION);
-                    } else {
-                        //正常
-                        //查找使用的文件
-                        QueryWrapper<ArticleFile> articleFileQueryWrapper = new QueryWrapper<>();
-                        articleFileQueryWrapper.eq("article_id", article.getId());
-                        articleFileQueryWrapper.eq("user_id", user.getId());
-                        Collection<ArticleFile> articleFileList = service.articleFileService.list(articleFileQueryWrapper);
-                        List<String> fileIdList = CommonUtils.convertToFieldList(articleFileList, "getFileId");
-                        article.setFileIds(String.join(",", fileIdList));
-                        //查找使用的tag
-                        QueryWrapper<ArticleTag> articleTagQueryWrapper = new QueryWrapper<>();
-                        articleTagQueryWrapper.eq("article_id", article.getId());
-                        articleTagQueryWrapper.eq("user_id", user.getId());
-                        Collection<ArticleTag> articleTagList = service.articleTagService.list(articleTagQueryWrapper);
-                        if (!articleTagList.isEmpty()) {
-                            List<String> tagIdList = CommonUtils.convertToFieldList(articleTagList, "getTagId");
-                            Collection<Tag> tagList = service.tagService.listByIds(tagIdList);
-                            List<String> tagNameList = CommonUtils.convertToFieldList(tagList, "getName");
-                            article.setTags(String.join(",", tagNameList));
-                        }
-                        modelMap.put("articleEdit", article);
-                    }
+                    //正常
+                    //查找使用的文件
+                    QueryWrapper<ArticleFile> articleFileQueryWrapper = new QueryWrapper<>();
+                    articleFileQueryWrapper.eq("article_id", article.getId());
+                    Collection<ArticleFile> articleFileList = service.articleFileService.list(articleFileQueryWrapper);
+                    List<String> fileIdList = CommonUtils.convertToFieldList(articleFileList, "getFileId");
+                    article.setFileIds(String.join(",", fileIdList));
+                    //查找使用的tag
+                    initArticleTags(article);
+                    modelMap.addAttribute("articleEdit", article);
                 }
+            }
+        } else {
+            QueryWrapper<Article> draftQueryWrapper = new QueryWrapper<>();
+            draftQueryWrapper.eq("is_draft", Article.IS_DRAFT_TRUE);
+            Article draft = service.articleService.getOne(draftQueryWrapper);
+            if (draft != null) {
+                //查找使用的tag
+                initArticleTags(draft);
+                modelMap.addAttribute("articleEdit", draft);
+                modelMap.addAttribute("isDraft", true);
             }
         }
         modelMap.addAttribute("create", "layui-this");
@@ -127,15 +122,12 @@ public class MainController {
     @GetMapping("/about/edit")
     public String aboutEdit(ModelMap modelMap) {
         QueryWrapper<About> aboutQueryWrapper = new QueryWrapper<>();
-        User user = ShiroUtils.getLoginUser();
-        aboutQueryWrapper.ge("user_id", user.getId());
         aboutQueryWrapper.orderByDesc("created_time");
         About about = service.aboutService.getOne(aboutQueryWrapper);
         if (about == null) {
             about = new About();
         } else {
             QueryWrapper<AboutFile> aboutFileQueryWrapper = new QueryWrapper<>();
-            aboutFileQueryWrapper.eq("user_id", user.getId());
             aboutFileQueryWrapper.eq("about_id", about.getId());
             List<AboutFile> aboutFileList = service.aboutFileService.list(aboutFileQueryWrapper);
             List<String> fileIdList = new ArrayList<>();
@@ -181,5 +173,22 @@ public class MainController {
     @GetMapping("/uploadTest")
     public String uploadTest() {
         return "uploadTest";
+    }
+
+    /**
+     * 初始化文章的tags
+     *
+     * @param article 文章
+     */
+    private void initArticleTags(Article article) {
+        QueryWrapper<ArticleTag> articleTagQueryWrapper = new QueryWrapper<>();
+        articleTagQueryWrapper.eq("article_id", article.getId());
+        Collection<ArticleTag> articleTagList = service.articleTagService.list(articleTagQueryWrapper);
+        if (!articleTagList.isEmpty()) {
+            List<String> tagIdList = CommonUtils.convertToFieldList(articleTagList, "getTagId");
+            Collection<Tag> tagList = service.tagService.listByIds(tagIdList);
+            List<String> tagNameList = CommonUtils.convertToFieldList(tagList, "getName");
+            article.setTags(String.join(",", tagNameList));
+        }
     }
 }

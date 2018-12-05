@@ -40,6 +40,7 @@ public class CommentController implements BaseController {
         JSONResult jsonResult = JSONResult.init();
         QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(comment);
+        queryWrapper.eq("available", Comment.AVAILABLE);
         queryWrapper.orderByDesc("created_time");
         service.commentService.page(page, queryWrapper);
         page.getRecords().forEach(record -> {
@@ -66,6 +67,9 @@ public class CommentController implements BaseController {
             comment.setUserName(null);
         }
         comment.setPraiseCount(0);
+        QueryWrapper<Comment> countQueryWrapper = new QueryWrapper<>();
+        countQueryWrapper.eq("article_id", comment.getArticleId());
+        comment.setFloor(service.commentService.count(countQueryWrapper) + 1);
         boolean result = service.commentService.save(comment);
         if (result) {
             JSONObject jsonObject = new JSONObject();
@@ -107,13 +111,13 @@ public class CommentController implements BaseController {
      * @return 删除结果
      */
     @RequestMapping("/delete")
-    public JSONResult delete(Comment comment, @RequestParam(required = false, defaultValue = "false") Boolean logical) {
+    public JSONResult delete(Comment comment, @RequestParam(required = false, defaultValue = "true") Boolean logical) {
         JSONResult jsonResult = JSONResult.init();
         boolean result;
         if (logical) {
             UpdateWrapper<Comment> updateWrapper = new UpdateWrapper<>();
-            //TODO 根据需要修改表示逻辑删除的列和值。
-            updateWrapper.set("表示逻辑删除的字段", "表示逻辑删除的值");
+            updateWrapper.set("available", Comment.DELETE);
+            updateWrapper.eq("id", comment.getId());
             result = service.commentService.update(comment, updateWrapper);
         } else {
             QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
@@ -121,9 +125,9 @@ public class CommentController implements BaseController {
             result = service.commentService.remove(queryWrapper);
         }
         if (result)
-            jsonResult.success();
+            jsonResult.success(DELETE_SUCCESS);
         else
-            jsonResult.error();
+            jsonResult.error(DELETE_FAILED);
         return jsonResult;
     }
 }

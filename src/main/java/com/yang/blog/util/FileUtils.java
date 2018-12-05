@@ -5,8 +5,6 @@ import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.bean.MultipartFileParam;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.config.SystemProperties;
-import com.yang.blog.entity.User;
-import com.yang.blog.shiro.ShiroUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.system.ApplicationHome;
@@ -67,7 +65,7 @@ public class FileUtils {
      * @return 文件记录对应的文件在硬盘上的完整路径(包括文件本身名字和后缀名)
      */
     public static String uploadPath(com.yang.blog.entity.File file) {
-        return basePath + file.getUserId() + File.separator + file.getSaveName() + file.getExtensionName();
+        return basePath + file.getSaveName() + file.getExtensionName();
     }
 
     /**
@@ -107,9 +105,8 @@ public class FileUtils {
         String fileSaveName = param.getTaskId() + fileExtName;
         //临时文件名
         String tempFileName = fileSaveName + "_tmp";
-        User user = ShiroUtils.getLoginUser();
-        //文件保存位置:uploadPath/userId
-        String filePath = basePath + user.getId();
+        //文件保存位置:uploadPath
+        String filePath = basePath;
         File fileDir = new File(filePath);
         if (!fileDir.exists()) {
             fileDir.mkdirs();

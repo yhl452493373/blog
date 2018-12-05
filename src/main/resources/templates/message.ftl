@@ -66,7 +66,12 @@
         <#--<img class="info-img" src="${contextPath}/static/images/info-img.png" alt="">-->
         <div class="info-text" style="padding-left: 0">
             <p class="title count">
-                <span class="name">{{ d.userName }} 于 {{ d.createdTime }} 留言:</span>
+                <span class="name">
+                    <@shiro.user>
+                        <a class="layui-icon layui-icon-delete message-delete" href="${contextPath}/data/message/delete?id={{ d.id }}"></a>
+                    </@shiro.user>
+                    第{{ d.floor }}楼. {{ d.userName }} 于 {{ d.createdTime }} 留言:
+                </span>
                 <span class="info-img like" data-id="{{ d.id }}"><i class="layui-icon layui-icon-praise"></i><span class="count">{{ d.praiseCount }}</span></span>
             </p>
             <p class="info-intr">{{ d.content }}</p>
@@ -88,7 +93,30 @@
         $(document).on('click', '#leaveMessage', function (e) {
             e.preventDefault();
             leaveMessage();
+        }).on('click.message-delete', '.message-delete', function (e) {
+            e.preventDefault();
+            deleteMessage.call(this);
         });
+
+        function deleteMessage() {
+            var href = this.getAttribute('href');
+            layer.confirm('确定删除这条留言?', function (index) {
+                $.ajax({
+                    url: href,
+                    success: function (result) {
+                        if (result.status === 'success') {
+                            layer.alert('删除成功', function (index) {
+                                loadMessage();
+                                layer.close(index);
+                            })
+                        } else {
+                            layer.alert(result.message);
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        }
 
         /**
          * 加载留言列表
@@ -130,7 +158,7 @@
                             });
                         } else {
                             renderEmpty({
-                                message: '还没有人留言,来抢沙发!'
+                                message: '还没有人留言,快来抢沙发!'
                             });
                         }
                     }
@@ -141,6 +169,13 @@
         function leaveMessage() {
             var $messageForm = $('#messageForm');
             var formData = new FormData($messageForm.get(0));
+            if(formData.get("userName").trim().length===0){
+                layer.msg('昵称不能为空');
+                return;
+            }else if(formData.get("content").trim().length===0){
+                layer.msg('留言内容不能为空');
+                return;
+            }
             $.ajax({
                 url: $messageForm.attr('action'),
                 type: $messageForm.attr('method'),
@@ -149,9 +184,10 @@
                 contentType: false,
                 success: function (result) {
                     if (result.status === 'success') {
-                        renderData(result.data);
                         layer.alert('留言成功!', function (index) {
                             layer.close(index);
+                            $messageForm.get(0).reset();
+                            loadMessage();
                         });
                     } else {
                         layer.alert(result.message);

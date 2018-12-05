@@ -8,7 +8,6 @@ import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.bean.MultipartFileParam;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.File;
-import com.yang.blog.shiro.ShiroUtils;
 import com.yang.blog.util.FileUtils;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
@@ -76,7 +75,6 @@ public class FileController implements BaseController {
                 file.setExtensionName(uploadFile.getName().substring(uploadFile.getName().lastIndexOf(".")));
                 file.setCreatedTime(LocalDateTime.now());
                 file.setSize(uploadFile.length());
-                file.setUserId(ShiroUtils.getLoginUser().getId());
                 //此处上传的所有文件都是临时状态，与其关联的对象添加后，要修改这个文件的状态
                 file.setAvailable(File.TEMP);
                 //去掉保存的文件名和原始文件名的后缀名

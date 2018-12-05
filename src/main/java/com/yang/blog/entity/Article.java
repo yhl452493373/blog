@@ -24,11 +24,6 @@ public class Article extends BaseEntity<Article> implements Serializable, Clonea
     private static final long serialVersionUID = 1L;
 
     /**
-     * 博文所属用户id
-     */
-    private String userId;
-
-    /**
      * 博文标题
      */
     private String title;
@@ -74,6 +69,12 @@ public class Article extends BaseEntity<Article> implements Serializable, Clonea
     private Integer available;
 
     /**
+     * 纯文本的内容,用于过滤html标签后生成摘要
+     */
+    @TableField(exist = false)
+    private String planTextContent;
+
+    /**
      * 用户设置的标签列表,逗号分隔,同一用户的标签不可同名
      */
     @TableField(exist = false)
@@ -84,14 +85,6 @@ public class Article extends BaseEntity<Article> implements Serializable, Clonea
      */
     @TableField(exist = false)
     private String fileIds;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 
     public String getTitle() {
         return title;
@@ -165,6 +158,14 @@ public class Article extends BaseEntity<Article> implements Serializable, Clonea
         this.available = available;
     }
 
+    public String getPlanTextContent() {
+        return planTextContent;
+    }
+
+    public void setPlanTextContent(String planTextContent) {
+        this.planTextContent = planTextContent;
+    }
+
     public String getTags() {
         return tags;
     }
@@ -184,8 +185,7 @@ public class Article extends BaseEntity<Article> implements Serializable, Clonea
     @Override
     public String toString() {
         return "Article{" +
-                "userId=" + userId +
-                ", title=" + title +
+                "title=" + title +
                 ", content=" + content +
                 ", summary=" + summary +
                 ", isDraft=" + isDraft +
@@ -194,6 +194,7 @@ public class Article extends BaseEntity<Article> implements Serializable, Clonea
                 ", publishTime=" + publishTime +
                 ", modifiedTime=" + modifiedTime +
                 ", available=" + available +
+                ", planTextContent=" + planTextContent +
                 ", tags=" + tags +
                 ", fileIds=" + fileIds +
                 "}";

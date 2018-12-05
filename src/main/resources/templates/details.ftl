@@ -77,7 +77,12 @@
         <#--<img class="info-img" src="../res/static/images/info-img.png" alt="">-->
         <div class="info-text" style="padding-left: 0">
             <p class="title count" style="margin-top: 0">
-                <span class="name">{{ d.userName }} 于 {{ d.createdTime }} 评论:</span>
+                <span class="name">
+                    <@shiro.user>
+                        <a class="layui-icon layui-icon-delete comment-delete" href="${contextPath}/data/comment/delete?id={{ d.id }}"></a>
+                    </@shiro.user>
+                    第{{ d.floor }}楼. {{ d.userName }} 于 {{ d.createdTime }} 评论:
+                </span>
                 <span class="info-img like" data-id="{{ d.id }}"><i class="layui-icon layui-icon-praise"></i><span
                             class="count">{{ d.praiseCount }}</span></span>
             </p>
@@ -102,7 +107,30 @@
         $(document).on('click.article-delete', '.article-delete', function (e) {
             e.preventDefault();
             deleteArticle.call(this);
+        }).on('click.comment-delete', '.comment-delete', function (e) {
+            e.preventDefault();
+            deleteComment.call(this);
         });
+
+        function deleteComment() {
+            var href = this.getAttribute('href');
+            layer.confirm('确定删除这条评论?', function (index) {
+                $.ajax({
+                    url: href,
+                    success: function (result) {
+                        if (result.status === 'success') {
+                            layer.alert('删除成功', function (index) {
+                                loadComment();
+                                layer.close(index);
+                            })
+                        } else {
+                            layer.alert(result.message);
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        }
 
         function deleteArticle() {
             var href = this.getAttribute('href');
@@ -121,7 +149,6 @@
                 });
                 layer.close(index);
             });
-
         }
 
         /**

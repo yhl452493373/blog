@@ -40,8 +40,6 @@ public class ServiceConfig {
     @Autowired
     public ArticleFileService articleFileService;
     @Autowired
-    public PraiseService praiseService;
-    @Autowired
     public AboutFileService aboutFileService;
     @Autowired
     public AnnouncementService announcementService;

@@ -26,11 +26,6 @@ public class ArticleTag extends BaseEntity<ArticleTag> implements Serializable {
      */
     private String tagId;
 
-    /**
-     * 文章-标签对应关系所属用户
-     */
-    private String userId;
-
     public String getArticleId() {
         return articleId;
     }
@@ -47,20 +42,11 @@ public class ArticleTag extends BaseEntity<ArticleTag> implements Serializable {
         this.tagId = tagId;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     @Override
     public String toString() {
         return "ArticleTag{" +
                 "articleId=" + articleId +
                 ", tagId=" + tagId +
-                ", userId=" + userId +
                 "}";
     }
 }

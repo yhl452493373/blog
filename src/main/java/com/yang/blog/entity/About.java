@@ -18,11 +18,6 @@ public class About extends BaseEntity<About> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 关于所属用户id
-     */
-    private String userId;
-
-    /**
      * 关于的内容
      */
     private String content;
@@ -37,14 +32,6 @@ public class About extends BaseEntity<About> implements Serializable {
      */
     @TableField(exist = false)
     private String fileIds;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 
     public String getContent() {
         return content;
@@ -73,8 +60,7 @@ public class About extends BaseEntity<About> implements Serializable {
     @Override
     public String toString() {
         return "About{" +
-                "userId=" + userId +
-                ", content=" + content +
+                "content=" + content +
                 ", available=" + available +
                 ", fileIds=" + fileIds +
                 "}";

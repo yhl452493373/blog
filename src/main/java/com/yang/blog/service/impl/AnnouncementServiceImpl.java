@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class AnnouncementServiceImpl extends ServiceImpl<AnnouncementMapper, Announcement> implements AnnouncementService {
 
     @Override
-    public void setOtherAvailable(String userId, Integer available) {
-        baseMapper.setOtherAvailable(userId, available);
+    public void setOtherAvailable(Integer available) {
+        baseMapper.setOtherAvailable(available);
     }
 }

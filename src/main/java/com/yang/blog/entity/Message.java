@@ -41,6 +41,11 @@ public class Message extends BaseEntity<Message> implements Serializable {
      */
     private Integer available;
 
+    /**
+     * 留言楼层
+     */
+    private Integer floor;
+
     public String getUserName() {
         return userName;
     }
@@ -81,6 +86,14 @@ public class Message extends BaseEntity<Message> implements Serializable {
         this.available = available;
     }
 
+    public Integer getFloor() {
+        return floor;
+    }
+
+    public void setFloor(Integer floor) {
+        this.floor = floor;
+    }
+
     @Override
     public String toString() {
         return "Message{" +
@@ -89,6 +102,7 @@ public class Message extends BaseEntity<Message> implements Serializable {
                 ", content=" + content +
                 ", praiseCount=" + praiseCount +
                 ", available=" + available +
+                ", floor=" + floor +
                 "}";
     }
 }

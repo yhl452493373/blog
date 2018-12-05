@@ -34,26 +34,26 @@
             <p class="error">文章不存在</p>
         <#else>
             <form id="articleForm" class="layui-form article-form" action="${contextPath}/data/article/${articleEdit.id???string("update","add")}" method="post">
-            <div class="layui-form-item">
-        <input name="title" type="text" class="layui-input create-title-input" placeholder="请输入文章标题" value="${articleEdit.title!}">
-            </div>
-            <div class="layui-form-item">
-        <input type="hidden" id="id" name="id" value="${articleEdit.id!}">
-        <input type="hidden" id="fileIds" name="fileIds" value="${articleEdit.fileIds!}">
-            <textarea name="content" id="content" placeholder="文章内容" style="display: none;">${articleEdit.content!}</textarea>
-            </div>
-            <div class="layui-form-item create-tags-container">
-        <label class="layui-form-label">文章标签:</label>
-            <div class="layui-input-block">
-            <div class="inputTags">
-        <input type="hidden" name="tags" id="tags" value="${articleEdit.tags!}">
-            <input type="text" id="inputTags" class="inputTagsInput" placeholder="输入标签">
-            </div>
-            </div>
-            </div>
+                <div class="layui-form-item">
+                    <input name="title" type="text" class="layui-input create-title-input" placeholder="请输入文章标题" value="<#if isDraft!>[草稿] </#if>${articleEdit.title!}">
+                </div>
+                <div class="layui-form-item">
+                    <input type="hidden" id="id" name="id" value="${articleEdit.id!}">
+                    <input type="hidden" id="fileIds" name="fileIds" value="${articleEdit.fileIds!}">
+                    <textarea name="content" id="content" placeholder="文章内容" style="display: none;">${articleEdit.content!}</textarea>
+                </div>
+                <div class="layui-form-item create-tags-container">
+                    <label class="layui-form-label">文章标签:</label>
+                    <div class="layui-input-block">
+                        <div class="inputTags">
+                            <input type="hidden" name="tags" id="tags" value="${articleEdit.tags!}">
+                            <input type="text" id="inputTags" class="inputTagsInput" placeholder="输入标签">
+                        </div>
+                    </div>
+                </div>
             </form>
             <div class="create-button-group">
-            <#if !articleEdit.id??>
+            <#if !articleEdit.id?? || isDraft!>
                 <button id="publish" class="layui-btn layui-btn-normal">发布文章</button>
                 <button id="draft" class="layui-btn layui-btn-normal">保存草稿</button>
                 <button id="back" class="layui-btn create-button-back" onclick="window.history.go(-1)">返回</button>
@@ -197,6 +197,8 @@
             layedit.sync(layeditIndex);
             var $articleForm = $('#articleForm');
             var formData = new FormData($articleForm.get(0));
+            formData.append('isDraft', 0);//设置为非草稿状态
+            formData.append("planTextContent", layedit.getText(layeditIndex));
             $.ajax({
                 url: $articleForm.attr('action'),
                 type: $articleForm.attr('method'),
@@ -219,7 +221,8 @@
             layedit.sync(layeditIndex);
             var $articleForm = $('#articleForm');
             var formData = new FormData($articleForm.get(0));
-            formData.append('isDraft', 1 + '');//设置为草稿状态
+            formData.append('isDraft', 1);//设置为草稿状态
+            formData.append("planTextContent", layedit.getText(layeditIndex));
             $.ajax({
                 url: $articleForm.attr('action'),
                 type: $articleForm.attr('method'),
@@ -229,9 +232,7 @@
                 success: function (result) {
                     if (result.status === 'success') {
                         //todo 保存草稿后需要允许继续编辑
-                        layer.alert('文章保存草稿成功', function () {
-                            window.location.href = contextPath + '/details/' + result.data;
-                        });
+                        layer.alert('文章保存草稿成功');
                     } else {
                         layer.alert('文章保存草稿失败，请稍后再试');
                     }

@@ -1,6 +1,7 @@
 package com.yang;
 
 import com.github.yhl452493373.utils.CommonUtils;
+import com.hankcs.hanlp.HanLP;
 import com.yang.blog.entity.Article;
 import com.yang.blog.entity.Message;
 import com.yang.blog.es.doc.EsArticle;
@@ -50,5 +51,12 @@ public class BaseTest {
         System.out.println(message.getContent());
         System.out.println(message2.getContent());
         System.out.println(message.getContent());
+    }
+
+    @Test
+    public void testGetSummary(){
+        String content = "<p>&nbsp; &nbsp; &nbsp; &nbsp; 经过半个多月的努力，我的个人博客终于可以用了。</p><p>&nbsp; &nbsp; &nbsp; &nbsp; 欢迎大家没事过来看看。</p><p>&nbsp; &nbsp; &nbsp; &nbsp; 我的博客主要更新一些在java、js、css等方面遇到的问题及解决方案。</p><p>&nbsp; &nbsp; &nbsp; &nbsp; 多多捧场哦！</p><p><br></p><p>&nbsp; &nbsp; &nbsp; &nbsp; 我的github地址：https://github.com/yhl452493373</p>";
+        String summary = HanLP.getSummary(content, 255);
+        System.out.println(summary);
     }
 }

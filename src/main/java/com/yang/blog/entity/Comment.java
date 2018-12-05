@@ -46,6 +46,11 @@ public class Comment extends BaseEntity<Comment> implements Serializable {
      */
     private Integer available;
 
+    /**
+     * 评论楼层
+     */
+    private Integer floor;
+
     public String getArticleId() {
         return articleId;
     }
@@ -94,6 +99,14 @@ public class Comment extends BaseEntity<Comment> implements Serializable {
         this.available = available;
     }
 
+    public Integer getFloor() {
+        return floor;
+    }
+
+    public void setFloor(Integer floor) {
+        this.floor = floor;
+    }
+
     @Override
     public String toString() {
         return "Comment{" +
@@ -103,6 +116,7 @@ public class Comment extends BaseEntity<Comment> implements Serializable {
                 ", content=" + content +
                 ", praiseCount=" + praiseCount +
                 ", available=" + available +
+                ", floor=" + floor +
                 "}";
     }
 }

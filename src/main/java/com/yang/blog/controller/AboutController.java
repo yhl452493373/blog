@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yhl452493373.bean.JSONResult;
 import com.github.yhl452493373.utils.CommonUtils;
 import com.yang.blog.config.ServiceConfig;
-import com.yang.blog.entity.*;
-import com.yang.blog.shiro.ShiroUtils;
+import com.yang.blog.entity.About;
+import com.yang.blog.entity.AboutFile;
+import com.yang.blog.entity.Article;
+import com.yang.blog.entity.File;
 import com.yang.blog.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +41,7 @@ public class AboutController implements BaseController {
         JSONResult jsonResult = JSONResult.init();
         if (StringUtils.isEmpty(about.getContent()))
             return jsonResult.error(ADD_FAILED + "内容不能为空");
-        User user = ShiroUtils.getLoginUser();
         about.setId(CommonUtils.uuid());
-        about.setUserId(user.getId());
         about.setCreatedTime(LocalDateTime.now());
         about.setAvailable(Article.TEMP);
         boolean aboutResult, aboutFileResult = true;
@@ -96,7 +96,6 @@ public class AboutController implements BaseController {
         boolean fileResult = true, aboutFileResult = true;
         List<String> fileIdList = CommonUtils.splitIds(fileIds);
         if (!fileIdList.isEmpty()) {
-            User user = ShiroUtils.getLoginUser();
             fileResult = service.fileService.setAvailable(fileIdList, File.AVAILABLE);
             if (fileResult) {
                 //将文件和文章关联
@@ -106,7 +105,6 @@ public class AboutController implements BaseController {
                     articleFile.setAboutId(about.getId());
                     articleFile.setFileId(fileId);
                     articleFile.setCreatedTime(LocalDateTime.now());
-                    articleFile.setUserId(user.getId());
                     aboutFileList.add(articleFile);
                 });
                 aboutFileResult = service.aboutFileService.saveBatch(aboutFileList);

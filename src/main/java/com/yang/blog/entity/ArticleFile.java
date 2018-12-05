@@ -26,11 +26,6 @@ public class ArticleFile extends BaseEntity<ArticleFile> implements Serializable
      */
     private String fileId;
 
-    /**
-     * 关联关系所属用户id
-     */
-    private String userId;
-
     public String getArticleId() {
         return articleId;
     }
@@ -47,20 +42,11 @@ public class ArticleFile extends BaseEntity<ArticleFile> implements Serializable
         this.fileId = fileId;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     @Override
     public String toString() {
         return "ArticleFile{" +
                 "articleId=" + articleId +
                 ", fileId=" + fileId +
-                ", userId=" + userId +
                 "}";
     }
 }

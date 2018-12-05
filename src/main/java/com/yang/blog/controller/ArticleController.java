@@ -10,7 +10,6 @@ import com.hankcs.hanlp.HanLP;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.*;
 import com.yang.blog.es.doc.EsArticle;
-import com.yang.blog.shiro.ShiroUtils;
 import com.yang.blog.util.FileUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -70,11 +69,9 @@ public class ArticleController implements BaseController {
             return jsonResult.error(ADD_FAILED + "标题不能为空");
         if (StringUtils.isEmpty(article.getContent()))
             return jsonResult.error(ADD_FAILED + "内容不能为空");
-        User user = ShiroUtils.getLoginUser();
         article.setId(CommonUtils.uuid());
-        article.setUserId(user.getId());
         article.setIsDraft(isDraft ? Article.IS_DRAFT_TRUE : Article.IS_DRAFT_FALSE);
-        article.setSummary(HanLP.getSummary(article.getContent(), 255));
+        article.setSummary(HanLP.getSummary(article.getPlanTextContent(), 255));
         article.setReadCount(0);
         article.setPraiseCount(0);
         article.setCreatedTime(LocalDateTime.now());
@@ -124,7 +121,7 @@ public class ArticleController implements BaseController {
         if (StringUtils.isEmpty(article.getContent()))
             return jsonResult.error(UPDATE_FAILED + "内容不能为空");
         article.setModifiedTime(LocalDateTime.now());
-        article.setSummary(HanLP.getSummary(article.getContent(), 255));
+        article.setSummary(HanLP.getSummary(article.getPlanTextContent().trim(), 255));
         Article old = service.articleService.getById(article.getId());
         if (old == null)
             return jsonResult.error(UPDATE_FAILED + "记录id不正确");
@@ -208,10 +205,8 @@ public class ArticleController implements BaseController {
     private boolean relateArticleAndFile(Article article) {
         String fileIds = article.getFileIds();
         boolean fileResult = true, articleFileResult = true;
-        User user = ShiroUtils.getLoginUser();
         //与当前文章相关文件关系表的查询条件
         QueryWrapper<ArticleFile> articleQueryWrapper = new QueryWrapper<>();
-        articleQueryWrapper.eq("user_id", user.getId());
         articleQueryWrapper.eq("article_id", article.getId());
         //传入的所有文件id
         List<String> fileIdList = CommonUtils.splitIds(fileIds);
@@ -246,7 +241,6 @@ public class ArticleController implements BaseController {
                     ArticleFile articleFile = new ArticleFile();
                     articleFile.setArticleId(article.getId());
                     articleFile.setFileId(fileId);
-                    articleFile.setUserId(user.getId());
                     articleFile.setCreatedTime(LocalDateTime.now());
                     newArticleFileList.add(articleFile);
                 });
@@ -254,7 +248,6 @@ public class ArticleController implements BaseController {
                 if (articleFileResult) {
                     //将文件状态改为正常
                     QueryWrapper<ArticleFile> articleFileQueryWrapper = new QueryWrapper<>();
-                    articleFileQueryWrapper.eq("user_id", user.getId());
                     articleFileQueryWrapper.eq("article_id", article.getId());
                     List<ArticleFile> savedFileList = service.articleFileService.list(articleFileQueryWrapper);
                     List<String> savedFileIdList = CommonUtils.convertToFieldList(savedFileList, "getFileId");
@@ -266,7 +259,6 @@ public class ArticleController implements BaseController {
         } else {
             //如果新传入文件id为空,则删除所有对应文件
             QueryWrapper<ArticleFile> articleFileQueryWrapper = new QueryWrapper<>();
-            articleFileQueryWrapper.eq("user_id", user.getId());
             articleFileQueryWrapper.eq("article_id", article.getId());
             List<ArticleFile> savedFileList = service.articleFileService.list(articleFileQueryWrapper);
             if (!savedFileList.isEmpty()) {
@@ -289,7 +281,6 @@ public class ArticleController implements BaseController {
     @SuppressWarnings("Duplicates")
     private boolean relateArticleAndTag(Article article) {
         boolean result;
-        User user = ShiroUtils.getLoginUser();
         String tags = article.getTags();
         List<String> tagNameList = new ArrayList<>(Arrays.asList(tags.split(",")));
         //最后与文章关联的标签
@@ -300,18 +291,15 @@ public class ArticleController implements BaseController {
 
         if (tagNameList.isEmpty()) {
             QueryWrapper<ArticleTag> removeQueryWrapper = new QueryWrapper<>();
-            removeQueryWrapper.eq("user_id", user.getId());
             removeQueryWrapper.eq("article_id", article.getId());
             service.articleTagService.remove(removeQueryWrapper);
         }
 
         QueryWrapper<Tag> oldTagQueryWrapper = new QueryWrapper<>();
-        oldTagQueryWrapper.eq("user_id", user.getId());
         oldTagQueryWrapper.in("name", tagNameList);
         List<Tag> oldTagList = service.tagService.list(oldTagQueryWrapper);
 
         QueryWrapper<ArticleTag> articleTagQueryWrapper = new QueryWrapper<>();
-        articleTagQueryWrapper.eq("user_id", user.getId());
         articleTagQueryWrapper.eq("article_id", article.getId());
         articleTagQueryWrapper.notIn("tag_id", CommonUtils.convertToIdList(oldTagList));
 
@@ -321,7 +309,6 @@ public class ArticleController implements BaseController {
         if (tagNameList.isEmpty())
             return true;
         QueryWrapper<Tag> tagQueryWrapper = new QueryWrapper<>();
-        tagQueryWrapper.eq("user_id", user.getId());
         tagQueryWrapper.in("name", tagNameList);
         //拥有的所有的tag
         List<Tag> tagList = service.tagService.list();
@@ -333,7 +320,6 @@ public class ArticleController implements BaseController {
         tagNameList.forEach(tagName -> {
             Tag tag = new Tag();
             tag.setName(tagName);
-            tag.setUserId(user.getId());
             tag.setAvailable(Tag.AVAILABLE);
             tag.setCreatedTime(LocalDateTime.now());
             finalTagList.add(tag);
@@ -353,11 +339,9 @@ public class ArticleController implements BaseController {
         }
         //所有新增标签保存后,查询文章关联的对应标签记录
         tagQueryWrapper = new QueryWrapper<>();
-        tagQueryWrapper.eq("user_id", user.getId());
         tagQueryWrapper.in("name", relateTagName);
         tagList = service.tagService.list(tagQueryWrapper);
         articleTagQueryWrapper = new QueryWrapper<>();
-        articleTagQueryWrapper.eq("user_id", user.getId());
         articleTagQueryWrapper.eq("article_id", article.getId());
         List<ArticleTag> articleTagList = service.articleTagService.list(articleTagQueryWrapper);
         List<String> relatedTagIdList = CommonUtils.convertToFieldList(articleTagList, "getTagId");
@@ -366,7 +350,6 @@ public class ArticleController implements BaseController {
         tagList.forEach(tag -> {
             if (relatedTagIdList.indexOf(tag.getId()) == -1) {
                 ArticleTag articleTag = new ArticleTag();
-                articleTag.setUserId(user.getId());
                 articleTag.setArticleId(article.getId());
                 articleTag.setCreatedTime(LocalDateTime.now());
                 articleTag.setTagId(tag.getId());

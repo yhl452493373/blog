@@ -2,7 +2,6 @@ package com.yang.blog.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yang.blog.entity.Announcement;
-import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -14,5 +13,5 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface AnnouncementMapper extends BaseMapper<Announcement> {
 
-    void setOtherAvailable(@Param("userId") String userId, @Param("available") Integer available);
+    void setOtherAvailable(Integer available);
 }

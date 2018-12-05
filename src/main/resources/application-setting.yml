@@ -1,5 +1,5 @@
 system:
-  allow-register: false
+  allow-register: true
   username-length:
     min: 6
     max: 18

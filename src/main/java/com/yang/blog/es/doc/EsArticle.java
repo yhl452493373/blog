@@ -29,12 +29,6 @@ public class EsArticle extends EsBaseDoc<EsArticle, Article> implements Constant
     private String type = DOC_TYPE;
 
     /**
-     * 博文所属用户id
-     */
-    @Field(type = FieldType.Keyword)
-    private String userId;
-
-    /**
      * 博文标题
      */
     @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp-smart", analyzer = "hanlp-index")
@@ -103,14 +97,6 @@ public class EsArticle extends EsBaseDoc<EsArticle, Article> implements Constant
      */
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getTitle() {

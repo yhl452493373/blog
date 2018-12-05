@@ -17,11 +17,6 @@ public class Announcement extends BaseEntity<Announcement> implements Serializab
     private static final long serialVersionUID = 1L;
 
     /**
-     * 公告所属用户id
-     */
-    private String userId;
-
-    /**
      * 公告内容
      */
     private String content;
@@ -30,14 +25,6 @@ public class Announcement extends BaseEntity<Announcement> implements Serializab
      * 公告状态：-1-删除，0-不可见，1-正常，2-临时（此状态会被定期清理）
      */
     private Integer available;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 
     public String getContent() {
         return content;
@@ -58,8 +45,7 @@ public class Announcement extends BaseEntity<Announcement> implements Serializab
     @Override
     public String toString() {
         return "Announcement{" +
-                "userId=" + userId +
-                ", content=" + content +
+                "content=" + content +
                 ", available=" + available +
                 "}";
     }
