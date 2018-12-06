@@ -1,5 +1,6 @@
 package com.yang.blog.entity.base;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.yang.blog.annotation.FieldNotUpdate;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ public abstract class BaseEntity<Entity> implements Base<Entity>, Constant, Clon
      * 记录创建时间
      */
     @FieldNotUpdate
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdTime;
 
     public String getId() {

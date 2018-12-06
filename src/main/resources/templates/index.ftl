@@ -36,16 +36,16 @@
     <h4 class="item-title announcement" style="word-break: break-all;line-height: normal;padding: 15px 35px;">
         <p style="padding-left: 0;line-height: 30px">
             {{# if ( d.empty ) { }}
-            <a href="javascript:void(0)" style="display: block;text-align: center" class="empty-announcement" id="editAnnouncement">编辑公告</a>
+                <a href="javascript:void(0)" style="display: block;text-align: center" class="empty-announcement" id="editAnnouncement">编辑公告</a>
             {{# } else { }}
-            <@shiro.user>
-                <a class="layui-icon layui-icon-edit" href="javascript:void(0);" id="editAnnouncement"></a>
-            </@shiro.user>
-            <i class="layui-icon layui-icon-speaker"></i>
-            <span>公告：</span>
-            <span>{{ d.content }}</span>
-            <br>
-            <span style="color: #aaa;font-size: 14px;display: block;text-align: right">{{ d.createdTime }}</span>
+                <@shiro.user>
+                    <a class="layui-icon layui-icon-edit" href="javascript:void(0);" id="editAnnouncement"></a>
+                </@shiro.user>
+                <i class="layui-icon layui-icon-speaker"></i>
+                <span>公告：</span>
+                <span>{{ d.content }}</span>
+                <br>
+                <span style="color: #aaa;font-size: 14px;display: block;text-align: right">{{ d.createdTime }}</span>
             {{# } }}
         </p>
     </h4>
@@ -65,7 +65,7 @@
         </div>
         <div class="comment count">
             <a href="${contextPath}/comment/{{ d.id }}">评论</a>
-            <a href="javascript:void(0);" class="like" data-id="{{ d.id }}">点赞</a>
+            <a href="javascript:void(0);" class="like {{# if (d.praised) { }}layblog-this{{# } }}" data-id="{{ d.id }}">{{# if (d.praised) { }}已赞{{# } else { }}点赞{{# }}}</a>
         </div>
     </div>
 </script>
@@ -202,6 +202,9 @@
                         if (result.data.length > 0) {
                             result.data.forEach(function (item, index) {
                                 item.index = index + 1;
+                                if (localStorage.getItem(item.id) === 'yes') {
+                                    item.praised = true;
+                                }
                                 renderData(item);
                             });
                         } else {
@@ -248,7 +251,7 @@
 
         loadAnnouncement();
         loadArticle();
-        blog.praise('', blog.praise.paramType.articleId);
+        blog.praise('', blog.praise.paramType.article);
     });
 </script>
 </body>

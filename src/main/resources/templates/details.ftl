@@ -46,7 +46,7 @@
                         </@shiro.user>
                         ${article.title}
                     </h3>
-                    <h5>发布于：<span>${article.publishTime}</span></h5>
+                    <h5>发布于：<span>${article.publishTime?string('yyyy-MM-dd HH:mm:ss')}</span></h5>
                     <h6 style="font-size: 12px">
                         <#list tagList as tag>
                             <a href="#" title="${tag.name}相关文章" style="color: #999">${tag.name}</a>
@@ -221,8 +221,8 @@
 
         loadComment();
 
-        blog.praise('.pull-right', blog.praise.paramType.articleId);
-        blog.praise('.info-img', blog.praise.paramType.commentId);
+        blog.praise('.pull-right', blog.praise.paramType.article);
+        blog.praise('.info-img', blog.praise.paramType.comment);
     });
 </script>
 </body>

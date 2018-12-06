@@ -6,7 +6,7 @@
  @Site：http://www.layui.com/template/xianyan/
 
  */
-layui.define(['element', 'form',  'jquery', 'laytpl'], function (exports) {
+layui.define(['element', 'form', 'jquery', 'laytpl'], function (exports) {
     var element = layui.element
         , form = layui.form
         , $ = layui.jquery
@@ -80,15 +80,22 @@ layui.define(['element', 'form',  'jquery', 'laytpl'], function (exports) {
     function praise(additionalClass, paramType) {
         $(document).on('click' + additionalClass, additionalClass + '.like', function (e) {
             e.preventDefault();
-            var param = {}, that = this, $that = $(this);
-            param[paramType] = $that.attr('data-id');
+            var that = this, $that = $(this), praiseId = $that.attr('data-id');
+            if ( localStorage.getItem(praiseId) === 'yes') {
+                layer.msg("不可重复点赞");
+                return;
+            }
             if (!$that.hasClass("layblog-this")) {
                 $.ajax({
                     url: contextPath + '/data/praise/add',
-                    data: param,
+                    data: {
+                        praiseType: paramType,
+                        praiseId: praiseId
+                    },
                     type: 'post',
                     success: function (result) {
                         if (result.status === 'success') {
+                            localStorage.setItem(praiseId, 'yes');
                             that.text = '已赞';
                             $that.addClass('layblog-this');
                             $.tipsBox({
@@ -116,18 +123,15 @@ layui.define(['element', 'form',  'jquery', 'laytpl'], function (exports) {
                     }
                 });
             } else {
-                layer.msg('不可重复点赞', {
-                    icon: 6
-                    , time: 1000
-                });
+                layer.msg('不可重复点赞');
             }
         });
     }
 
     praise.paramType = {
-        articleId: 'articleId',
-        commentId: 'commentId',
-        messageId: 'messageId'
+        article: 'article',
+        comment: 'comment',
+        message: 'message'
     };
 
     //end 评论的特效

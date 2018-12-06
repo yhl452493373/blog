@@ -217,7 +217,7 @@
 
         loadMessage();
 
-        blog.praise('.info-img', blog.praise.paramType.messageId);
+        blog.praise('.info-img', blog.praise.paramType.message);
     });
 </script>
 </body>

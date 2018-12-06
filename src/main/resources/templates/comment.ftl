@@ -13,14 +13,14 @@
     <div class="container container-message container-details container-comment">
         <div class="contar-wrap">
             <div class="item">
-                <div class="item-box item-content-box layer-photos-demo layer-photos-demo1">
+                <div class="item-box item-content-box layer-photos-demo layer-photos-demo1" style="padding-bottom: 20px">
                     <h3>
                         <@shiro.user>
                             <a class="layui-icon layui-icon-edit" href="${contextPath}/edit/{{ d.id }}"></a>
                         </@shiro.user>
                         ${article.title}
                     </h3>
-                    <h5>发布于：<span>${article.publishTime}</span></h5>
+                    <h5>发布于：<span>${article.publishTime?string('yyyy-MM-dd HH:mm:ss')}</span></h5>
                     <div class="item-content">${article.content}</div>
                 </div>
             </div>
