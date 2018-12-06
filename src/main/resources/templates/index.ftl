@@ -202,7 +202,7 @@
                         if (result.data.length > 0) {
                             result.data.forEach(function (item, index) {
                                 item.index = index + 1;
-                                if (localStorage.getItem(item.id) === 'yes') {
+                                if (localStorage.getItem(item.id + '_praised') === 'yes') {
                                     item.praised = true;
                                 }
                                 renderData(item);

@@ -146,8 +146,6 @@ public class MainController {
             modelMap.addAttribute("article", new Article());
             modelMap.addAttribute("tagList", new ArrayList<>());
         } else {
-            article.setReadCount(article.getReadCount() + 1);
-            service.articleService.updateById(article);
             QueryWrapper<ArticleTag> articleTagQueryWrapper = new QueryWrapper<>();
             articleTagQueryWrapper.eq("article_id", articleId);
             List<ArticleTag> articleTagList = service.articleTagService.list(articleTagQueryWrapper);

@@ -56,7 +56,7 @@
                 </div>
                 <div class="count article-count layui-clear">
                     <span class="pull-left">阅读 <em>${article.readCount}</em></span>
-                    <span class="pull-right like" data-id="${article.id}">
+                    <span class="pull-right like" data-id="${article.id}" id="praiseCount">
                         <i class="layui-icon layui-icon-praise"></i><em class="count">${article.praiseCount}</em>
                     </span>
                 </div>
@@ -83,8 +83,10 @@
                     </@shiro.user>
                     第{{ d.floor }}楼. {{ d.userName }} 于 {{ d.createdTime }} 评论:
                 </span>
-                <span class="info-img like" data-id="{{ d.id }}"><i class="layui-icon layui-icon-praise"></i><span
-                            class="count">{{ d.praiseCount }}</span></span>
+                <span class="info-img like {{# if (d.praised) { }}layblog-this{{# } }}" data-id="{{ d.id }}">
+                    <i class="layui-icon layui-icon-praise"></i>
+                    <span class="count">{{ d.praiseCount }}</span>
+                </span>
             </p>
             <p class="info-intr">{{ d.content }}</p>
         </div>
@@ -188,6 +190,9 @@
                         $('#commentItemList > .info-item').remove();
                         if (result.data.length > 0) {
                             result.data.forEach(function (item) {
+                                if (localStorage.getItem(item.id + '_praised') === 'yes') {
+                                    item.praised = true;
+                                }
                                 renderData(item);
                             });
                         } else {
@@ -219,6 +224,28 @@
             }
         }
 
+        function initPraised() {
+            var $praiseCount = $('#praiseCount');
+            var itemId = $praiseCount.data('id');
+            if (localStorage.getItem(itemId + '_praised') === 'yes') {
+                $praiseCount.addClass('layblog-this');
+            }
+        }
+
+        function increaseReadCount() {
+            var $praiseCount = $('#praiseCount');
+            if (localStorage.getItem($praiseCount.data('id') + '_read') !== 'yes') {
+                $.get(contextPath + '/data/article/increaseReadCount?id=' + $praiseCount.data('id'), function (result) {
+                    console.log(result.status);
+                    if (result.status === 'success') {
+                        localStorage.setItem($praiseCount.data('id') + '_read', 'yes');
+                    }
+                });
+            }
+        }
+
+        increaseReadCount();
+        initPraised();
         loadComment();
 
         blog.praise('.pull-right', blog.praise.paramType.article);

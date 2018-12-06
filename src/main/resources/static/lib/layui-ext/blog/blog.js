@@ -81,7 +81,7 @@ layui.define(['element', 'form', 'jquery', 'laytpl'], function (exports) {
         $(document).on('click' + additionalClass, additionalClass + '.like', function (e) {
             e.preventDefault();
             var that = this, $that = $(this), praiseId = $that.attr('data-id');
-            if ( localStorage.getItem(praiseId) === 'yes') {
+            if (localStorage.getItem(praiseId + '_praised') === 'yes') {
                 layer.msg("不可重复点赞");
                 return;
             }
@@ -95,7 +95,7 @@ layui.define(['element', 'form', 'jquery', 'laytpl'], function (exports) {
                     type: 'post',
                     success: function (result) {
                         if (result.status === 'success') {
-                            localStorage.setItem(praiseId, 'yes');
+                            localStorage.setItem(praiseId + '_praised', 'yes');
                             that.text = '已赞';
                             $that.addClass('layblog-this');
                             $.tipsBox({

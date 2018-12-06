@@ -219,8 +219,14 @@ body {
 /* end header */
 
 /* 辅助 */
-.lay-blog .container .count .layblog-this {
+.like.layblog-this,
+.container .count .layblog-this .count,
+.lay-blog .container .count .layblog-this .layui-icon {
     color: #FF5722 !important;
+}
+
+.container .count .layblog-this .count {
+    font-size: 14px;
 }
 
 /* start container */
@@ -478,10 +484,10 @@ body {
 }
 
 .lay-blog .container-message .title .info-img i {
-    font-size: 24px;
-    padding-right: 5px;
-    position: relative;
-    top: 4px;
+    line-height: 38px;
+    font-size: 16px;
+    color: #999;
+    margin-right: 0;
 }
 
 .lay-blog .container-message .paging {
@@ -616,25 +622,25 @@ body {
 /*end create*/
 
 /*start page*/
-#page{
+#page {
     background: #fff;
     text-align: center;
 }
 
-.layui-laypage a:hover{
+.layui-laypage a:hover {
     color: #1e9fff;
 }
 
-.layui-laypage .layui-laypage-curr .layui-laypage-em{
+.layui-laypage .layui-laypage-curr .layui-laypage-em {
     background-color: #1e9fff;
     border-radius: 0;
 }
 
-.layui-laypage input:focus, .layui-laypage select:focus{
-    border-color: #1e9fff!important;
+.layui-laypage input:focus, .layui-laypage select:focus {
+    border-color: #1e9fff !important;
 }
 
-.layui-laypage a, .layui-laypage span{
+.layui-laypage a, .layui-laypage span {
     margin: 0 -1px 0 0;
     display: inline-block;
     height: 30px;
@@ -643,7 +649,7 @@ body {
     border-radius: 2px;
 }
 
-.layui-laypage select{
+.layui-laypage select {
     width: 100%;
     height: 100%;
     border: none;
@@ -652,12 +658,13 @@ body {
     vertical-align: top;
 }
 
-.layui-laypage .layui-laypage-limits, .layui-laypage .layui-laypage-refresh{
+.layui-laypage .layui-laypage-limits, .layui-laypage .layui-laypage-refresh {
     border: 1px solid #e2e2e2;
 }
 
-.layui-laypage .layui-laypage-refresh{
+.layui-laypage .layui-laypage-refresh {
     display: inline-block;
     width: 30px;
 }
+
 /*end page*/

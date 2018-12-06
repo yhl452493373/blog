@@ -171,6 +171,17 @@ public class ArticleController implements BaseController {
         return jsonResult;
     }
 
+    @RequestMapping("/increaseReadCount")
+    public JSONResult increaseReadCount(String id) {
+        Article article = service.articleService.getById(id);
+        if (article == null)
+            return JSONResult.init().error("文章计数统计异常");
+        article.setReadCount(article.getReadCount() + 1);
+        service.articleService.updateById(article);
+        service.esArticleService.save(new EsArticle().update(true, article, EsArticle.class));
+        return JSONResult.init().success("文章计数完成");
+    }
+
     @RequestMapping("/search")
     public JSONResult search(String content, @RequestParam(defaultValue = "false") Boolean includeContent, Page<EsArticle> page) {
         if (StringUtils.isEmpty(content) || content.trim().length() < 2)
