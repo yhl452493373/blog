@@ -1,6 +1,5 @@
 package com.yang.blog.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.yang.blog.entity.base.BaseEntity;
 
@@ -57,7 +56,6 @@ public class Article extends BaseEntity<Article> implements Serializable, Clonea
     /**
      * 发布时间
      */
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishTime;
 
     /**
