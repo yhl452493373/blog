@@ -178,7 +178,6 @@ public class ArticleController implements BaseController {
             return JSONResult.init().error("文章计数统计异常");
         article.setReadCount(article.getReadCount() + 1);
         service.articleService.updateById(article);
-        service.esArticleService.save(new EsArticle().update(true, article, EsArticle.class));
         return JSONResult.init().success("文章计数完成");
     }
 
@@ -198,12 +197,19 @@ public class ArticleController implements BaseController {
         if (includeContent)
             queryBuilder.should(QueryBuilders.matchQuery("content", content));
         SearchQuery searchQuery = new NativeSearchQueryBuilder().withFilter(filterBuilder).withQuery(queryBuilder).build();
-        //排序
-        page.setDesc("publishTime");
         service.esArticleService.search(page, searchQuery);
-        return JSONResult.init().success(QUERY_SUCCESS)
-                .data(page.getRecords(), JSONResult.Pattern.INCLUDE, "id", "title", "summary", "publishTime", "readCount", "praiseCount")
-                .count(page.getTotal());
+        if (page.getTotal() > 0) {
+            List<String> ids = new ArrayList<>();
+            page.getRecords().forEach(record -> ids.add(record.getId()));
+            QueryWrapper<Article> articleQueryWrapper = new QueryWrapper<>();
+            articleQueryWrapper.in("id", ids);
+            articleQueryWrapper.orderByDesc("publish_time");
+            List<Article> articleList = service.articleService.list(articleQueryWrapper);
+            return JSONResult.init().success(QUERY_SUCCESS)
+                    .data(articleList, JSONResult.Pattern.INCLUDE, "id", "title", "summary", "publishTime", "readCount", "praiseCount")
+                    .count(page.getTotal());
+        }
+        return JSONResult.init().success(QUERY_SUCCESS).count(0);
     }
 
     /**

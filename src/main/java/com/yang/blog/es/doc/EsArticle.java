@@ -53,18 +53,6 @@ public class EsArticle extends EsBaseDoc<EsArticle, Article> implements Constant
     private Integer isDraft;
 
     /**
-     * 阅读次数
-     */
-    @Field(index = false, type = FieldType.Integer)
-    private Integer readCount;
-
-    /**
-     * 点赞次数
-     */
-    @Field(index = false, type = FieldType.Integer)
-    private Integer praiseCount;
-
-    /**
      * 发布时间.这三个注解是为了前台序列化java8 LocalDateTime使用的，需要引入jsr310的包才可以使用
      */
     @JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -129,22 +117,6 @@ public class EsArticle extends EsBaseDoc<EsArticle, Article> implements Constant
 
     public void setIsDraft(Integer isDraft) {
         this.isDraft = isDraft;
-    }
-
-    public Integer getReadCount() {
-        return readCount;
-    }
-
-    public void setReadCount(Integer readCount) {
-        this.readCount = readCount;
-    }
-
-    public Integer getPraiseCount() {
-        return praiseCount;
-    }
-
-    public void setPraiseCount(Integer praiseCount) {
-        this.praiseCount = praiseCount;
     }
 
     public LocalDateTime getPublishTime() {
