@@ -4,5 +4,14 @@
 
     <!-- 开启二级缓存 -->
     <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    <select id="listAboutRelateFile" resultType="com.yang.blog.entity.File" flushCache="true">
+        SELECT
+            *
+        FROM
+            file f
+        WHERE
+            EXISTS ( SELECT af.file_id FROM about_file af WHERE af.about_id = #{id} AND af.file_id = f.id )
+          AND f.available = #{fileAvailable}
+    </select>
 
 </mapper>

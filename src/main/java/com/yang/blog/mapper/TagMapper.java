@@ -2,6 +2,9 @@ package com.yang.blog.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yang.blog.entity.Tag;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Collection;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.yang.blog.entity.Tag;
  */
 public interface TagMapper extends BaseMapper<Tag> {
 
+    Collection<Tag> listArticleRelateTagAsc(@Param("articleId") String articleId, @Param("orderColumns") String[] orderColumns);
 }

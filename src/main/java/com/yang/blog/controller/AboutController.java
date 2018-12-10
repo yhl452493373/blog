@@ -1,6 +1,5 @@
 package com.yang.blog.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yhl452493373.bean.JSONResult;
 import com.github.yhl452493373.utils.CommonUtils;
@@ -112,15 +111,7 @@ public class AboutController implements BaseController {
         }
 
         if (fileResult) {
-            //清理临时状态的文件.此一步操作稍作修改可作为定时任务一部分
-            QueryWrapper<AboutFile> aboutQueryWrapper = new QueryWrapper<>();
-            aboutQueryWrapper.eq("about_id", about.getId());
-            List<AboutFile> aboutFileList = service.aboutFileService.list(aboutQueryWrapper);
-            List<String> aboutFileIdList = CommonUtils.convertToFieldList(aboutFileList, "getFileId");
-            QueryWrapper<File> fileQueryWrapper = new QueryWrapper<>();
-            fileQueryWrapper.in("id", aboutFileIdList);
-            fileQueryWrapper.eq("available", File.TEMP);
-            List<File> tempFileList = service.fileService.list(fileQueryWrapper);
+            List<File> tempFileList = service.fileService.listAboutRelateFile(about.getId(),File.TEMP);
             aboutFileResult = FileUtils.delete(CommonUtils.convertToIdList(tempFileList));
         }
         return fileResult && aboutFileResult;

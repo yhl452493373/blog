@@ -15,4 +15,6 @@ import java.util.List;
  */
 public interface FileService extends IService<File> {
     boolean setAvailable(List<String> fileIdList, Integer available);
+
+    List<File> listAboutRelateFile(String id, Integer fileAvailable);
 }

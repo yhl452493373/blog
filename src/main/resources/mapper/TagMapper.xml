@@ -4,5 +4,23 @@
 
     <!-- 开启二级缓存 -->
     <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    <select id="listArticleRelateTagAsc" resultType="com.yang.blog.entity.Tag" flushCache="true">
+        SELECT
+            *
+        FROM
+            tag t
+        WHERE
+            #静态常量
+            t.available = ${@com.yang.blog.entity.Tag@AVAILABLE}
+        AND
+            EXISTS ( SELECT * FROM article_tag `at` WHERE `at`.tag_id = t.id AND `at`.article_id = #{articleId} )
+        <if test="orderColumns != null and orderColumns.length > 0">
+            ORDER BY
+                <foreach collection="orderColumns" item="ascColumn" separator=",">
+                    ${ascColumn}
+                </foreach>
+            ASC
+        </if>
+    </select>
 
 </mapper>

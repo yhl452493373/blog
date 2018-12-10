@@ -26,4 +26,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         fileList.forEach(file -> file.setAvailable(available));
         return updateBatchById(fileList);
     }
+
+    @Override
+    public List<File> listAboutRelateFile(String id, Integer fileAvailable) {
+        return baseMapper.listAboutRelateFile(id, fileAvailable);
+    }
 }
