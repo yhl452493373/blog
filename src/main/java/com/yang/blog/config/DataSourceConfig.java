@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.github.yhl452493373.bean.DataSourceGroup;
 import com.github.yhl452493373.bean.DataSourceProperties;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -17,6 +19,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.HashSet;
+import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
 @Configuration
@@ -42,6 +46,13 @@ public class DataSourceConfig {
         return new DataSourceTransactionManager(dataSource(dataSourceGroup));
     }
 
+    /**
+     * 性能分析插件
+     */
+    @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
+    @Autowired(required = false)
+    private PerformanceInterceptor performanceInterceptor;
+
     @Bean
     @Primary
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource, PaginationInterceptor paginationInterceptor) throws Exception {
@@ -52,9 +63,12 @@ public class DataSourceConfig {
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setCacheEnabled(true);
         sessionFactory.setConfiguration(configuration);
-        sessionFactory.setPlugins(new Interceptor[]{
-                paginationInterceptor
-        });
+        Set<Interceptor> interceptors = new HashSet<>();
+        interceptors.add(paginationInterceptor);
+        if (performanceInterceptor != null) {
+            interceptors.add(performanceInterceptor);
+        }
+        sessionFactory.setPlugins(interceptors.toArray(new Interceptor[]{}));
         return sessionFactory.getObject();
     }
 }

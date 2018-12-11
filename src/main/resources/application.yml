@@ -5,9 +5,10 @@ spring:
     cache: false
   profiles:
     active:
-    - single-datasource
-    - setting
-    - shiro-captcha
+      - dev
+      - single-datasource
+      - setting
+      - shiro-captcha
   servlet:
     multipart:
       max-file-size: 20MB
@@ -22,4 +23,4 @@ server:
   port: 8080
 logging:
   level:
-    com.yang.blog: debug
+    com.yang.blog: info
