@@ -185,14 +185,14 @@ body {
     }
 }
 
-@media only screen and (max-width: 980px) {
+@media only screen and (max-width: 900px) {
     .lay-blog .blog-search {
         display: none;
     }
 
 }
 
-@media only screen and (max-width: 750px) {
+@media only screen and (max-width: 1170px) {
     .lay-blog .blog-nav {
         display: none;
     }
@@ -210,7 +210,7 @@ body {
     }
 }
 
-@media only screen and (min-width: 750px) {
+@media only screen and (min-width: 900px) {
     .lay-blog ul#pop-nav {
         display: none !important;
     }
@@ -238,7 +238,7 @@ body {
 }
 
 .lay-blog .container {
-    width: 750px;
+    width: 900px;
     margin: 0 auto;
 }
 
@@ -328,7 +328,7 @@ body {
     margin-top: 20px;
 }
 
-@media only screen and (max-width: 750px) {
+@media only screen and (max-width: 900px) {
     .lay-blog .container {
         width: 100%;
         margin: 0 auto 70px;
