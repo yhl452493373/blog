@@ -260,6 +260,8 @@
                 success: function (result) {
                     if (result.status === 'success') {
                         //todo 保存草稿后需要允许继续编辑
+                        $('#id').val(result.data);
+                        $('#articleForm').attr('action', contextPath + '/data/article/update');
                         layer.alert('文章保存草稿成功');
                     } else {
                         layer.alert('文章保存草稿失败，请稍后再试');
