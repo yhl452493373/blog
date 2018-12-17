@@ -44,7 +44,7 @@
         layedit.set({
             //暴露layupload参数设置接口 --详细查看layupload参数说明
             uploadImage: {
-                url: contextPath + '/data/file/upload?layEditUpload=true',
+                url: contextPath + '/data/file/upload',
                 accept: 'image',
                 acceptMime: 'image/*',
                 exts: 'jpg|png|gif|bmp|jpeg',
@@ -63,7 +63,7 @@
                 }
             }
             , uploadVideo: {
-                url: contextPath + '/data/file/upload?layEditUpload=true',
+                url: contextPath + '/data/file/upload',
                 accept: 'video',
                 acceptMime: 'video/*',
                 exts: 'mp4|flv|avi|rm|rmvb',

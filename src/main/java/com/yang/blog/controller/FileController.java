@@ -36,22 +36,16 @@ public class FileController implements BaseController {
     /**
      * 单文件上传
      *
-     * @param fileParam     文件上传信息
-     * @param layEditUpload 是否layEdit的文件上传。layEdit文件上传返回值与其他的不一样。返回{code:0,msg:'消息',data:{src:'路径',titile:'文件名',fileId:'文件id'}}。其他返回JSONResult格式，在其data中有fileId表示文件id，fileUrl表示文件下载路径
+     * @param fileParam 文件上传信息
      */
     @PostMapping("/upload")
-    public JSONObject upload(MultipartFileParam fileParam, @RequestParam(required = false, defaultValue = "false") Boolean layEditUpload, HttpServletRequest request) {
+    public JSONObject upload(MultipartFileParam fileParam, HttpServletRequest request) {
         JSONResult jsonResult = JSONResult.init();
+        String contextPath = request.getContextPath();
         // 判断前端Form表单格式是否支持文件上传
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         if (!isMultipart) {
-            if (layEditUpload) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("code", 500);
-                jsonObject.put("msg", "不支持的表单格式");
-                return jsonObject;
-            }
-            return jsonResult.error("不支持的表单格式");
+            return jsonResult.code(HttpServletResponse.SC_NOT_ACCEPTABLE).error("不支持的表单格式");
         }
         logger.info("上传文件开始");
         try {
@@ -84,32 +78,16 @@ public class FileController implements BaseController {
                 uploadMap.remove("file");
                 uploadMap.remove("taskId");
                 uploadMap.put("fileId", file.getId());
-                uploadMap.put("fileUrl", "/data/file/download/" + file.getId());
+                uploadMap.put("fileUrl", contextPath + "/data/file/download/" + file.getId());
                 jsonResult.success("文件上传成功.").data(uploadMap);
-                if (layEditUpload) {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("code", 0);
-                    jsonObject.put("msg", "文件上传成功");
-                    JSONObject dataJSONObject = new JSONObject();
-                    dataJSONObject.put("src", "/data/file/download/" + file.getId());
-                    dataJSONObject.put("title", file.getOriginalName());
-                    dataJSONObject.put("fileId", file.getId());
-                    jsonObject.put("data", dataJSONObject);
-                    return jsonObject;
-                }
+                jsonResult.put("link", uploadMap.get("fileUrl"));
             } else {
                 uploadMap.remove("file");
                 jsonResult.success("文件上传中.").data(uploadMap);
             }
         } catch (IOException e) {
             logger.error("文件上传失败。{}", fileParam.toString());
-            if (layEditUpload) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("code", 500);
-                jsonObject.put("msg", "文件上传失败");
-                return jsonObject;
-            }
-            jsonResult.error("文件上传失败。");
+            jsonResult.code(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).error("文件上传失败。");
         }
         logger.info("上传文件结束");
         return jsonResult;

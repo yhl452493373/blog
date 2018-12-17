@@ -6,6 +6,63 @@
     <title>撰写-闲言轻博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <#include "include.resource.ftl">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/froala_editor.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/froala_style.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/code_view.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/draggable.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/colors.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/emoticons.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/image_manager.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/image.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/line_breaker.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/table.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/char_counter.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/video.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/fullscreen.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/file.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/quick_insert.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/help.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/third_party/spell_checker.css">
+    <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/special_characters.css">
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/mode/xml/xml.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/jquery/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/froala_editor.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/align.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/char_counter.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/code_beautifier.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/code_view.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/colors.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/draggable.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/emoticons.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/entities.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/file.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/font_size.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/font_family.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/fullscreen.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/image.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/image_manager.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/line_breaker.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/inline_style.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/link.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/lists.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/paragraph_format.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/paragraph_style.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/quick_insert.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/quote.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/table.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/save.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/url.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/video.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/help.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/print.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/special_characters.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/word_paste.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/languages/zh_cn.js"></script>
+
     <script src="${contextPath}/static/lib/ace/ace.js"></script>
     <style>
         .create-tags-container {
@@ -34,23 +91,23 @@
             <p class="error">文章不存在</p>
         <#else>
             <form id="articleForm" class="layui-form article-form" action="${contextPath}/data/article/${articleEdit.id???string("update","add")}" method="post">
-                <div class="layui-form-item">
-                    <input name="title" type="text" class="layui-input create-title-input" placeholder="请输入文章标题" value="<#if isDraft!>[草稿] </#if>${articleEdit.title!}">
-                </div>
-                <div class="layui-form-item">
-                    <input type="hidden" id="id" name="id" value="${articleEdit.id!}">
-                    <input type="hidden" id="fileIds" name="fileIds" value="${articleEdit.fileIds!}">
-                    <textarea name="content" id="content" placeholder="文章内容" style="display: none;">${articleEdit.content!}</textarea>
-                </div>
-                <div class="layui-form-item create-tags-container">
-                    <label class="layui-form-label">文章标签:</label>
-                    <div class="layui-input-block">
-                        <div class="inputTags">
-                            <input type="hidden" name="tags" id="tags" value="${articleEdit.tags!}">
-                            <input type="text" id="inputTags" class="inputTagsInput" placeholder="输入标签">
-                        </div>
-                    </div>
-                </div>
+            <div class="layui-form-item">
+        <input name="title" type="text" class="layui-input create-title-input" placeholder="请输入文章标题" value="<#if isDraft!>[草稿] </#if>${articleEdit.title!}">
+            </div>
+            <div class="layui-form-item">
+        <input type="hidden" id="id" name="id" value="${articleEdit.id!}">
+        <input type="hidden" id="fileIds" name="fileIds" value="${articleEdit.fileIds!}">
+            <textarea name="content" id="content" placeholder="文章内容" style="display: none;">${articleEdit.content!}</textarea>
+            </div>
+            <div class="layui-form-item create-tags-container">
+        <label class="layui-form-label">文章标签:</label>
+            <div class="layui-input-block">
+            <div class="inputTags">
+        <input type="hidden" name="tags" id="tags" value="${articleEdit.tags!}">
+            <input type="text" id="inputTags" class="inputTagsInput" placeholder="输入标签">
+            </div>
+            </div>
+            </div>
             </form>
             <div class="create-button-group">
             <#if !articleEdit.id?? || isDraft!>
@@ -70,9 +127,8 @@
     layui.extend({
         blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog',
         inputTags: '{/}${contextPath}/static/lib/layui-ext/input-tags/inputTags'
-    }).use(['blog', 'layer', 'layedit', 'inputTags', 'jquery'], function () {
-        var layedit = layui.layedit, layer = layui.layer;
-        var inputTags = layui.inputTags;
+    }).use(['blog', 'layer', 'inputTags', 'jquery'], function () {
+        var layer = layui.layer, inputTags = layui.inputTags;
         var $ = layui.jquery;
 
         $(document).on('click', '#publish', function (e) {
@@ -83,101 +139,156 @@
             draft();
         });
 
-        layedit.set({
-            //暴露layupload参数设置接口 --详细查看layupload参数说明
-            uploadImage: {
-                url: contextPath + '/data/file/upload?layEditUpload=true',
-                accept: 'image',
-                acceptMime: 'image/*',
-                exts: 'jpg|png|gif|bmp|jpeg',
-                size: 0,
-                done: function (res) {
-                    //成功后的回调
-                    var $fileIds = $('#fileIds');
-                    var fileIds = $fileIds.val();
-                    if (fileIds.trim() === '') {
-                        fileIds = [];
-                    } else {
-                        fileIds = fileIds.split(',');
-                    }
-                    fileIds.push(res.data['fileId']);
-                    $fileIds.val(fileIds.join(','));
-                }
+        //富文本编辑器
+        $('#content').froalaEditor({
+            language: 'zh_cn',
+            pasteDeniedAttrs: true,
+            pasteDeniedTags: true,
+            spellcheck: false,
+            height: 300,
+            fontFamily: {
+                'Andale Mono': 'Andale Mono',
+                'Arial,Helvetica,sans-serif': 'Arial',
+                'Georgia,serif': 'Georgia',
+                'Impact,Charcoal,sans-serif': 'Impact',
+                'Sans-Serif': 'Sans-Serif',
+                'Tahoma,Geneva,sans-serif': 'Tahoma',
+                'Times New Roman,Times,serif': 'Times New Roman',
+                'Verdana,Geneva,sans-serif': 'Verdana',
+                '宋体,SimSun': '宋体',
+                '楷体,楷体_GB2312,SimKai': '楷体',
+                '黑体,SimHei': '黑体',
+                '隶书, SimLi': '隶书',
+                '微软雅黑,Microsoft YaHei': '微软雅黑'
+            },
+            toolbarButtons: ['fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily', 'fontSize', 'color', 'inlineClass', 'inlineStyle', 'paragraphStyle', 'lineHeight', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', 'insertImage', 'insertVideo', 'embedly', 'insertFile', 'insertTable', '|', 'emoticons', 'fontAwesome', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 'print', 'help', 'html', '|', 'undo', 'redo'],
+            fileUploadParam: 'file',
+            fileUploadURL: contextPath + '/data/file/upload',
+            fileUploadMethod: 'POST',
+            fileMaxSize: 5 * 1024 * 1024,//最大单个文件5MB
+            imageUploadParam: 'file',
+            imageUploadURL: contextPath + '/data/file/upload',
+            imageUploadMethod: 'POST',
+            imageMaxSize: 5 * 1024 * 1024,//最大单个图片5MB
+            imageAllowedTypes: ['jpeg', 'jpg', 'png'],
+            videoUploadParam: 'file',
+            videoUploadURL: contextPath + '/data/file/upload',
+            videoUploadMethod: 'POST',
+            videoMaxSize: 20 * 1024 * 1024,//最大单个视频5MB
+            videoAllowedTypes: ['webm', 'jpg', 'ogg']
+        }).on('froalaEditor.file.beforeUpload', function (e, editor, files) {
+            // Return false if you want to stop the file upload.
+        }).on('froalaEditor.file.uploaded', function (e, editor, response) {
+            // File was uploaded to the server.
+        }).on('froalaEditor.file.inserted', function (e, editor, $file, response) {
+            // File was inserted in the editor.
+        }).on('froalaEditor.file.error', function (e, editor, error, response) {
+            // Bad link.
+            if (error.code === 1) {
             }
-            , uploadVideo: {
-                url: contextPath + '/data/file/upload?layEditUpload=true',
-                accept: 'video',
-                acceptMime: 'video/*',
-                exts: 'mp4|flv|avi|rm|rmvb',
-                size: 0,
-                done: function (res) {
-                    //成功后的回调
-                    var $fileIds = $('#fileIds');
-                    var fileIds = $fileIds.val();
-                    if (fileIds.trim() === '') {
-                        fileIds = [];
-                    } else {
-                        fileIds = fileIds.split(',');
-                    }
-                    fileIds.push(res.data['fileId']);
-                    $fileIds.val(fileIds.join(','));
-                }
+
+            // No link in upload response.
+            else if (error.code === 2) {
             }
-            , uploadFiles: {
-                url: contextPath + '/data/file/upload?layEditUpload=true',
-                field: 'file',//上传时的文件参数字段名
-                accept: 'file',
-                acceptMime: 'file/*',
-                exts: '',
-                size: 0, //单位为KB
-                done: function (res) {//文件上传接口返回code为0时的回调
-                    //成功后的回调
-                    var $fileIds = $('#fileIds');
-                    var fileIds = $fileIds.val();
-                    if (fileIds.trim() === '') {
-                        fileIds = [];
-                    } else {
-                        fileIds = fileIds.split(',');
-                    }
-                    fileIds.push(res.data['fileId']);
-                    $fileIds.val(fileIds.join(','));
-                }
+
+            // Error during file upload.
+            else if (error.code === 3) {
             }
-            //右键删除图片/视频时的回调参数，post到后台删除服务器文件等操作，
-            //传递参数：
-            //图片： imgpath --图片路径
-            //视频： filepath --视频路径 imgpath --封面路径
-            , calldel: {
-                url: contextPath + '/data/file/delete?layEditDelete=true<#if articleEdit.id??>&temporary=true</#if>',
-                done: function (res) {
-                    //成功后的回调
-                    var $fileIds = $('#fileIds');
-                    var fileIds = $fileIds.val();
-                    if (fileIds.trim() === '') {
-                        return;
-                    } else {
-                        fileIds = fileIds.split(',');
-                    }
-                    res.data.forEach(function (fileId) {
-                        fileIds.splice(fileIds.indexOf(fileId), 1);
-                    });
-                    $fileIds.val(fileIds.join(','));
-                }
+
+            // Parsing response failed.
+            else if (error.code === 4) {
             }
-            //开发者模式 --默认为false
-            , devmode: false
-            //插入代码设置
-            , codeConfig: {
-                hide: false,  //是否显示编码语言选择框
-                default: 'javascript' //hide为true时的默认语言格式
+
+            // File too text-large.
+            else if (error.code === 5) {
             }
-            , tool: [
-                'html', 'code', 'strong', 'italic', 'underline', 'del', 'addhr', '|', 'fontFomatt', 'colorpicker', 'face'
-                , '|', 'left', 'center', 'right', '|', 'link', 'unlink', 'image_alt', 'images', 'video', 'attachment', 'table'
-                , '|', 'fullScreen'
-            ]
+
+            // Invalid file type.
+            else if (error.code === 6) {
+            }
+
+            // File can be uploaded only to same domain in IE 8 and IE 9.
+            else if (error.code === 7) {
+            }
+
+            // Response contains the original server response to the request if available.
+        }).on('froalaEditor.image.beforeUpload', function (e, editor, images) {
+            // Return false if you want to stop the image upload.
+        }).on('froalaEditor.image.uploaded', function (e, editor, response) {
+            // Image was uploaded to the server.
+        }).on('froalaEditor.image.inserted', function (e, editor, $img, response) {
+            // Image was inserted in the editor.
+        }).on('froalaEditor.image.replaced', function (e, editor, $img, response) {
+            // Image was replaced in the editor.
+        }).on('froalaEditor.image.error', function (e, editor, error, response) {
+            // Bad link.
+            if (error.code === 1) {
+            }
+
+            // No link in upload response.
+            else if (error.code === 2) {
+            }
+
+            // Error during image upload.
+            else if (error.code === 3) {
+            }
+
+            // Parsing response failed.
+            else if (error.code === 4) {
+            }
+
+            // Image too text-large.
+            else if (error.code === 5) {
+            }
+
+            // Invalid image type.
+            else if (error.code === 6) {
+            }
+
+            // Image can be uploaded only to same domain in IE 8 and IE 9.
+            else if (error.code === 7) {
+            }
+
+            // Response contains the original server response to the request if available.
+        }).on('froalaEditor.video.beforeUpload', function (e, editor, videos) {
+            // Return false if you want to stop the video upload.
+        }).on('froalaEditor.video.uploaded', function (e, editor, response) {
+            // Video was uploaded to the server.
+        }).on('froalaEditor.video.inserted', function (e, editor, $img, response) {
+            // Video was inserted in the editor.
+        }).on('froalaEditor.video.replaced', function (e, editor, $img, response) {
+            // Video was replaced in the editor.
+        }).on('froalaEditor.video.error', function (e, editor, error, response) {
+            // Bad link.
+            if (error.code === 1) {
+            }
+
+            // No link in upload response.
+            else if (error.code === 2) {
+            }
+
+            // Error during video upload.
+            else if (error.code === 3) {
+            }
+
+            // Parsing response failed.
+            else if (error.code === 4) {
+            }
+
+            // Video too text-large.
+            else if (error.code === 5) {
+            }
+
+            // Invalid video type.
+            else if (error.code === 6) {
+            }
+
+            // Video can be uploaded only to same domain in IE 8 and IE 9.
+            else if (error.code === 7) {
+            }
+
+            // Response contains the original server response to the request if available.
         });
-        var layeditIndex = layedit.build('content');
 
         var tags = $('#tags').val();
         inputTags.render({
@@ -194,11 +305,10 @@
         });
 
         function publish() {
-            layedit.sync(layeditIndex);
             var $articleForm = $('#articleForm');
             var formData = new FormData($articleForm.get(0));
             formData.append('isDraft', 0);//设置为非草稿状态
-            formData.append("planTextContent", layedit.getText(layeditIndex));
+            formData.append("planTextContent", $('#content').val());
             $.ajax({
                 url: $articleForm.attr('action'),
                 type: $articleForm.attr('method'),
@@ -218,11 +328,10 @@
         }
 
         function draft() {
-            layedit.sync(layeditIndex);
             var $articleForm = $('#articleForm');
             var formData = new FormData($articleForm.get(0));
             formData.append('isDraft', 1);//设置为草稿状态
-            formData.append("planTextContent", layedit.getText(layeditIndex));
+            formData.append("planTextContent", $('#content').val());
             $.ajax({
                 url: $articleForm.attr('action'),
                 type: $articleForm.attr('method'),
