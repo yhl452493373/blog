@@ -2,6 +2,9 @@
 <#--css-->
 <link rel="stylesheet" href="${contextPath}/static/lib/layui/css/layui.css">
 <link rel="stylesheet" href="${contextPath}/static/css/main.css">
+<#--富文本编辑器需要用到的样式-->
+<link rel="stylesheet" href="${contextPath}/static/css/font-awesome.min.css">
+<link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/froala_style.css">
 <#--script-->
 <script src="${contextPath}/static/lib/layui/layui.js"></script>
 

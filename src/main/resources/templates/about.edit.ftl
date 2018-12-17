@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <title>关于-闲言轻博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="${contextPath}/static/lib/ace/ace.js"></script>
     <#include "include.resource.ftl">
+    <#include "include.froalaeditor.ftl">
 </head>
 <body class="lay-blog">
 <#include "include.header.ftl">
@@ -32,62 +32,100 @@
 <script>
     layui.extend({
         blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
-    }).use(['blog', 'layer', 'layedit', 'jquery'], function () {
-        var layedit = layui.layedit, layer = layui.layer;
-        var $ = layui.jquery;
+    }).use(['blog', 'layer', 'layedit'], function () {
+        var  layer = layui.layer;
 
-        $(document).on('click', '#save', function (e) {
-            e.preventDefault();
-            save();
+        //富文本编辑器
+        $('#content').froalaEditor({
+            language: 'zh_cn',
+            pasteDeniedAttrs: true,
+            pasteDeniedTags: true,
+            spellcheck: false,
+            toolbarSticky: false,
+            htmlExecuteScripts: false,
+            height: 300,
+            fontFamily: {
+                'Andale Mono': 'Andale Mono',
+                'Arial,Helvetica,sans-serif': 'Arial',
+                'Georgia,serif': 'Georgia',
+                'Impact,Charcoal,sans-serif': 'Impact',
+                'Sans-Serif': 'Sans-Serif',
+                'Tahoma,Geneva,sans-serif': 'Tahoma',
+                'Times New Roman,Times,serif': 'Times New Roman',
+                'Verdana,Geneva,sans-serif': 'Verdana',
+                '宋体,SimSun': '宋体',
+                '楷体,楷体_GB2312,SimKai': '楷体',
+                '黑体,SimHei': '黑体',
+                '隶书, SimLi': '隶书',
+                '微软雅黑,Microsoft YaHei': '微软雅黑'
+            },
+            toolbarButtons: ['fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily', 'fontSize', 'color', 'inlineClass', 'inlineStyle', 'paragraphStyle', 'lineHeight', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', 'insertImage', 'insertVideo', 'embedly', 'insertFile', 'insertTable', '|', 'emoticons', 'fontAwesome', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 'print', 'getPDF', 'help', 'html', '|', 'undo', 'redo'],
+            fileUploadParam: 'file',
+            fileUploadURL: contextPath + '/data/file/upload',
+            fileUploadMethod: 'POST',
+            fileMaxSize: 5 * 1024 * 1024,//最大单个文件5MB
+            imageUploadParam: 'file',
+            imageUploadURL: contextPath + '/data/file/upload',
+            imageUploadMethod: 'POST',
+            imageMaxSize: 5 * 1024 * 1024,//最大单个图片5MB
+            imageAllowedTypes: ['jpeg', 'jpg', 'png'],
+            videoUploadParam: 'file',
+            videoUploadURL: contextPath + '/data/file/upload',
+            videoUploadMethod: 'POST',
+            videoMaxSize: 20 * 1024 * 1024,//最大单个视频5MB
+            videoAllowedTypes: ['webm', 'mp4', 'ogg']
+        }).on('froalaEditor.file.uploaded', function (e, editor, response) {
+            uploadedCallback(response);
+        }).on('froalaEditor.file.unlink', function (e, editor, link) {
+            deleteCallback($(link), 'file');
+        }).on('froalaEditor.file.error', function (e, editor, error, response) {
+            errorCallback(error, response);
+        }).on('froalaEditor.image.uploaded', function (e, editor, response) {
+            uploadedCallback(response);
+        }).on('froalaEditor.image.removed', function (e, editor, $img) {
+            deleteCallback($img, 'image');
+        }).on('froalaEditor.image.error', function (e, editor, error, response) {
+            errorCallback(error, response);
+        }).on('froalaEditor.video.uploaded', function (e, editor, response) {
+            uploadedCallback(response);
+        }).on('froalaEditor.video.removed', function (e, editor, $video) {
+            deleteCallback($video, 'video');
+        }).on('froalaEditor.video.error', function (e, editor, error, response) {
+            errorCallback(error, response);
         });
 
-        layedit.set({
-            //暴露layupload参数设置接口 --详细查看layupload参数说明
-            uploadImage: {
-                url: contextPath + '/data/file/upload',
-                accept: 'image',
-                acceptMime: 'image/*',
-                exts: 'jpg|png|gif|bmp|jpeg',
-                size: 0,
-                done: function (res) {
-                    //成功后的回调
-                    var $fileIds = $('#fileIds');
-                    var fileIds = $fileIds.val();
-                    if (fileIds.trim() === '') {
-                        fileIds = [];
-                    } else {
-                        fileIds = fileIds.split(',');
-                    }
-                    fileIds.push(res.data['fileId']);
-                    $fileIds.val(fileIds.join(','));
-                }
+        function uploadedCallback(response) {
+            var $fileIds = $('#fileIds');
+            var fileIds = $fileIds.val();
+            if (fileIds.trim() === '') {
+                fileIds = [];
+            } else {
+                fileIds = fileIds.split(',');
             }
-            , uploadVideo: {
-                url: contextPath + '/data/file/upload',
-                accept: 'video',
-                acceptMime: 'video/*',
-                exts: 'mp4|flv|avi|rm|rmvb',
-                size: 0,
-                done: function (res) {
-                    //成功后的回调
-                    var $fileIds = $('#fileIds');
-                    var fileIds = $fileIds.val();
-                    if (fileIds.trim() === '') {
-                        fileIds = [];
-                    } else {
-                        fileIds = fileIds.split(',');
+            response = JSON.parse(response);
+            fileIds.push(response.data['fileId']);
+            $fileIds.val(fileIds.join(','));
+        }
+
+        function deleteCallback($object, objectType) {
+            var objMap = {
+                video: 'src',
+                image: 'src',
+                file: 'href'
+            };
+            var url = $object.attr(objMap[objectType]);
+            if (url == null)
+                url = $object.find(objectType).attr(objMap[objectType]);
+            if (url != null) {
+                $.ajax({
+                    method: "POST",
+                    url: contextPath + '/data/file/delete',
+                    data: {
+                        sourceUrls: url,
+                        temporary: true
                     }
-                    fileIds.push(res.data['fileId']);
-                    $fileIds.val(fileIds.join(','));
-                }
-            }
-            //右键删除图片/视频时的回调参数，post到后台删除服务器文件等操作，
-            //传递参数：
-            //图片： imgpath --图片路径
-            //视频： filepath --视频路径 imgpath --封面路径
-            , calldel: {
-                url: contextPath + '/data/file/delete?layEditDelete=true<#if aboutEdit.id??>&temporary=true</#if>',
-                done: function (res) {
+                }).done(function (res) {
+                    console.log(objectType + ' was deleted');
                     //成功后的回调
                     var $fileIds = $('#fileIds');
                     var fileIds = $fileIds.val();
@@ -100,30 +138,41 @@
                         fileIds.splice(fileIds.indexOf(fileId), 1);
                     });
                     $fileIds.val(fileIds.join(','));
-                }
+                }).fail(function () {
+                    console.log(objectType + ' delete failed');
+                });
             }
-            //开发者模式 --默认为false
-            , devmode: false
-            //插入代码设置
-            , codeConfig: {
-                hide: false,  //是否显示编码语言选择框
-                default: 'javascript' //hide为true时的默认语言格式
+        }
+
+        function errorCallback(error, response) {
+            if (error.code === 1) {
+                layer.alert('Bad Link');
+            } else if (error.code === 2) {
+                layer.alert('No link in upload response');
+            } else if (error.code === 3) {
+                layer.alert('Error during upload');
+            } else if (error.code === 4) {
+                layer.alert('Parsing response failed');
+            } else if (error.code === 5) {
+                layer.alert('File too text-large');
+            } else if (error.code === 6) {
+                layer.alert('Invalid file type')
+            } else if (error.code === 7) {
+                layer.alert('File can be uploaded only to same domain in IE 8 and IE 9');
             }
-            , tool: [
-                'html', 'code', 'strong', 'italic', 'underline', 'del', 'addhr', '|', 'fontFomatt', 'colorpicker', 'face'
-                , '|', 'left', 'center', 'right', '|', 'link', 'unlink', 'image_alt', 'images', 'video', 'anchors'
-                , '|', 'fullScreen'
-            ]
-            , height: 350
+            console.log(response);
+        }
+
+        $(document).on('click', '#save', function (e) {
+            e.preventDefault();
+            save();
         });
-        var layeditIndex = layedit.build('content');
 
         function save() {
-            if (layedit.getContent(layeditIndex).length === 0 && layedit.getText(layeditIndex).length === 0) {
+            if ($('#content').val().length === 0) {
                 layer.alert('请输入内容');
                 return;
             }
-            layedit.sync(layeditIndex);
             var $aboutForm = $('#aboutForm');
             var formData = new FormData($aboutForm.get(0));
             $.ajax({

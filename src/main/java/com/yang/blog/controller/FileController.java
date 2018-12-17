@@ -176,18 +176,27 @@ public class FileController implements BaseController {
     /**
      * 删除数据
      *
-     * @param fileIds       删除对象id,多个id用逗号分隔
-     * @param temporary     是否设置为临时文件,主要用于富文本等涉及到图片修改的地方.此时先将图片设置为临时,最后保存时再将使用的文件修改为正常状态.临时文件会被定时清除
-     * @param logical       是否逻辑删除。默认false，使用物理删除
-     * @param layEditDelete 是否layEdit的文件删除
+     * @param fileIds   删除对象id,多个id用逗号分隔
+     * @param temporary 是否设置为临时文件,主要用于富文本等涉及到图片修改的地方.此时先将图片设置为临时,最后保存时再将使用的文件修改为正常状态.临时文件会被定时清除
+     * @param logical   是否逻辑删除。默认false，使用物理删除
      * @return 删除结果。data为删除的文件id数组
      */
     @RequestMapping("/delete")
-    public JSONResult delete(String fileIds, HttpServletRequest request, @RequestParam(required = false, defaultValue = "false") Boolean temporary, @RequestParam(required = false, defaultValue = "false") Boolean logical, @RequestParam(defaultValue = "false", required = false) Boolean layEditDelete) {
+    public JSONResult delete(String fileIds, HttpServletRequest request, @RequestParam(required = false, defaultValue = "false") Boolean temporary, @RequestParam(required = false, defaultValue = "false") Boolean logical) {
         JSONResult jsonResult = JSONResult.init();
-        boolean result;
-        if (!layEditDelete) {
-            List<String> fileIdList = CommonUtils.splitIds(fileIds);
+        boolean result = false;
+        List<String> fileIdList;
+        //fileIds为空,则是从froala editor发起的删除请求
+        if (StringUtils.isEmpty(fileIds)) {
+            String sourceUrls = request.getParameter("sourceUrls");
+            if (sourceUrls != null) {
+                fileIdList = new ArrayList<>();
+                result = deleteFromSourceUrls(temporary, sourceUrls, fileIdList);
+                if (result)
+                    jsonResult.data(fileIdList);
+            }
+        } else {
+            fileIdList = CommonUtils.splitIds(fileIds);
             Collection<File> fileList = service.fileService.listByIds(fileIdList);
             if (temporary) {
                 //文件设为临时状态
@@ -208,13 +217,6 @@ public class FileController implements BaseController {
             }
             if (result)
                 jsonResult.data(fileIdList);
-        } else {
-            String imagePath = request.getParameter("imgpath");
-            String videoPath = request.getParameter("filepath");
-            List<String> fileIdList = new ArrayList<>();
-            result = layEditDelete(temporary, true, imagePath, fileIdList);
-            result = layEditDelete(temporary, result, videoPath, fileIdList);
-            jsonResult.data(fileIdList);
         }
         if (result)
             jsonResult.success(DELETE_SUCCESS);
@@ -227,20 +229,23 @@ public class FileController implements BaseController {
      * 编辑文件时的删除处理.在新增时,文件不使用临时删除,修改时使用
      *
      * @param temporary  是否设置为临时.
-     * @param result     整个操作是否成功的初始值
-     * @param filePath   文件路径
+     * @param sourceUrls 文件下载路径
      * @param fileIdList 文件id列表
      * @return 是否删除成功
      */
-    private boolean layEditDelete(@RequestParam(required = false, defaultValue = "false") Boolean temporary, boolean result, String filePath, List<String> fileIdList) {
-        if (StringUtils.isNotEmpty(filePath)) {
-            String fileId = filePath.substring(filePath.lastIndexOf("/") + 1);
-            if (temporary) {
-                result = service.fileService.setAvailable(Collections.singletonList(fileId), File.TEMP);
-                fileIdList.add(fileId);
-            } else {
-                FileUtils.delete(fileId);
-                fileIdList.add(fileId);
+    private boolean deleteFromSourceUrls(@RequestParam(required = false, defaultValue = "false") Boolean temporary, String sourceUrls, List<String> fileIdList) {
+        boolean result = false;
+        if (StringUtils.isNotEmpty(sourceUrls)) {
+            String[] sourceUrlArray = sourceUrls.split(",");
+            for (String sourceUrl : sourceUrlArray) {
+                String fileId = sourceUrl.substring(sourceUrl.lastIndexOf("/") + 1);
+                if (temporary) {
+                    result = service.fileService.setAvailable(Collections.singletonList(fileId), File.TEMP);
+                    fileIdList.add(fileId);
+                } else {
+                    FileUtils.delete(fileId);
+                    fileIdList.add(fileId);
+                }
             }
         }
         return result;
