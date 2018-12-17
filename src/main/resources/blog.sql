@@ -47,7 +47,7 @@ CREATE TABLE `article` (
 `id` varchar(32) NOT NULL,
 `title` varchar(50) NULL COMMENT '博文标题',
 `content` text NULL COMMENT '博文内容',
-`summary` varchar(255) NULL COMMENT '内容摘要。保存，修改时自动生成',
+`summary` varchar(1000) NULL COMMENT '内容摘要。保存，修改时自动生成',
 `is_draft` int(1) NULL COMMENT '是否是草稿。单个用户最多只会有一个草稿。0-否，1-是',
 `read_count` int(11) NULL COMMENT '阅读次数',
 `praise_count` int(11) NULL COMMENT '点赞次数',
