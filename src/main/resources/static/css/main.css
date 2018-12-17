@@ -210,7 +210,7 @@ body {
     }
 }
 
-@media only screen and (min-width: 900px) {
+@media only screen and (min-width: 1170px) {
     .lay-blog ul#pop-nav {
         display: none !important;
     }
@@ -238,7 +238,7 @@ body {
 }
 
 .lay-blog .container {
-    width: 900px;
+    width: 800px;
     margin: 0 auto;
 }
 
@@ -340,6 +340,10 @@ body {
 
     .lay-blog .container-wrap {
         padding-top: 110px;
+    }
+
+    #page{
+        margin: 0 10px;
     }
 }
 
