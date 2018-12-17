@@ -21,7 +21,7 @@
                         </@shiro.user>
                     </h3>
                     <#if aboutRead??>
-                        <div class="item-conent">
+                        <div class="item-conent fr-view">
                             ${aboutRead.content}
                         </div>
                     <#else>

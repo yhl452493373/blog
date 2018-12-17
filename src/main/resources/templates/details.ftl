@@ -52,7 +52,7 @@
                             <a href="#" title="${tag.name}相关文章" style="color: #999">${tag.name}</a>
                         </#list>
                     </h6>
-                    <div class="item-content">${article.content}</div>
+                    <div class="item-content fr-view">${article.content}</div>
                 </div>
                 <div class="count article-count layui-clear">
                     <span class="pull-left">阅读 <em>${article.readCount}</em></span>
