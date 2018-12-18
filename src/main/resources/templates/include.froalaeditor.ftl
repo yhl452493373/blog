@@ -1,8 +1,17 @@
 <#include "include.common.ftl">
+<#--codemirror需要的内容-->
+<link rel="stylesheet" href="${contextPath}/static/lib/codemirror-5.42.0/lib/codemirror.css">
+<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/lib/codemirror.js"></script>
+<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/mode/htmlmixed/htmlmixed.js"></script>
+<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/mode/xml/xml.js"></script>
+<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/mode/css/css.js"></script>
+<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/mode/javascript/javascript.js"></script>
+<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/mode/yaml/yaml.js"></script>
+<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/addon/display/fullscreen.js"></script>
+<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/addon/selection/active-line.js"></script>
+<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/addon/edit/matchbrackets.js"></script>
 <#--富文本编辑器需要的内容-->
-<link rel="stylesheet" href="${contextPath}/static/lib/codemirror/css/codemirror.min.css">
 <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/froala_editor.css">
-<#--由于resource中引用了,这个不需要再引用-->
 <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/code_view.css">
 <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/draggable.css">
 <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/colors.css">
@@ -21,10 +30,9 @@
 <#--富文本编辑器需要的内容-->
 <script type="text/javascript" src="${contextPath}/static/lib/jquery/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="${contextPath}/static/lib/html2pdf/html2pdf.bundle.js"></script>
-<script type="text/javascript" src="${contextPath}/static/lib/codemirror/js/codemirror.min.js"></script>
-<script type="text/javascript" src="${contextPath}/static/lib/codemirror/js/xml.min.js"></script>
 <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/froala_editor.min.js"></script>
 <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/align.min.js"></script>
+<script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/code.js"></script>
 <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/char_counter.min.js"></script>
 <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/code_beautifier.min.js"></script>
 <script type="text/javascript" src="${contextPath}/static/lib/froala-editor/js/plugins/code_view.min.js"></script>

@@ -161,6 +161,9 @@ img.fr-shadow,
   line-height: 1;
   vertical-align: middle;
 }
+.fr-view .fr-text-indent{
+  text-indent: 2em;
+}
 .fr-view .fr-text-gray {
   color: #AAA !important;
 }

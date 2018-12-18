@@ -32,6 +32,7 @@ import java.util.*;
 public class ArticleController implements BaseController {
     private final Logger logger = LoggerFactory.getLogger(ArticleController.class);
     private ServiceConfig service = ServiceConfig.serviceConfig;
+    private String summarySuffix = "...";
 
     /**
      * 分页查询数据
@@ -72,7 +73,7 @@ public class ArticleController implements BaseController {
         article.setIsDraft(isDraft ? Article.IS_DRAFT_TRUE : Article.IS_DRAFT_FALSE);
         article.setSummary(article.getPlanTextContent());
         if (article.getSummary().trim().length() > 255) {
-            article.setSummary(article.getSummary().substring(0, 255) + "...");
+            article.setSummary(article.getSummary().substring(0, 255 - summarySuffix.length()) + summarySuffix);
         }
         article.setReadCount(0);
         article.setPraiseCount(0);
@@ -97,7 +98,9 @@ public class ArticleController implements BaseController {
             article.setAvailable(Article.AVAILABLE);
             service.articleService.updateById(article);
             //同步写入到es数据库
-            service.esArticleService.save(new EsArticle().update(true, article, EsArticle.class));
+            EsArticle esArticle = new EsArticle().update(true, article, EsArticle.class);
+            esArticle.setContent(article.getPlanTextContent());
+            service.esArticleService.save(esArticle);
             //添加博客成功,返回其id作为data的值,通过id跳转
             jsonResult.success(ADD_SUCCESS).data(article.getId());
         } else {
@@ -125,7 +128,7 @@ public class ArticleController implements BaseController {
         article.setModifiedTime(LocalDateTime.now());
         article.setSummary(article.getPlanTextContent());
         if (article.getSummary().trim().length() > 255) {
-            article.setSummary(article.getSummary().substring(0, 255) + "...");
+            article.setSummary(article.getSummary().substring(0, 255 - summarySuffix.length()) + summarySuffix);
         }
         Article old = service.articleService.getById(article.getId());
         if (old == null)
@@ -135,7 +138,9 @@ public class ArticleController implements BaseController {
                 articleFileResult = relateArticleAndFile(old),
                 articleTagResult = relateArticleAndTag(old);
         //将数据同步更新到es中
-        service.esArticleService.save(new EsArticle().update(true, old, EsArticle.class));
+        EsArticle esArticle = new EsArticle().update(true, old, EsArticle.class);
+        esArticle.setContent(article.getPlanTextContent());
+        service.esArticleService.save(esArticle);
         if (articleResult && articleFileResult && articleTagResult) {
             jsonResult.success(UPDATE_SUCCESS).data(article.getId());
         } else {

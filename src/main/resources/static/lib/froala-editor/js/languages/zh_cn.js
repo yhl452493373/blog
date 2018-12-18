@@ -339,7 +339,9 @@ $.FE.LANGUAGE['zh_cn'] = {
     "Dashed Borders": "虚线边框",
     "Alternate Rows": "隔行变色",
     "Highlighted": "高亮",
-    "Download PDF": "另存为PDF"
+    "Download PDF": "另存为PDF",
+    "Text Indent": "段落缩进",
+    "Insert Code": "插入代码"
 
   },
   direction: "ltr"

@@ -59,6 +59,21 @@
                 '隶书, SimLi': '隶书',
                 '微软雅黑,Microsoft YaHei': '微软雅黑'
             },
+            paragraphFormat: {
+                H1: 'Heading 1',
+                H2: 'Heading 2',
+                H3: 'Heading 3',
+                H4: 'Heading 4',
+                N: 'Normal',
+                PRE: 'Code'
+            },
+            paragraphStyles: {
+                'fr-text-indent': 'Text Indent',
+                'fr-text-gray': 'Gray',
+                'fr-text-bordered': 'Bordered',
+                'fr-text-spaced': 'Spaced',
+                'fr-text-uppercase': 'Uppercase'
+            },
             toolbarButtons: ['fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily', 'fontSize', 'color', 'inlineClass', 'inlineStyle', 'paragraphStyle', 'lineHeight', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'quote', '-', 'outdent', 'indent', 'insertLink', 'insertImage', 'insertVideo', 'embedly', 'insertFile', 'insertTable', '|', 'emoticons', 'fontAwesome', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 'print', 'getPDF', 'html', '|', 'undo', 'redo'],
             fileUploadParam: 'file',
             fileUploadURL: contextPath + '/data/file/upload',

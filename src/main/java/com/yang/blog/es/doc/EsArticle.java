@@ -37,6 +37,7 @@ public class EsArticle extends EsBaseDoc<EsArticle, Article> implements Constant
     /**
      * 博文内容
      */
+    @FieldNotUpdate
     @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp-smart", analyzer = "hanlp-index")
     private String content;
 
