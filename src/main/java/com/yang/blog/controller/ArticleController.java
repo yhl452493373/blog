@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
 import com.github.yhl452493373.utils.CommonUtils;
-import com.hankcs.hanlp.HanLP;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.*;
 import com.yang.blog.es.doc.EsArticle;
@@ -71,7 +70,10 @@ public class ArticleController implements BaseController {
             return jsonResult.error(ADD_FAILED + "内容不能为空");
         article.setId(CommonUtils.uuid());
         article.setIsDraft(isDraft ? Article.IS_DRAFT_TRUE : Article.IS_DRAFT_FALSE);
-        article.setSummary(HanLP.getSummary(article.getPlanTextContent(), 255));
+        article.setSummary(article.getPlanTextContent());
+        if (article.getSummary().trim().length() > 255) {
+            article.setSummary(article.getSummary().substring(0, 255) + "...");
+        }
         article.setReadCount(0);
         article.setPraiseCount(0);
         article.setCreatedTime(LocalDateTime.now());
@@ -121,7 +123,10 @@ public class ArticleController implements BaseController {
         if (StringUtils.isEmpty(article.getContent()))
             return jsonResult.error(UPDATE_FAILED + "内容不能为空");
         article.setModifiedTime(LocalDateTime.now());
-        article.setSummary(HanLP.getSummary(article.getPlanTextContent().trim(), 255));
+        article.setSummary(article.getPlanTextContent());
+        if (article.getSummary().trim().length() > 255) {
+            article.setSummary(article.getSummary().substring(0, 255) + "...");
+        }
         Article old = service.articleService.getById(article.getId());
         if (old == null)
             return jsonResult.error(UPDATE_FAILED + "记录id不正确");

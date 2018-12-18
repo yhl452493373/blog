@@ -40,7 +40,8 @@
             <div class="layui-form-item">
         <input type="hidden" id="id" name="id" value="${articleEdit.id!}">
         <input type="hidden" id="fileIds" name="fileIds" value="${articleEdit.fileIds!}">
-            <textarea name="content" id="content" placeholder="文章内容" style="display: none;">${articleEdit.content!}</textarea>
+            <textarea id="content" name="content" style="display: none" placeholder="请输入文章内容">${articleEdit.content!}</textarea>
+            <div id="contentHtml" style="display: none">${articleEdit.content!}</div>
             </div>
             <div class="layui-form-item create-tags-container">
         <label class="layui-form-label">文章标签:</label>
@@ -82,7 +83,9 @@
         });
 
         //富文本编辑器
-        $('#content').froalaEditor({
+        $('#contentHtml').on('froalaEditor.initialized', function (e, editor) {
+            $(this).show();
+        }).froalaEditor({
             language: 'zh_cn',
             pasteDeniedAttrs: true,
             pasteDeniedTags: true,
@@ -224,10 +227,11 @@
         });
 
         function publish() {
+            $('#content').val($('#contentHtml').froalaEditor('html.get', false));
             var $articleForm = $('#articleForm');
             var formData = new FormData($articleForm.get(0));
             formData.append('isDraft', 0);//设置为非草稿状态
-            formData.append("planTextContent", $('#content').val());
+            formData.append("planTextContent", $('#contentHtml .fr-element.fr-view').text());
             $.ajax({
                 url: $articleForm.attr('action'),
                 type: $articleForm.attr('method'),
@@ -247,10 +251,11 @@
         }
 
         function draft() {
+            $('#content').val($('#contentHtml').froalaEditor('html.get', false));
             var $articleForm = $('#articleForm');
             var formData = new FormData($articleForm.get(0));
             formData.append('isDraft', 1);//设置为草稿状态
-            formData.append("planTextContent", $('#content').val());
+            formData.append("planTextContent", $('#contentHtml .fr-element.fr-view').text());
             $.ajax({
                 url: $articleForm.attr('action'),
                 type: $articleForm.attr('method'),
