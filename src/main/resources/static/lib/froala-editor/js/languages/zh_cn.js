@@ -341,8 +341,9 @@ $.FE.LANGUAGE['zh_cn'] = {
     "Highlighted": "高亮",
     "Download PDF": "另存为PDF",
     "Text Indent": "段落缩进",
-    "Insert Code": "插入代码"
-
+    "Insert Code": "插入代码",
+    "Remove Code": "删除代码",
+    "Edit Code": "编辑代码"
   },
   direction: "ltr"
 };

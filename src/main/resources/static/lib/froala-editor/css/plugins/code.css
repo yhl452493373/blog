@@ -2,7 +2,7 @@
     z-index: 10000000000!important;
 }
 
-.ace_code{
+.ace_code_highlight{
     white-space: pre-wrap;
     border: solid lightgrey 1px
 }
