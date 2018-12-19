@@ -10,11 +10,21 @@
         'perl', 'perl6', 'php', 'python', 'ruby', 'sass', 'sql', 'stylus', 'swift', 'text',
         'typescript', 'vbscript', 'xml', 'yaml'
     ];
-    var defaultLanguage = defaultLanguageList[0];
+    var defaultLanguage = 'html';
+    var defaultThemeList = [
+        'ambiance', 'chaos', 'chrome', 'clouds', 'clouds_midnight', 'cobalt', 'crimson_editor', 'dawn', 'dracula',
+        'dreamweaver', 'eclipse', 'github', 'gob', 'gruvbox', 'idle_fingers', 'iplastic', 'katzenmilch', 'kr_theme',
+        'kuroir', 'merbivore', 'merbivore_soft', 'mono_industrial', 'monokai', 'pastel_on_dark', 'solarized_dark',
+        'solarized_light', 'sqlserver', 'terminal', 'textmate', 'tomorrow', 'tomorrow_night', 'tomorrow_night_blue',
+        'tomorrow_night_bright', 'tomorrow_night_eighties', 'twilight', 'vibrant_ink', 'xcode'
+    ];
+    var defaultTheme = 'tomorrow';
     $.FroalaEditor.DEFAULTS = $.extend($.FroalaEditor.DEFAULTS, {
         insertCodeOption: {
-            default: defaultLanguage,
-            languages: defaultLanguageList
+            defaultLanguage: defaultLanguage,
+            languages: defaultLanguageList,
+            defaultTheme: defaultTheme,
+            themes: defaultThemeList
         }
     });
 
@@ -38,10 +48,10 @@
 
         function show(content) {
             if (!insertCodeWindow) {
-                var languageList = editor.opts.insertCodeOption.languages || defaultLanguageList;
-                var defaultLan = editor.opts.insertCodeOption.default || defaultLanguage;
+                var tempLanguageList = editor.opts.insertCodeOption.languages || defaultLanguageList;
+                var tempDefaultLanguage = editor.opts.insertCodeOption.defaultLanguage || defaultLanguage;
                 var titleHtml = "<h4>" + editor.language.translate("Insert Code") + "</h4>",
-                    contentHtml = "<pre id='insertCodeContent' style='height: 350px'>" + (content || "") + "</pre>",
+                    contentHtml = "<pre id='insertCodeContent' style='height: 350px;font-size: 14px'>" + (content || "") + "</pre>",
                     //create modal window
                     modal = editor.modals.create(pluginName, titleHtml, contentHtml);
                 insertCodeWindow = modal.$modal;
@@ -49,16 +59,38 @@
                 insertCodeBody = modal.$body;
                 insertCodeHead.append(function () {
                     var select = [];
-                    select.push('<select class="choose-code-language" style="height: 30px;margin: 6px 0;float: left;display: inline-block">');
-                    for (var i = 0; i < languageList.length; i++) {
-                        var lan = languageList[i];
-                        if (defaultLan == null && i === 0) {
-                            select.push('<option value="' + lan + '" selected>' + lan + '</option>');
+                    select.push('<span class="code-header-selector-label">' + editor.language.translate('Code Language') + '：</span>');
+                    select.push('<select class="choose-code-language">');
+                    for (var i = 0; i < tempLanguageList.length; i++) {
+                        var language = tempLanguageList[i];
+                        if (tempDefaultLanguage == null && i === 0) {
+                            select.push('<option value="' + language + '" selected>' + language + '</option>');
                         } else {
-                            if (lan === defaultLan) {
-                                select.push('<option value="' + lan + '" selected>' + lan + '</option>');
+                            if (language === tempDefaultLanguage) {
+                                select.push('<option value="' + language + '" selected>' + language + '</option>');
                             } else {
-                                select.push('<option value="' + lan + '">' + lan + '</option>');
+                                select.push('<option value="' + language + '">' + language + '</option>');
+                            }
+                        }
+                    }
+                    select.push('</select>');
+                    return select.join('');
+                });
+                var tempThemeList = editor.opts.insertCodeOption.themes || defaultThemeList;
+                var tempDefaultTheme = editor.opts.insertCodeOption.defaultTheme || defaultTheme;
+                insertCodeHead.append(function () {
+                    var select = [];
+                    select.push('<span class="code-header-selector-label">' + editor.language.translate('Code Editor Theme') + '：</span>');
+                    select.push('<select class="choose-code-theme">');
+                    for (var i = 0; i < tempThemeList.length; i++) {
+                        var theme = tempThemeList[i];
+                        if (tempDefaultTheme == null && i === 0) {
+                            select.push('<option value="' + theme + '" selected>' + theme + '</option>');
+                        } else {
+                            if (theme === tempDefaultLanguage) {
+                                select.push('<option value="' + theme + '" selected>' + theme + '</option>');
+                            } else {
+                                select.push('<option value="' + theme + '">' + theme + '</option>');
                             }
                         }
                     }
@@ -66,7 +98,8 @@
                     return select.join('');
                 });
                 insertCodeHead.css({
-                    'z-index': 100
+                    zIndex: 100,
+                    textAlign: 'left'
                 });
                 insertCodeBody.css({
                     textAlign: 'left',
@@ -84,9 +117,15 @@
                     editor.insertCode.hide();
                     editor.undo.saveStep();
                     if (highlightBlock) {
-                        highlightBlock.replaceWith('<pre contenteditable="false" class="ace_code_highlight" ace-mode="ace/mode/' + insertCodeHead.find('.choose-code-language').val() + '" ace-theme="ace/theme/tomorrow" ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre><p></p>');
+                        highlightBlock.replaceWith('<pre contenteditable="false" class="ace_code_highlight" ' +
+                            'ace-mode="ace/mode/' + insertCodeHead.find('.choose-code-language').val() + '" ' +
+                            'ace-theme="ace/theme/' + insertCodeHead.find('.choose-code-theme').val() + '" ' +
+                            'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre><p></p>');
                     } else {
-                        editor.html.insert('<pre contenteditable="false" class="ace_code_highlight" ace-mode="ace/mode/' + insertCodeHead.find('.choose-code-language').val() + '" ace-theme="ace/theme/tomorrow" ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre><p></p>', true);
+                        editor.html.insert('<pre contenteditable="false" class="ace_code_highlight" ' +
+                            'ace-mode="ace/mode/' + insertCodeHead.find('.choose-code-language').val() + '" ' +
+                            'ace-theme="ace/theme/' + insertCodeHead.find('.choose-code-theme').val() + '" ' +
+                            'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre><p></p>', true);
                     }
                     editor.undo.saveStep();
                     _staticHighlight($('.ace_code_highlight'));
@@ -96,11 +135,20 @@
                     (insertCodeWindow.data("instance") || editor).insertCode.hide();
                 }, false);
                 editor.events.$on(insertCodeHead, 'change', function (e) {
-                    codeEditor.session.setMode("ace/mode/" + e.target.value);
+                    var target = e.target, mode, theme;
+                    if (target.className.indexOf('choose-code-language') !== -1) {
+                        mode = e.target.value;
+                        theme = insertCodeHead.find('.choose-code-theme').val();
+                    } else if (target.className.indexOf('choose-code-theme') !== -1) {
+                        theme = e.target.value;
+                        mode = insertCodeHead.find('.choose-code-language').val();
+                    }
+                    codeEditor.session.setMode("ace/mode/" + mode);
+                    codeEditor.setTheme("ace/theme/" + theme);
                 });
             }
             if (!codeEditor) {
-                codeEditor = _initCodeEditor('insertCodeContent', defaultLan);
+                codeEditor = _initCodeEditor('insertCodeContent', tempDefaultLanguage, defaultTheme);
             } else {
                 if (!content) {
                     codeEditor.setValue('');
@@ -135,11 +183,11 @@
             }
         }
 
-        function _initCodeEditor(codeEditorElementId, defaultLan) {
+        function _initCodeEditor(codeEditorElementId, defaultLanguage, defaultTheme) {
             ace.require("ace/ext/language_tools");
             var tempCodeEditor = ace.edit(codeEditorElementId);
-            tempCodeEditor.session.setMode("ace/mode/" + defaultLan);
-            tempCodeEditor.setTheme("ace/theme/tomorrow");
+            tempCodeEditor.session.setMode("ace/mode/" + defaultLanguage);
+            tempCodeEditor.setTheme("ace/theme/" + defaultTheme);
             tempCodeEditor.setOptions({
                 autoScrollEditorIntoView: true,
                 enableBasicAutocompletion: true,

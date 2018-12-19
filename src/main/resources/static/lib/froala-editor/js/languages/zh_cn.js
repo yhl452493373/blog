@@ -343,7 +343,9 @@ $.FE.LANGUAGE['zh_cn'] = {
     "Text Indent": "段落缩进",
     "Insert Code": "插入代码",
     "Remove Code": "删除代码",
-    "Edit Code": "编辑代码"
+    "Edit Code": "编辑代码",
+    "Code Language": "代码语言",
+    "Code Editor Theme": "代码主题"
   },
   direction: "ltr"
 };

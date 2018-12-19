@@ -1,8 +1,19 @@
 .ace_editor.ace_autocomplete, .ace_tooltip {
-    z-index: 10000000000!important;
+    z-index: 10000000000 !important;
 }
 
-.ace_code_highlight{
+.ace_code_highlight {
     white-space: pre-wrap;
     border: solid lightgrey 1px
+}
+
+.code-header-selector-label{
+    display: inline;
+    margin-left: 20px;
+}
+
+.choose-code-language, .choose-code-theme {
+    height: 30px;
+    margin: 6px 0;
+    display: inline-block;
 }
