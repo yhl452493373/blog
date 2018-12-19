@@ -4,20 +4,20 @@
  * Copyright 2014-2018 Froala Labs
  */
 (function ($) {
-    // Add an option for your plugin.
+    var defaultLanguageList = [
+        'coffee', 'csharp', 'css', 'dart', 'erlang', 'ftl', 'golang', 'groovy', 'html', 'jade', 'java',
+        'javascript', 'json', 'jsp', 'kotlin', 'less', 'lua', 'markdown', 'mysql', 'objectivec', 'php',
+        'perl', 'perl6', 'php', 'python', 'ruby', 'sass', 'sql', 'stylus', 'swift', 'text',
+        'typescript', 'vbscript', 'xml', 'yaml'
+    ];
+    var defaultLanguage = defaultLanguageList[0];
     $.FroalaEditor.DEFAULTS = $.extend($.FroalaEditor.DEFAULTS, {
         insertCodeOption: {
-            default: 'html',
-            languages: [
-                'coffee', 'csharp', 'css', 'dart', 'erlang', 'ftl', 'golang', 'groovy', 'html', 'jade', 'java',
-                'javascript', 'json', 'jsp', 'kotlin', 'less', 'lua', 'markdown', 'mysql', 'objectivec', 'php',
-                'perl', 'perl6', 'php', 'python', 'ruby', 'sass', 'sql', 'stylus', 'swift', 'text',
-                'typescript', 'vbscript', 'xml', 'yaml'
-            ]
+            default: defaultLanguage,
+            languages: defaultLanguageList
         }
     });
 
-    // Define popup template.
     $.extend($.FroalaEditor.POPUP_TEMPLATES, {
         // 若使用此行,则弹窗需要设置弹窗内容: custom_layer: '<div class="custom-layer">Hello World!</div>'
         // "insertCode.popup": '[_BUTTONS_][_CUSTOM_LAYER_]'
@@ -38,6 +38,8 @@
 
         function show(content) {
             if (!insertCodeWindow) {
+                var languageList = editor.opts.insertCodeOption.languages || defaultLanguageList;
+                var defaultLan = editor.opts.insertCodeOption.default || defaultLanguage;
                 var titleHtml = "<h4>" + editor.language.translate("Insert Code") + "</h4>",
                     contentHtml = "<pre id='insertCodeContent' style='height: 350px'>" + (content || "") + "</pre>",
                     //create modal window
@@ -48,12 +50,16 @@
                 insertCodeHead.append(function () {
                     var select = [];
                     select.push('<select class="choose-code-language" style="height: 30px;margin: 6px 0;float: left;display: inline-block">');
-                    for (var i = 0; i < editor.opts.insertCodeOption.languages.length; i++) {
-                        var lan = editor.opts.insertCodeOption.languages[i];
-                        if (lan === editor.opts.insertCodeOption.default) {
+                    for (var i = 0; i < languageList.length; i++) {
+                        var lan = languageList[i];
+                        if (defaultLan == null && i === 0) {
                             select.push('<option value="' + lan + '" selected>' + lan + '</option>');
                         } else {
-                            select.push('<option value="' + lan + '">' + lan + '</option>');
+                            if (lan === defaultLan) {
+                                select.push('<option value="' + lan + '" selected>' + lan + '</option>');
+                            } else {
+                                select.push('<option value="' + lan + '">' + lan + '</option>');
+                            }
                         }
                     }
                     select.push('</select>');
@@ -94,7 +100,7 @@
                 });
             }
             if (!codeEditor) {
-                codeEditor = _initCodeEditor('insertCodeContent');
+                codeEditor = _initCodeEditor('insertCodeContent', defaultLan);
             } else {
                 if (!content) {
                     codeEditor.setValue('');
@@ -129,10 +135,10 @@
             }
         }
 
-        function _initCodeEditor(codeEditorElementId) {
+        function _initCodeEditor(codeEditorElementId, defaultLan) {
             ace.require("ace/ext/language_tools");
             var tempCodeEditor = ace.edit(codeEditorElementId);
-            tempCodeEditor.session.setMode("ace/mode/html");
+            tempCodeEditor.session.setMode("ace/mode/" + defaultLan);
             tempCodeEditor.setTheme("ace/theme/tomorrow");
             tempCodeEditor.setOptions({
                 autoScrollEditorIntoView: true,
@@ -225,42 +231,21 @@
         }
     };
 
-    // Define an icon.
     $.FroalaEditor.DefineIcon('insertCode', {NAME: 'file-code-o'});
-
-    // Define a button.
     $.FroalaEditor.RegisterCommand('insertCode', {
-        // Button title.
         title: 'Insert Code',
-
-        // Specify the icon for the button.
-        // If this option is not specified, the button name will be used.
         icon: 'insertCode',
-
-        // Save the button action into undo stack.
         undo: false,
-
-        // Focus inside the editor before the callback.
         focus: false,
-
-        // Show the button on mobile or not.
         showOnMobile: false,
-
         modal: false,
-
-        // Refresh the buttons state after the callback.
         refreshAfterCallback: false,
-
-        // Called when the button is hit.
         callback: function () {
-            // The current context is the editor instance.
             this.insertCode.show();
         },
-
         plugin: 'insertCode'
     });
 
-    // Define custom popup 1.
     $.FroalaEditor.DefineIcon('codeRemove', {NAME: 'trash'});
     $.FroalaEditor.RegisterCommand('codeRemove', {
         title: 'Remove Code',
@@ -271,7 +256,6 @@
         }
     });
 
-    // Define custom popup 2.
     $.FroalaEditor.DefineIcon('codeEdit', {NAME: 'edit'});
     $.FroalaEditor.RegisterCommand('codeEdit', {
         title: 'Edit Code',
