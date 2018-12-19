@@ -74,7 +74,7 @@ Element.prototype.toString = function() {
     if (this.type != "fragment") {
         stringBuilder.push("</", this.type, ">");
     }
-    
+
     return stringBuilder.join("");
 };
 
@@ -103,7 +103,7 @@ var highlight = function(el, opts, callback) {
     if (!mode)
         return false;
     var theme = opts.theme || "ace/theme/textmate";
-    
+
     var data = "";
     var nodes = [];
 
@@ -123,7 +123,7 @@ var highlight = function(el, opts, callback) {
         if (opts.trim)
             data = data.trim();
     }
-    
+
     highlight.render(data, mode, theme, opts.firstLineNumber, !opts.showGutter, function (highlighted) {
         dom.importCssString(highlighted.css, "ace_highlight");
         el.innerHTML = highlighted.html;
@@ -135,6 +135,11 @@ var highlight = function(el, opts, callback) {
             lineEl && lineEl.appendChild(node);
         }
         callback && callback();
+    });
+};
+highlight.loadTheme = function (theme, onLoad) {
+    config.loadModule(['theme', theme], function (themeModule) {
+        onLoad && onLoad(themeModule);
     });
 };
 highlight.render = function(input, mode, theme, lineStart, disableGutter, callback) {
@@ -186,10 +191,10 @@ highlight.renderSync = function(input, mode, theme, lineStart, disableGutter) {
 
     session.setValue(input);
     var length =  session.getLength();
-    
+
     var outerEl = simpleDom.createElement("div");
     outerEl.className = theme.cssClass;
-    
+
     var innerEl = simpleDom.createElement("div");
     innerEl.className = "ace_static_highlight" + (disableGutter ? "" : " ace_show_gutter");
     innerEl.style["counter-reset"] = "ace_line " + (lineStart - 1);
@@ -197,7 +202,7 @@ highlight.renderSync = function(input, mode, theme, lineStart, disableGutter) {
     for (var ix = 0; ix < length; ix++) {
         var lineEl = simpleDom.createElement("div");
         lineEl.className = "ace_line";
-        
+
         if (!disableGutter) {
             var gutterEl = simpleDom.createElement("span");
             gutterEl.className ="ace_gutter ace_gutter-cell";

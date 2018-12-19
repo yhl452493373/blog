@@ -5,11 +5,36 @@
  */
 (function ($) {
     var defaultLanguageList = [
-        'coffee', 'csharp', 'css', 'dart', 'erlang', 'ftl', 'golang', 'groovy', 'html', 'jade', 'java',
-        'javascript', 'json', 'jsp', 'kotlin', 'less', 'lua', 'markdown', 'mysql', 'objectivec', 'php',
-        'perl', 'perl6', 'php', 'python', 'ruby', 'sass', 'sql', 'stylus', 'swift', 'text',
-        'typescript', 'vbscript', 'xml', 'yaml'
+        'abap', 'abc', 'actionscript', 'ada', 'apache_conf', 'apex', 'applescript', 'asciidoc', 'asl', 'assembly_x86',
+        'autohotkey', 'batchfile', 'bro', 'c9search', 'c_cpp', 'cirru', 'clojure', 'cobol', 'coffee', 'coldfusion',
+        'csharp', 'csound_document', 'csound_orchestra', 'csound_score', 'csp', 'css', 'curly', 'd', 'dart', 'diff',
+        'django', 'dockerfile', 'dot', 'drools', 'edifact', 'eiffel', 'ejs', 'elixir', 'elm', 'erlang', 'forth', 'fortran',
+        'fsharp', 'fsl', 'ftl', 'gcode', 'gherkin', 'gitignore', 'glsl', 'gobstones', 'golang', 'graphqlschema', 'groovy',
+        'haml', 'handlebars', 'haskell', 'haskell_cabal', 'haxe', 'hjson', 'html', 'html_elixir', 'html_ruby', 'ini', 'io',
+        'jack', 'jade', 'java', 'javascript', 'json', 'jsoniq', 'jsp', 'jssm', 'jsx', 'julia', 'kotlin', 'latex', 'less',
+        'liquid', 'lisp', 'livescript', 'logiql', 'logtalk', 'lsl', 'lua', 'luapage', 'lucene', 'makefile', 'markdown',
+        'mask', 'matlab', 'maze', 'mel', 'mixal', 'mushcode', 'mysql', 'nix', 'nsis', 'objectivec', 'ocaml', 'pascal',
+        'perl', 'perl6', 'pgsql', 'php', 'php_laravel_blade', 'pig', 'plain_text', 'powershell', 'praat', 'prolog', 'properties',
+        'protobuf', 'puppet', 'python', 'r', 'razor', 'rdoc', 'red', 'redshift', 'rhtml', 'rst', 'ruby', 'rust', 'sass',
+        'scad', 'scala', 'scheme', 'scss', 'sh', 'sjs', 'slim', 'smarty', 'snippets', 'soy_template', 'space', 'sparql',
+        'sql', 'sqlserver', 'stylus', 'svg', 'swift', 'tcl', 'terraform', 'tex', 'text', 'textile', 'toml', 'tsx', 'turtle',
+        'twig', 'typescript', 'vala', 'vbscript', 'velocity', 'verilog', 'vhdl', 'visualforce', 'wollok', 'xml', 'xquery',
+        'yaml'
     ];
+    var defaultLanguageAlias = {
+        c_cpp: 'c/cpp',
+        csound_document: 'csound document',
+        csound_orchestra: 'csound orchestra',
+        csound_score: 'csound score',
+        ftl: 'ftl (freemarker)',
+        haskell_cabal: 'haskell cabal',
+        html_elixir: 'html elixir',
+        html_ruby: 'html ruby',
+        php_laravel_blade: 'php laravel blade',
+        plain_text: 'plain text',
+        soy_template: 'soy template'
+
+    };
     var defaultLanguage = 'html';
     var defaultThemeList = [
         'ambiance', 'chaos', 'chrome', 'clouds', 'clouds_midnight', 'cobalt', 'crimson_editor', 'dawn', 'dracula',
@@ -46,13 +71,12 @@
             return highlightBlock;
         }
 
-        function show(content) {
+        function show(content, theme) {
             if (!insertCodeWindow) {
                 var tempLanguageList = editor.opts.insertCodeOption.languages || defaultLanguageList;
                 var tempDefaultLanguage = editor.opts.insertCodeOption.defaultLanguage || defaultLanguage;
                 var titleHtml = "<h4>" + editor.language.translate("Insert Code") + "</h4>",
                     contentHtml = "<pre id='insertCodeContent' style='height: 350px;font-size: 14px'>" + (content || "") + "</pre>",
-                    //create modal window
                     modal = editor.modals.create(pluginName, titleHtml, contentHtml);
                 insertCodeWindow = modal.$modal;
                 insertCodeHead = modal.$head;
@@ -63,13 +87,14 @@
                     select.push('<select class="choose-code-language">');
                     for (var i = 0; i < tempLanguageList.length; i++) {
                         var language = tempLanguageList[i];
+                        var languageAlias = defaultLanguageAlias.hasOwnProperty(language) ? defaultLanguageAlias[language] : language;
                         if (tempDefaultLanguage == null && i === 0) {
-                            select.push('<option value="' + language + '" selected>' + language + '</option>');
+                            select.push('<option value="' + language + '" selected>' + languageAlias + '</option>');
                         } else {
                             if (language === tempDefaultLanguage) {
-                                select.push('<option value="' + language + '" selected>' + language + '</option>');
+                                select.push('<option value="' + language + '" selected>' + languageAlias + '</option>');
                             } else {
-                                select.push('<option value="' + language + '">' + language + '</option>');
+                                select.push('<option value="' + language + '">' + languageAlias + '</option>');
                             }
                         }
                     }
@@ -83,14 +108,14 @@
                     select.push('<span class="code-header-selector-label">' + editor.language.translate('Code Editor Theme') + '：</span>');
                     select.push('<select class="choose-code-theme">');
                     for (var i = 0; i < tempThemeList.length; i++) {
-                        var theme = tempThemeList[i];
+                        var tempTheme = tempThemeList[i];
                         if (tempDefaultTheme == null && i === 0) {
-                            select.push('<option value="' + theme + '" selected>' + theme + '</option>');
+                            select.push('<option value="' + tempTheme + '" selected>' + tempTheme.replace(/_/g, ' ') + '</option>');
                         } else {
-                            if (theme === tempDefaultLanguage) {
-                                select.push('<option value="' + theme + '" selected>' + theme + '</option>');
+                            if (tempTheme === tempDefaultTheme || tempTheme === theme) {
+                                select.push('<option value="' + tempTheme + '" selected>' + tempTheme.replace(/_/g, ' ') + '</option>');
                             } else {
-                                select.push('<option value="' + theme + '">' + theme + '</option>');
+                                select.push('<option value="' + tempTheme + '">' + tempTheme.replace(/_/g, ' ') + '</option>');
                             }
                         }
                     }
@@ -117,19 +142,21 @@
                     editor.insertCode.hide();
                     editor.undo.saveStep();
                     if (highlightBlock) {
-                        highlightBlock.replaceWith('<pre contenteditable="false" class="ace_code_highlight" ' +
+                        var tempHighlightBlock = $('<pre contenteditable="false" class="ace_code_highlight" ' +
                             'ace-mode="ace/mode/' + insertCodeHead.find('.choose-code-language').val() + '" ' +
                             'ace-theme="ace/theme/' + insertCodeHead.find('.choose-code-theme').val() + '" ' +
-                            'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre><p></p>');
+                            'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre>');
+                        highlightBlock.replaceWith(tempHighlightBlock);
+                        highlightBlock = tempHighlightBlock;
                     } else {
                         editor.html.insert('<pre contenteditable="false" class="ace_code_highlight" ' +
                             'ace-mode="ace/mode/' + insertCodeHead.find('.choose-code-language').val() + '" ' +
                             'ace-theme="ace/theme/' + insertCodeHead.find('.choose-code-theme').val() + '" ' +
                             'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre><p></p>', true);
+                        highlightBlock = null;
                     }
-                    editor.undo.saveStep();
                     _staticHighlight($('.ace_code_highlight'));
-                    highlightBlock = null;
+                    editor.undo.saveStep();
                 });
                 editor.events.bindClick(insertCodeBody, ".cancel", function () {
                     (insertCodeWindow.data("instance") || editor).insertCode.hide();
@@ -162,6 +189,13 @@
                 tempBody.find('.insert').text(updateButtonName);
             } else {
                 tempBody.find('.insert').text(insertButtonName);
+            }
+            if (theme) {
+                codeEditor.setTheme("ace/theme/" + theme);
+                editor.modals.get(pluginName).$head.find('.choose-code-theme').val(theme);
+            } else {
+                codeEditor.setTheme("ace/theme/" + (editor.opts.insertCodeOption.defaultTheme || defaultTheme));
+                editor.modals.get(pluginName).$head.find('.choose-code-theme').val(editor.opts.insertCodeOption.defaultTheme || defaultTheme);
             }
             editor.modals.show(pluginName);
             editor.modals.resize(pluginName);
@@ -198,7 +232,6 @@
         }
 
         function _staticHighlight($elements) {
-            ace.require("ace/lib/dom");
             var highlight = ace.require("ace/ext/static_highlight");
             $elements.each(function () {
                 if ($(this).find('.ace_static_highlight').length === 0)
@@ -228,7 +261,7 @@
 
             // Create the list of buttons.
             popup_buttons += '<div class="fr-buttons">';
-            popup_buttons += editor.button.buildList(['codeRemove', 'codeEdit']);
+            popup_buttons += editor.button.buildList(['codeRemove', 'codeTheme', 'codeEdit']);
             popup_buttons += '</div>';
 
             // 指定弹出层内容
@@ -301,6 +334,48 @@
         focus: false,
         callback: function () {
             this.insertCode._removeCode();
+            this.undo.saveStep();
+        }
+    });
+
+    $.FroalaEditor.DefineIcon('codeTheme', {NAME: 'magic'});
+    $.FroalaEditor.RegisterCommand('codeTheme', {
+        title: 'Change Code Theme',
+        type: 'dropdown',
+        undo: false,
+        focus: false,
+        refreshAfterCallback: true,
+        html: function () {
+            var tempThemeList = this.opts.insertCodeOption.themes;
+            var options = ['<ul class="fr-dropdown-list" role="presentation">'];
+            for (var i = 0; i < tempThemeList.length; i++) {
+                var t = tempThemeList[i];
+                options.push('<li role="presentation"><a class="fr-command ' + t + '" tabIndex="-1" role="option" data-cmd="codeTheme" data-param1="' + t + '" title="' + t.replace(/_/g, '') + '">' + t.replace(/_/g, '') + "</a></li>");
+            }
+            options.push('</ul>');
+            return options.join('');
+        },
+        callback: function (cmd, val) {
+            var that = this;
+            var text = [];
+            this.insertCode._highlightBlock().find('.ace_line').each(function () {
+                var tempText = this.innerText;
+                if (!/\n$/.test(tempText))
+                    tempText += '\n';
+                text.push(tempText);
+            });
+            var highlightBlock = this.insertCode._highlightBlock();
+            highlightBlock.attr('ace-theme', 'ace/theme/' + val);
+            var highlight = ace.require("ace/ext/static_highlight");
+            highlight.loadTheme(highlightBlock.attr('ace-theme'), function (themeModule) {
+                highlightBlock.children().attr('class', themeModule.cssClass);
+                that.undo.saveStep();
+            });
+        },
+        refreshOnShow: function ($btn, $dropdown) {
+            var theme = this.insertCode._highlightBlock().attr('ace-theme').replace(/ace\/theme\//, '');
+            $dropdown.find(".fr-command.fr-active").removeClass('fr-active').attr('aria-selected', false);
+            $dropdown.find(".fr-command[data-param1='" + theme + "']").addClass('fr-active').attr('aria-selected', true);
         }
     });
 
@@ -311,13 +386,14 @@
         focus: false,
         callback: function () {
             var text = [];
-            this.insertCode._highlightBlock().find('.ace_line').each(function () {
+            var highlightBlock = this.insertCode._highlightBlock();
+            highlightBlock.find('.ace_line').each(function () {
                 var tempText = this.innerText;
                 if (!/\n$/.test(tempText))
                     tempText += '\n';
                 text.push(tempText);
             });
-            this.insertCode.show(text.join(''));
+            this.insertCode.show(text.join(''), highlightBlock.attr('ace-theme').replace(/ace\/theme\//, ''));
         }
     });
 })(jQuery);
