@@ -2,16 +2,14 @@
 <#--codemirror需要的内容-->
 <link rel="stylesheet" href="${contextPath}/static/lib/codemirror-5.42.0/lib/codemirror.css">
 <script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/lib/codemirror.js"></script>
-<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/mode/htmlmixed/htmlmixed.js"></script>
 <script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/mode/xml/xml.js"></script>
-<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/mode/css/css.js"></script>
-<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/mode/javascript/javascript.js"></script>
-<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/mode/yaml/yaml.js"></script>
-<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/addon/display/fullscreen.js"></script>
-<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/addon/selection/active-line.js"></script>
-<script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/addon/edit/matchbrackets.js"></script>
+<#--ace代码编辑器需要的内容-->
+<script src="${contextPath}/static/lib/ace/ace.js"></script>
+<script src="${contextPath}/static/lib/ace/ext-language_tools.js"></script>
+<script src="${contextPath}/static/lib/ace/ext-static_highlight.js"></script>
 <#--富文本编辑器需要的内容-->
 <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/froala_editor.css">
+<link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/code.css">
 <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/code_view.css">
 <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/draggable.css">
 <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/colors.css">

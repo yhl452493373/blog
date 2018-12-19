@@ -7,11 +7,12 @@
     // Add an option for your plugin.
     $.FroalaEditor.DEFAULTS = $.extend($.FroalaEditor.DEFAULTS, {
         insertCodeOption: {
-            default: 'htmlmixed',
+            default: 'html',
             languages: [
-                'css', 'erlang', 'go', 'groovy', 'htmlmixed', 'javascript', 'lua', 'markdown', 'nginx', 'php',
-                'powershell', 'python', 'ruby', 'sass', 'shell', 'sql', 'stylus', 'swift', 'vb', 'vbscript',
-                'xml', 'yaml'
+                'coffee', 'csharp', 'css', 'dart', 'erlang', 'ftl', 'golang', 'groovy', 'html', 'jade', 'java',
+                'javascript', 'json', 'jsp', 'kotlin', 'less', 'lua', 'markdown', 'mysql', 'objectivec', 'php',
+                'perl', 'perl6', 'php', 'python', 'ruby', 'sass', 'sql', 'stylus', 'swift', 'text',
+                'typescript', 'vbscript', 'xml', 'yaml'
             ]
         }
     });
@@ -20,18 +21,13 @@
     // The editor parameter is the current instance.
     $.FroalaEditor.PLUGINS.insertCode = function (editor) {
         // Private variable visible only inside the plugin scope.
-        var insertCodeWindow, insertCodeHead, insertCodeBody, pluginName = 'insert_code', codeMirrorEditor;
-
-        // Private method that is visible only inside plugin scope.
-        function _privateMethod() {
-            console.log(pluginName);
-        }
+        var insertCodeWindow, insertCodeHead, insertCodeBody, pluginName = 'insert_code', codeEditor;
 
         // Public method that is visible in the instance scope.
         function show() {
             if (!insertCodeWindow) {
                 var titleHtml = "<h4>" + editor.language.translate("Insert Code") + "</h4>",
-                    contentHtml = "<textarea id='insertCodeContent' placeholder='输入代码'></textarea>",
+                    contentHtml = "<pre id='insertCodeContent' style='height: 350px'></pre>",
                     //create modal window
                     modal = editor.modals.create(pluginName, titleHtml, contentHtml);
                 insertCodeWindow = modal.$modal;
@@ -39,7 +35,7 @@
                 insertCodeBody = modal.$body;
                 insertCodeHead.append(function () {
                     var select = [];
-                    select.push('<select class="choose-codemirror-language" style="height: 30px;margin: 6px 0;float: left;display: inline-block">');
+                    select.push('<select class="choose-code-language" style="height: 30px;margin: 6px 0;float: left;display: inline-block">');
                     for (var i = 0; i < editor.opts.insertCodeOption.languages.length; i++) {
                         var lan = editor.opts.insertCodeOption.languages[i];
                         if (lan === editor.opts.insertCodeOption.default) {
@@ -67,64 +63,56 @@
                     (insertCodeWindow.data("instance") || editor).modals.resize(pluginName)
                 });
                 editor.events.bindClick(insertCodeBody, ".insert", function (e) {
-                    var id = 'code-' + new Date().getTime();
+                    //todo 判断是否在代码块中.
                     editor.insertCode.hide();
                     editor.undo.saveStep();
-                    editor.html.insert('<pre id="' + id + '"></pre>', true);
+                    editor.html.insert('<pre class="ace_code" contenteditable="false" ace-mode="ace/mode/' + insertCodeHead.find('.choose-code-language').val() + '" ace-theme="ace/theme/tomorrow" ace-gutter="true">' + codeEditor.getValue().replace(/</gm,'&lt;').replace(/>/gm,'&gt;') + '</pre><p></p>', true);
                     editor.undo.saveStep();
-                    //todo 待处理
-                    CodeMirror(document.getElementById(id), {
-                        value: codeMirrorEditor.getValue(),
-                        mode: editor.opts.insertCodeOption.default,     // 默认模式
-                        indentUnit: 4,                          // 缩进单位为4
-                        lineNumbers: true,                      // 显示行数
-                        styleActiveLine: true,                  // 当前行背景高亮
-                        matchBrackets: true,                    // 括号匹配
-                        lineWrapping: true                      // 自动换行
-                    });
+                    _staticHighlight($('.ace_code'))
                 });
                 editor.events.bindClick(insertCodeBody, ".cancel", function () {
                     (insertCodeWindow.data("instance") || editor).insertCode.hide();
                 }, false);
                 editor.events.$on(insertCodeHead, 'change', function (e) {
-                    codeMirrorEditor.setOption("mode", e.target.value);
+                    codeEditor.session.setMode("ace/mode/" + e.target.value);
                 });
             }
             editor.modals.show(pluginName);
             editor.modals.resize(pluginName);
-            if (!codeMirrorEditor) {
-                codeMirrorEditor = _initCodeMirrorEditor(insertCodeBody.find('#insertCodeContent').get(0));
+            if (!codeEditor) {
+                codeEditor = _initCodeEditor('insertCodeContent');
             } else {
-                codeMirrorEditor.setValue('');
+                codeEditor.setValue('');
             }
         }
 
-        function _initCodeMirrorEditor(codeElement) {
-            var codeEditor = CodeMirror.fromTextArea(codeElement, {
-                mode: editor.opts.insertCodeOption.default,     // 默认模式
-                indentUnit: 4,                          // 缩进单位为4
-                lineNumbers: true,                      // 显示行数
-                styleActiveLine: true,                  // 当前行背景高亮
-                matchBrackets: true,                    // 括号匹配
-                lineWrapping: true                      // 自动换行
+        function _initCodeEditor(codeEditorElementId) {
+            ace.require("ace/ext/language_tools");
+            var tempCodeEditor = ace.edit(codeEditorElementId);
+            tempCodeEditor.session.setMode("ace/mode/html");
+            tempCodeEditor.setTheme("ace/theme/tomorrow");
+            tempCodeEditor.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true,
+                enableLiveAutocompletion: true
             });
+            return tempCodeEditor;
+        }
 
-            codeEditor.setOption("extraKeys", {
-                // Tab键换成4个空格
-                Tab: function (cm) {
-                    var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
-                    cm.replaceSelection(spaces);
-                },
-                // F11键切换全屏
-                "F11": function (cm) {
-                    cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-                },
-                // Esc键退出全屏
-                "Esc": function (cm) {
-                    if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
-                }
+        function _staticHighlight($elements) {
+            ace.require("ace/lib/dom");
+            var highlight = ace.require("ace/ext/static_highlight");
+            $elements.each(function () {
+                highlight(this, {
+                    mode: this.getAttribute("ace-mode"),
+                    theme: this.getAttribute("ace-theme"),
+                    startLineNumber: 1,
+                    showGutter: this.getAttribute("ace-gutter"),
+                    trim: true
+                }, function (highlighted) {
+
+                });
             });
-            return codeEditor;
         }
 
         function hide() {
