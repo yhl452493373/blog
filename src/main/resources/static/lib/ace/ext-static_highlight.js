@@ -142,6 +142,7 @@ highlight.loadTheme = function (theme, onLoad) {
     config.loadModule(['theme', theme], function (themeModule) {
         onLoad && onLoad(themeModule);
     });
+    dom.importCssString(baseStyles, "ace_highlight");
 };
 highlight.render = function(input, mode, theme, lineStart, disableGutter, callback) {
     var waiting = 1;

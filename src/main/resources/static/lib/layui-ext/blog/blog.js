@@ -12,6 +12,13 @@ layui.define(['element', 'form', 'jquery', 'laytpl'], function (exports) {
         , $ = layui.jquery
         , laytpl = layui.laytpl;
 
+    $(function () {
+        var highlight = ace.require("ace/ext/static_highlight");
+        $('.ace_code_highlight_container').each(function () {
+            highlight.loadTheme($(this).children().attr('ace-theme'));
+        });
+    });
+
     // start 导航显示隐藏
 
     $("#mobile-nav").on('click', function () {

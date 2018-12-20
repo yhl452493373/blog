@@ -3,10 +3,6 @@
 <link rel="stylesheet" href="${contextPath}/static/lib/codemirror-5.42.0/lib/codemirror.css">
 <script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/lib/codemirror.js"></script>
 <script type="text/javascript" src="${contextPath}/static/lib/codemirror-5.42.0/mode/xml/xml.js"></script>
-<#--ace代码编辑器需要的内容-->
-<script src="${contextPath}/static/lib/ace/ace.js"></script>
-<script src="${contextPath}/static/lib/ace/ext-language_tools.js"></script>
-<script src="${contextPath}/static/lib/ace/ext-static_highlight.js"></script>
 <#--富文本编辑器需要的内容-->
 <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/froala_editor.css">
 <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/plugins/code.css">

@@ -5,6 +5,12 @@
 <#--富文本编辑器需要用到的样式-->
 <link rel="stylesheet" href="${contextPath}/static/css/font-awesome.min.css">
 <link rel="stylesheet" href="${contextPath}/static/lib/froala-editor/css/froala_style.css">
+
+<#--ace代码编辑器需要的内容-->
+<script src="${contextPath}/static/lib/ace/ace.js"></script>
+<script src="${contextPath}/static/lib/ace/ext-language_tools.js"></script>
+<script src="${contextPath}/static/lib/ace/ext-static_highlight.js"></script>
+
 <#--script-->
 <script src="${contextPath}/static/lib/layui/layui.js"></script>
 

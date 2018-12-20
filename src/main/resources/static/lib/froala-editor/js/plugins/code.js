@@ -134,12 +134,13 @@
         /**
          * show insert code window
          * @param content default code content.it can be null
+         * @param language default code editor language.it can be null
          * @param theme default code editor theme.it can be null
          */
-        function show(content, theme) {
+        function show(content, language, theme) {
             if (!insertCodeWindow) {
                 var tempLanguageList = _getOption('languages', defaultLanguageList);
-                var tempDefaultLanguage = _getOption('defaultLanguage', defaultLanguage);
+                var tempDefaultLanguage = language || _getOption('defaultLanguage', defaultLanguage);
                 var titleHtml = "<h4>" + editor.language.translate("Insert Code") + "</h4>",
                     contentHtml = "<pre class='insert-code-content'>" + (content || "") + "</pre>",
                     modal = editor.modals.create(pluginName, titleHtml, contentHtml);
@@ -151,15 +152,15 @@
                     select.push('<span class="insert-code-header-selector-label">' + editor.language.translate('Code Language') + '：</span>');
                     select.push('<select class="insert-code-choose-code-language">');
                     for (var i = 0; i < tempLanguageList.length; i++) {
-                        var language = tempLanguageList[i];
-                        var languageAlias = defaultLanguageAlias.hasOwnProperty(language) ? defaultLanguageAlias[language] : language;
+                        var tempLanguage = tempLanguageList[i];
+                        var languageAlias = defaultLanguageAlias.hasOwnProperty(tempLanguage) ? defaultLanguageAlias[tempLanguage] : tempLanguage;
                         if (tempDefaultLanguage == null && i === 0) {
-                            select.push('<option value="' + language + '" selected>' + languageAlias + '</option>');
+                            select.push('<option value="' + tempLanguage + '" selected>' + languageAlias + '</option>');
                         } else {
-                            if (language === tempDefaultLanguage) {
-                                select.push('<option value="' + language + '" selected>' + languageAlias + '</option>');
+                            if (tempLanguage === tempDefaultLanguage) {
+                                select.push('<option value="' + tempLanguage + '" selected>' + languageAlias + '</option>');
                             } else {
-                                select.push('<option value="' + language + '">' + languageAlias + '</option>');
+                                select.push('<option value="' + tempLanguage + '">' + languageAlias + '</option>');
                             }
                         }
                     }
@@ -167,7 +168,7 @@
                     return select.join('');
                 });
                 var tempThemeList = _getOption('themes', defaultThemeList);
-                var tempDefaultTheme = _getOption('defaultTheme', defaultTheme);
+                var tempDefaultTheme = theme || _getOption('defaultTheme', defaultTheme);
                 insertCodeHead.append(function () {
                     var select = [];
                     select.push('<span class="insert-code-header-selector-label">' + editor.language.translate('Code Editor Theme') + '：</span>');
@@ -261,6 +262,14 @@
             } else {
                 tempBody.find('.insert').text(insertButtonName);
             }
+            if (language) {
+                codeEditor.session.setMode("ace/mode/" + language);
+                editor.modals.get(pluginName).$head.find('.insert-code-choose-code-language').val(language);
+            } else {
+                codeEditor.session.setMode("ace/mode/" + defaultLanguage);
+                editor.modals.get(pluginName).$head.find('.insert-code-choose-code-language').val(_getOption('defaultLanguage', defaultLanguage));
+            }
+
             if (theme) {
                 codeEditor.setTheme("ace/theme/" + theme);
                 editor.modals.get(pluginName).$head.find('.insert-code-choose-code-theme').val(theme);
@@ -499,7 +508,7 @@
                     tempText += '\n';
                 text.push(tempText);
             });
-            this.insertCode.show(text.join(''), highlightBlock.attr('ace-theme').replace(/ace\/theme\//, ''));
+            this.insertCode.show(text.join(''), highlightBlock.attr('ace-mode').replace(/ace\/mode\//, ''), highlightBlock.attr('ace-theme').replace(/ace\/theme\//, ''));
         }
     });
 
