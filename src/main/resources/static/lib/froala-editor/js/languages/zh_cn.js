@@ -345,7 +345,8 @@ $.FE.LANGUAGE['zh_cn'] = {
     "Remove Code": "删除代码",
     "Edit Code": "编辑代码",
     "Code Language": "代码语言",
-    "Code Editor Theme": "代码主题"
+    "Code Editor Theme": "代码编辑器主题",
+    "Code Theme": "代码主题"
   },
   direction: "ltr"
 };

@@ -126,7 +126,8 @@ var highlight = function(el, opts, callback) {
 
     highlight.render(data, mode, theme, opts.firstLineNumber, !opts.showGutter, function (highlighted) {
         dom.importCssString(highlighted.css, "ace_highlight");
-        el.innerHTML = highlighted.html;
+        //must delete char \n . otherwise can not input chinese in froala editor after highligth code
+        el.innerHTML = highlighted.html.replace(/\n/g,'');
         var container = el.firstChild.firstChild;
         for (var i = 0; i < nodes.length; i += 2) {
             var pos = highlighted.session.doc.indexToPosition(nodes[i]);

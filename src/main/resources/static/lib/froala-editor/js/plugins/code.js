@@ -4,6 +4,10 @@
  * Copyright 2014-2018 Froala Labs
  */
 (function ($) {
+    /**
+     * ace editor support languages.
+     * @type {string[]} language name list.they came from mode-xxx.js, 'xxx' is the language name
+     */
     var defaultLanguageList = [
         'abap', 'abc', 'actionscript', 'ada', 'apache_conf', 'apex', 'applescript', 'asciidoc', 'asl', 'assembly_x86',
         'autohotkey', 'batchfile', 'bro', 'c9search', 'c_cpp', 'cirru', 'clojure', 'cobol', 'coffee', 'coldfusion',
@@ -21,6 +25,10 @@
         'twig', 'typescript', 'vala', 'vbscript', 'velocity', 'verilog', 'vhdl', 'visualforce', 'wollok', 'xml', 'xquery',
         'yaml'
     ];
+
+    /**
+     * language alias.for example:if you want to show c_cpp as C/C++ , you can add a property like c_cpp:'C/C++' below
+     */
     var defaultLanguageAlias = {
         c_cpp: 'c/cpp',
         csound_document: 'csound document',
@@ -35,7 +43,17 @@
         soy_template: 'soy template'
 
     };
+
+    /**
+     * ace editor's default language
+     * @type {string} language name in default language list
+     */
     var defaultLanguage = 'html';
+
+    /**
+     * ace editor support themes
+     * @type {string[]} theme name list.they came from theme-xxx.js, 'xxx' is the theme name
+     */
     var defaultThemeList = [
         'ambiance', 'chaos', 'chrome', 'clouds', 'clouds_midnight', 'cobalt', 'crimson_editor', 'dawn', 'dracula',
         'dreamweaver', 'eclipse', 'github', 'gob', 'gruvbox', 'idle_fingers', 'iplastic', 'katzenmilch', 'kr_theme',
@@ -43,7 +61,16 @@
         'solarized_light', 'sqlserver', 'terminal', 'textmate', 'tomorrow', 'tomorrow_night', 'tomorrow_night_blue',
         'tomorrow_night_bright', 'tomorrow_night_eighties', 'twilight', 'vibrant_ink', 'xcode'
     ];
+
+    /**
+     * ace editor's default theme
+     * @type {string} theme name in default theme list
+     */
     var defaultTheme = 'tomorrow';
+
+    /**
+     * merge default options to FroalaEditor's DEFAULTS options
+     */
     $.FroalaEditor.DEFAULTS = $.extend($.FroalaEditor.DEFAULTS, {
         insertCodeOption: {
             defaultLanguage: defaultLanguage,
@@ -53,38 +80,76 @@
         }
     });
 
+    /**
+     * add a new popup to FroalaEditor called 'insertCode.popup'.it only show some buttons.
+     * if we need some content , we should change [_BUTTONS_] to [_BUTTONS_][_CUSTOM_LAYER_]
+     */
     $.extend($.FroalaEditor.POPUP_TEMPLATES, {
-        // 若使用此行,则弹窗需要设置弹窗内容: custom_layer: '<div class="custom-layer">Hello World!</div>'
-        // "insertCode.popup": '[_BUTTONS_][_CUSTOM_LAYER_]'
         "insertCode.popup": '[_BUTTONS_]'
     });
 
+    /**
+     * get rand number
+     * @param num rand number length
+     * @returns {number} rand number
+     */
+    function getRandom(num) {
+        return Math.floor((Math.random() + Math.floor(Math.random() * 9 + 1)) * Math.pow(10, num - 1));
+    }
 
+    /**
+     * define plugin
+     * @param editor froala editor instance
+     * @returns {{_removeCode: _removeCode, hide: hide, _init: _init, _highlightBlock: (function(): *), show: show, _getOption: (function(*, *=): *)}}
+     */
     $.FroalaEditor.PLUGINS.insertCode = function (editor) {
         var insertButtonName = editor.language.translate("Insert");
         var updateButtonName = editor.language.translate("Update");
         var cancelButtonName = editor.language.translate("Cancel");
 
-        var insertCodeWindow, insertCodeHead, insertCodeBody, pluginName = 'insert_code', codeEditor, highlightBlock;
+        //插件名字加上随机数,用于产生多个插件实例
+        var pluginName = 'insert_code_' + getRandom(10);
+        var insertCodeWindow, insertCodeHead, insertCodeBody, codeEditor, highlightBlock;
 
+        /**
+         * get current code editor instance's option
+         * @param optionName option name
+         * @param defaultOption default option if user not set it
+         * @returns {*} the final option
+         * @private this is a private method.do not use it in public
+         */
+        function _getOption(optionName, defaultOption) {
+            return editor.opts.insertCodeOption[optionName] || defaultOption;
+        }
+
+        /**
+         * get current highlight code block
+         * @returns {*} current highlight code block.it's a jquery instance
+         * @private this is a private method.do not use it in public
+         */
         function _highlightBlock() {
             return highlightBlock;
         }
 
+        /**
+         * show insert code window
+         * @param content default code content.it can be null
+         * @param theme default code editor theme.it can be null
+         */
         function show(content, theme) {
             if (!insertCodeWindow) {
-                var tempLanguageList = editor.opts.insertCodeOption.languages || defaultLanguageList;
-                var tempDefaultLanguage = editor.opts.insertCodeOption.defaultLanguage || defaultLanguage;
+                var tempLanguageList = _getOption('languages', defaultLanguageList);
+                var tempDefaultLanguage = _getOption('defaultLanguage', defaultLanguage);
                 var titleHtml = "<h4>" + editor.language.translate("Insert Code") + "</h4>",
-                    contentHtml = "<pre id='insertCodeContent' style='height: 350px;font-size: 14px'>" + (content || "") + "</pre>",
+                    contentHtml = "<pre class='insert-code-content'>" + (content || "") + "</pre>",
                     modal = editor.modals.create(pluginName, titleHtml, contentHtml);
                 insertCodeWindow = modal.$modal;
                 insertCodeHead = modal.$head;
                 insertCodeBody = modal.$body;
                 insertCodeHead.append(function () {
                     var select = [];
-                    select.push('<span class="code-header-selector-label">' + editor.language.translate('Code Language') + '：</span>');
-                    select.push('<select class="choose-code-language">');
+                    select.push('<span class="insert-code-header-selector-label">' + editor.language.translate('Code Language') + '：</span>');
+                    select.push('<select class="insert-code-choose-code-language">');
                     for (var i = 0; i < tempLanguageList.length; i++) {
                         var language = tempLanguageList[i];
                         var languageAlias = defaultLanguageAlias.hasOwnProperty(language) ? defaultLanguageAlias[language] : language;
@@ -101,12 +166,12 @@
                     select.push('</select>');
                     return select.join('');
                 });
-                var tempThemeList = editor.opts.insertCodeOption.themes || defaultThemeList;
-                var tempDefaultTheme = editor.opts.insertCodeOption.defaultTheme || defaultTheme;
+                var tempThemeList = _getOption('themes', defaultThemeList);
+                var tempDefaultTheme = _getOption('defaultTheme', defaultTheme);
                 insertCodeHead.append(function () {
                     var select = [];
-                    select.push('<span class="code-header-selector-label">' + editor.language.translate('Code Editor Theme') + '：</span>');
-                    select.push('<select class="choose-code-theme">');
+                    select.push('<span class="insert-code-header-selector-label">' + editor.language.translate('Code Editor Theme') + '：</span>');
+                    select.push('<select class="insert-code-choose-code-theme">');
                     for (var i = 0; i < tempThemeList.length; i++) {
                         var tempTheme = tempThemeList[i];
                         if (tempDefaultTheme == null && i === 0) {
@@ -131,9 +196,9 @@
                     overflow: 'auto',
                     paddingBottom: 0
                 });
-                insertCodeBody.append('<div style="display: block;text-align: right;line-height: 42px">' +
+                insertCodeBody.append('<div class="insert-code-content-buttons">' +
                     '<button class="fr-command insert">' + insertButtonName + '</button>' +
-                    '<button class="fr-command cancel" style="margin:0 12px;color: #888">' + cancelButtonName + '</button>' +
+                    '<button class="fr-command cancel">' + cancelButtonName + '</button>' +
                     '</div>');
                 editor.events.$on($(editor.o_win), "resize", function () {
                     (insertCodeWindow.data("instance") || editor).modals.resize(pluginName)
@@ -141,21 +206,27 @@
                 editor.events.bindClick(insertCodeBody, ".insert", function (e) {
                     editor.insertCode.hide();
                     editor.undo.saveStep();
+                    var tempId;
                     if (highlightBlock) {
-                        var tempHighlightBlock = $('<pre contenteditable="false" class="ace_code_highlight" ' +
-                            'ace-mode="ace/mode/' + insertCodeHead.find('.choose-code-language').val() + '" ' +
-                            'ace-theme="ace/theme/' + insertCodeHead.find('.choose-code-theme').val() + '" ' +
-                            'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre>');
+                        tempId = highlightBlock.children('pre').attr('id');
+                        // noinspection HtmlUnknownAttribute
+                        var tempHighlightBlock = $('<div><pre id="' + tempId + '" contenteditable="false" class="ace_code_highlight" ' +
+                            'ace-mode="ace/mode/' + insertCodeHead.find('.insert-code-choose-code-language').val() + '" ' +
+                            'ace-theme="ace/theme/' + insertCodeHead.find('.insert-code-choose-code-theme').val() + '" ' +
+                            'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre></div>');
                         highlightBlock.replaceWith(tempHighlightBlock);
                         highlightBlock = tempHighlightBlock;
+                        _staticHighlight($('#' + tempId));
                     } else {
-                        editor.html.insert('<pre contenteditable="false" class="ace_code_highlight" ' +
-                            'ace-mode="ace/mode/' + insertCodeHead.find('.choose-code-language').val() + '" ' +
-                            'ace-theme="ace/theme/' + insertCodeHead.find('.choose-code-theme').val() + '" ' +
-                            'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre><p></p>', true);
+                        tempId = 'ace_code_highlight_' + getRandom(10);
+                        // noinspection HtmlUnknownAttribute
+                        editor.html.insert('<div><pre id="' + tempId + '" contenteditable="false" class="ace_code_highlight" ' +
+                            'ace-mode="ace/mode/' + insertCodeHead.find('.insert-code-choose-code-language').val() + '" ' +
+                            'ace-theme="ace/theme/' + insertCodeHead.find('.insert-code-choose-code-theme').val() + '" ' +
+                            'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre></div><p><br></p>', true);
                         highlightBlock = null;
+                        _staticHighlight($('#' + tempId));
                     }
-                    _staticHighlight($('.ace_code_highlight'));
                     editor.undo.saveStep();
                 });
                 editor.events.bindClick(insertCodeBody, ".cancel", function () {
@@ -163,19 +234,19 @@
                 }, false);
                 editor.events.$on(insertCodeHead, 'change', function (e) {
                     var target = e.target, mode, theme;
-                    if (target.className.indexOf('choose-code-language') !== -1) {
+                    if (target.className.indexOf('insert-code-choose-code-language') !== -1) {
                         mode = e.target.value;
-                        theme = insertCodeHead.find('.choose-code-theme').val();
-                    } else if (target.className.indexOf('choose-code-theme') !== -1) {
+                        theme = insertCodeHead.find('.insert-code-choose-code-theme').val();
+                    } else if (target.className.indexOf('insert-code-choose-code-theme') !== -1) {
                         theme = e.target.value;
-                        mode = insertCodeHead.find('.choose-code-language').val();
+                        mode = insertCodeHead.find('.insert-code-choose-code-language').val();
                     }
                     codeEditor.session.setMode("ace/mode/" + mode);
                     codeEditor.setTheme("ace/theme/" + theme);
                 });
             }
             if (!codeEditor) {
-                codeEditor = _initCodeEditor('insertCodeContent', tempDefaultLanguage, defaultTheme);
+                codeEditor = _initCodeEditor(editor.modals.get(pluginName).$body.find('.insert-code-content').get(0), tempDefaultLanguage, defaultTheme);
             } else {
                 if (!content) {
                     codeEditor.setValue('');
@@ -192,24 +263,32 @@
             }
             if (theme) {
                 codeEditor.setTheme("ace/theme/" + theme);
-                editor.modals.get(pluginName).$head.find('.choose-code-theme').val(theme);
+                editor.modals.get(pluginName).$head.find('.insert-code-choose-code-theme').val(theme);
             } else {
-                codeEditor.setTheme("ace/theme/" + (editor.opts.insertCodeOption.defaultTheme || defaultTheme));
-                editor.modals.get(pluginName).$head.find('.choose-code-theme').val(editor.opts.insertCodeOption.defaultTheme || defaultTheme);
+                codeEditor.setTheme("ace/theme/" + _getOption('defaultTheme', defaultTheme));
+                editor.modals.get(pluginName).$head.find('.insert-code-choose-code-theme').val(_getOption('defaultTheme', defaultTheme));
             }
             editor.modals.show(pluginName);
             editor.modals.resize(pluginName);
         }
 
+        /**
+         * hide insert code window
+         */
         function hide() {
             editor.modals.hide(pluginName)
         }
 
+        /**
+         * define show tool popup event when click code highlight block
+         * @param event click event
+         * @private this is a private method.do not use it in public
+         */
         function _showToolPopup(event) {
             if (editor.core.hasFocus() && event) {
                 var $target = $(event.target);
                 if ($target.closest('.ace_code_highlight').length === 1 && $target.closest('.fr-view').length === 1) {
-                    highlightBlock = $target.closest('.ace_code_highlight');
+                    highlightBlock = $target.closest('.ace_code_highlight').parent();
                     _showPopup();
                 } else {
                     highlightBlock = null;
@@ -217,9 +296,17 @@
             }
         }
 
-        function _initCodeEditor(codeEditorElementId, defaultLanguage, defaultTheme) {
+        /**
+         * init ace code editor
+         * @param codeEditorElement editor element.it's a dom element,not a jquery instance
+         * @param defaultLanguage editor code language
+         * @param defaultTheme editor theme
+         * @returns {*} ace code editor instance
+         * @private this is a private method.do not use it in public
+         */
+        function _initCodeEditor(codeEditorElement, defaultLanguage, defaultTheme) {
             ace.require("ace/ext/language_tools");
-            var tempCodeEditor = ace.edit(codeEditorElementId);
+            var tempCodeEditor = ace.edit(codeEditorElement);
             tempCodeEditor.session.setMode("ace/mode/" + defaultLanguage);
             tempCodeEditor.setTheme("ace/theme/" + defaultTheme);
             tempCodeEditor.setOptions({
@@ -231,10 +318,15 @@
             return tempCodeEditor;
         }
 
+        /**
+         * define static highlight method.it's used for highlighting insert code
+         * @param $elements the elements which need to highlight.it's a jquery instance
+         * @private this is a private method.do not use it in public
+         */
         function _staticHighlight($elements) {
             var highlight = ace.require("ace/ext/static_highlight");
             $elements.each(function () {
-                if ($(this).find('.ace_static_highlight').length === 0)
+                if ($(this).find('.ace_static_highlight').length === 0) {
                     highlight(this, {
                         mode: this.getAttribute("ace-mode"),
                         theme: this.getAttribute("ace-theme"),
@@ -244,9 +336,14 @@
                     }, function (highlighted) {
 
                     });
+                }
             });
         }
 
+        /**
+         * default init method.
+         * @private this is a private method.do not use it in public
+         */
         function _init() {
             editor.events.on("window.mouseup", _showToolPopup);
             editor.events.$on(editor.$wp, "scroll.insertCode-popup", function (e) {
@@ -254,47 +351,49 @@
             })
         }
 
-        // Create custom popup.
+        /**
+         * init code block's tool popup when click it
+         * @returns {insertCode.popup} initialized popup
+         * @private this is a private method.do not use it in public
+         */
         function _initPopup() {
-            // Popup buttons.
             var popup_buttons = '';
-
-            // Create the list of buttons.
             popup_buttons += '<div class="fr-buttons">';
             popup_buttons += editor.button.buildList(['codeRemove', 'codeTheme', 'codeEdit']);
             popup_buttons += '</div>';
-
-            // 指定弹出层内容
             var template = {
                 buttons: popup_buttons
             };
-
-            // Create popup.
             return editor.popups.create('insertCode.popup', template);
         }
 
-        // Show the popup
+        /**
+         * show code block's tool popup when click it
+         * @private this is a private method.do not use it in public
+         */
         function _showPopup() {
-            var $highlightBlock = highlightBlock;
-
+            var $highlightBlock = highlightBlock.children('pre');
             var $popup = editor.popups.get('insertCode.popup');
-
             if (!$popup) $popup = _initPopup();
-
             editor.popups.setContainer('insertCode.popup', editor.$sc);
-
             var offset = $highlightBlock.offset();
             offset.width = $highlightBlock.outerWidth();
             offset.height = $highlightBlock.outerHeight();
-
             editor.popups.show('insertCode.popup', offset.left + offset.width / 2, offset.top + offset.height, offset.height);
         }
 
-        // Hide the custom popup.
+        /**
+         * hide code block's tool popup
+         * @private this is a private method.do not use it in public
+         */
         function _hidePopup() {
             editor.popups.hide('insertCode.popup');
         }
 
+        /**
+         * remove current active highlight code block;
+         * @private this is a private method.do not use it in public
+         */
         function _removeCode() {
             _hidePopup();
             highlightBlock.next('p').remove();
@@ -307,11 +406,15 @@
             _init: _init,
             _removeCode: _removeCode,
             _highlightBlock: _highlightBlock,
+            _getOption: _getOption,
             show: show,
             hide: hide
         }
     };
 
+    /**
+     * define a icon called insertCode.we can add it to froala editor's toolbar
+     */
     $.FroalaEditor.DefineIcon('insertCode', {NAME: 'file-code-o'});
     $.FroalaEditor.RegisterCommand('insertCode', {
         title: 'Insert Code',
@@ -327,6 +430,9 @@
         plugin: 'insertCode'
     });
 
+    /**
+     * define a icon called codeRemove.do not add it to froala editor's toolbar
+     */
     $.FroalaEditor.DefineIcon('codeRemove', {NAME: 'trash'});
     $.FroalaEditor.RegisterCommand('codeRemove', {
         title: 'Remove Code',
@@ -338,15 +444,18 @@
         }
     });
 
+    /**
+     * define a icon called codeTheme.do not add it to froala editor's toolbar
+     */
     $.FroalaEditor.DefineIcon('codeTheme', {NAME: 'magic'});
     $.FroalaEditor.RegisterCommand('codeTheme', {
-        title: 'Change Code Theme',
+        title: 'Code Theme',
         type: 'dropdown',
         undo: false,
         focus: false,
         refreshAfterCallback: true,
         html: function () {
-            var tempThemeList = this.opts.insertCodeOption.themes;
+            var tempThemeList = this.insertCode._getOption('themes', defaultTheme);
             var options = ['<ul class="fr-dropdown-list" role="presentation">'];
             for (var i = 0; i < tempThemeList.length; i++) {
                 var t = tempThemeList[i];
@@ -357,14 +466,7 @@
         },
         callback: function (cmd, val) {
             var that = this;
-            var text = [];
-            this.insertCode._highlightBlock().find('.ace_line').each(function () {
-                var tempText = this.innerText;
-                if (!/\n$/.test(tempText))
-                    tempText += '\n';
-                text.push(tempText);
-            });
-            var highlightBlock = this.insertCode._highlightBlock();
+            var highlightBlock = this.insertCode._highlightBlock().children('pre');
             highlightBlock.attr('ace-theme', 'ace/theme/' + val);
             var highlight = ace.require("ace/ext/static_highlight");
             highlight.loadTheme(highlightBlock.attr('ace-theme'), function (themeModule) {
@@ -373,12 +475,15 @@
             });
         },
         refreshOnShow: function ($btn, $dropdown) {
-            var theme = this.insertCode._highlightBlock().attr('ace-theme').replace(/ace\/theme\//, '');
+            var theme = this.insertCode._highlightBlock().children('pre').attr('ace-theme').replace(/ace\/theme\//, '');
             $dropdown.find(".fr-command.fr-active").removeClass('fr-active').attr('aria-selected', false);
             $dropdown.find(".fr-command[data-param1='" + theme + "']").addClass('fr-active').attr('aria-selected', true);
         }
     });
 
+    /**
+     * define a icon called codeEdit.do not add it to froala editor's toolbar
+     */
     $.FroalaEditor.DefineIcon('codeEdit', {NAME: 'edit'});
     $.FroalaEditor.RegisterCommand('codeEdit', {
         title: 'Edit Code',
@@ -386,7 +491,7 @@
         focus: false,
         callback: function () {
             var text = [];
-            var highlightBlock = this.insertCode._highlightBlock();
+            var highlightBlock = this.insertCode._highlightBlock().children('pre');
             highlightBlock.find('.ace_line').each(function () {
                 var tempText = this.innerText;
                 if (!/\n$/.test(tempText))

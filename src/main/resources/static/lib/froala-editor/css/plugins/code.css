@@ -7,13 +7,29 @@
     border: solid lightgrey 1px
 }
 
-.code-header-selector-label{
+.insert-code-content {
+    height: 350px;
+    font-size: 14px;
+}
+
+.insert-code-header-selector-label {
     display: inline;
     margin-left: 20px;
 }
 
-.choose-code-language, .choose-code-theme {
+.insert-code-choose-code-language, .insert-code-choose-code-theme {
     height: 30px;
     margin: 6px 0;
     display: inline-block;
+}
+
+.insert-code-content-buttons {
+    display: block;
+    text-align: right;
+    line-height: 42px;
+}
+
+.insert-code-content-buttons .cancel {
+    margin: 0 12px;
+    color: #888;
 }
