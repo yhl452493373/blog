@@ -211,7 +211,8 @@
                     if (highlightBlock) {
                         tempId = highlightBlock.children('pre').attr('id');
                         // noinspection HtmlUnknownAttribute
-                        var tempHighlightBlock = $('<div class="ace_code_highlight_container"contenteditable="false" ><pre id="' + tempId + '" class="ace_code_highlight" ' +
+                        var tempHighlightBlock = $('<div class="ace_code_highlight_container" ace-mode="' + insertCodeHead.find('.insert-code-choose-code-language').val() +
+                            '" contenteditable="false" ><pre id="' + tempId + '" class="ace_code_highlight" ' +
                             'ace-mode="ace/mode/' + insertCodeHead.find('.insert-code-choose-code-language').val() + '" ' +
                             'ace-theme="ace/theme/' + insertCodeHead.find('.insert-code-choose-code-theme').val() + '" ' +
                             'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre></div>');
@@ -221,7 +222,8 @@
                     } else {
                         tempId = 'ace_code_highlight_' + getRandom(10);
                         // noinspection HtmlUnknownAttribute
-                        editor.html.insert('<div class="ace_code_highlight_container"contenteditable="false" ><pre id="' + tempId + '" class="ace_code_highlight" ' +
+                        editor.html.insert('<div class="ace_code_highlight_container" ace-mode="' + insertCodeHead.find('.insert-code-choose-code-language').val() +
+                            '" contenteditable="false" ><pre id="' + tempId + '" class="ace_code_highlight" ' +
                             'ace-mode="ace/mode/' + insertCodeHead.find('.insert-code-choose-code-language').val() + '" ' +
                             'ace-theme="ace/theme/' + insertCodeHead.find('.insert-code-choose-code-theme').val() + '" ' +
                             'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre></div><p><br></p>', true);

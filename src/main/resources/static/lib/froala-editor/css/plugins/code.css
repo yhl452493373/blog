@@ -33,3 +33,17 @@
     margin: 0 12px;
     color: #888;
 }
+
+.ace_code_highlight_container {
+    position: relative;
+}
+
+.ace_code_highlight_container:before {
+    content: attr(ace-mode);
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0,0,0,.5);
+    color: #fff;
+    padding: 0 5px;
+}
