@@ -218,7 +218,7 @@
                             'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre></div>');
                         highlightBlock.replaceWith(tempHighlightBlock);
                         highlightBlock = tempHighlightBlock;
-                        _staticHighlight($('#' + tempId));
+                        // _staticHighlight($('#' + tempId));
                     } else {
                         tempId = 'ace_code_highlight_' + getRandom(10);
                         // noinspection HtmlUnknownAttribute
@@ -228,7 +228,7 @@
                             'ace-theme="ace/theme/' + insertCodeHead.find('.insert-code-choose-code-theme').val() + '" ' +
                             'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre></div><p><br></p>', true);
                         highlightBlock = null;
-                        _staticHighlight($('#' + tempId));
+                        // _staticHighlight($('#' + tempId));
                     }
                     editor.undo.saveStep();
                 });
@@ -370,7 +370,7 @@
         function _initPopup() {
             var popup_buttons = '';
             popup_buttons += '<div class="fr-buttons">';
-            popup_buttons += editor.button.buildList(['codeRemove', 'codeTheme', 'codeEdit', 'insertLineBefore', 'deleteLineBefore']);
+            popup_buttons += editor.button.buildList(['codeRemove', 'codeEdit', 'codeTheme', 'insertLineBefore', 'deleteLineBefore']);
             popup_buttons += '</div>';
             var template = {
                 buttons: popup_buttons
@@ -385,12 +385,29 @@
         function _showPopup() {
             var $highlightBlock = highlightBlock.children('pre');
             var $popup = editor.popups.get('insertCode.popup');
-            if (!$popup) $popup = _initPopup();
+            if (!$popup) {
+                $popup = _initPopup();
+                editor.popups.onHide("insertCode.popup", function () {
+                    var text = [];
+                    if (this.insertCode._highlightBlock().find('.ace_line').length > 0) {
+                        this.insertCode._highlightBlock().find('.ace_line').each(function () {
+                            var tempText = this.innerText;
+                            if (!/\n$/.test(tempText))
+                                tempText += '\n';
+                            text.push(tempText);
+                        });
+                        if (text.length === 0)
+                            text.push(this.insertCode._highlightBlock().text());
+                        this.insertCode._highlightBlock().children('pre').text(text.join(''));
+                    }
+                });
+            }
             editor.popups.setContainer('insertCode.popup', editor.$sc);
             var offset = $highlightBlock.offset();
             offset.width = $highlightBlock.outerWidth();
             offset.height = $highlightBlock.outerHeight();
             editor.popups.show('insertCode.popup', offset.left + offset.width / 2, offset.top + offset.height, offset.height);
+            _staticHighlight($highlightBlock);
         }
 
         /**

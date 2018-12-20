@@ -33,7 +33,7 @@
     layui.extend({
         blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
     }).use(['blog', 'layer', 'layedit'], function () {
-        var  layer = layui.layer;
+        var layer = layui.layer;
 
         //富文本编辑器
         $('#content').froalaEditor({
@@ -74,7 +74,7 @@
                 'fr-text-spaced': 'Spaced',
                 'fr-text-uppercase': 'Uppercase'
             },
-            toolbarButtons: ['fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily', 'fontSize', 'color', 'inlineClass', 'inlineStyle', 'paragraphStyle', 'lineHeight', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'quote', '-', 'outdent', 'indent', 'insertLink', 'insertImage', 'insertVideo', 'embedly', 'insertFile', 'insertTable', '|', 'emoticons', 'fontAwesome', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 'print', 'getPDF', 'html', '|', 'undo', 'redo'],
+            toolbarButtons: ['fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily', 'fontSize', 'color', 'inlineClass', 'inlineStyle', 'paragraphStyle', 'lineHeight', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'quote', '-', 'outdent', 'indent', 'insertLink', 'insertImage', 'insertVideo', 'embedly', 'insertFile', 'insertTable', '|', 'emoticons', 'insertCode', 'fontAwesome', 'specialCharacters', 'insertHR', 'clearFormatting', '|', 'print', 'getPDF', 'html', '|', 'undo', 'redo'],
             fileUploadParam: 'file',
             fileUploadURL: contextPath + '/data/file/upload',
             fileUploadMethod: 'POST',

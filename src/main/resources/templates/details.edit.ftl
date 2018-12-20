@@ -123,7 +123,7 @@
                 'fr-text-spaced': 'Spaced',
                 'fr-text-uppercase': 'Uppercase'
             },
-            toolbarButtons: ['insertCode','fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily', 'fontSize', 'color', 'inlineClass', 'inlineStyle', 'paragraphStyle', 'lineHeight', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'quote', '-', 'outdent', 'indent', 'insertLink', 'insertImage', 'insertVideo', 'embedly', 'insertFile', 'insertTable', '|', 'emoticons', 'fontAwesome', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 'print', 'getPDF', 'html', '|', 'undo', 'redo'],
+            toolbarButtons: ['fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily', 'fontSize', 'color', 'inlineClass', 'inlineStyle', 'paragraphStyle', 'lineHeight', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'quote', '-', 'outdent', 'indent', 'insertLink', 'insertImage', 'insertVideo', 'embedly', 'insertFile', 'insertTable', '|', 'emoticons', 'insertCode', 'fontAwesome', 'specialCharacters', 'insertHR', 'clearFormatting', '|', 'print', 'getPDF', 'html', '|', 'undo', 'redo'],
             fileUploadParam: 'file',
             fileUploadURL: contextPath + '/data/file/upload',
             fileUploadMethod: 'POST',

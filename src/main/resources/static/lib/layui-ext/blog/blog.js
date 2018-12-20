@@ -14,8 +14,16 @@ layui.define(['element', 'form', 'jquery', 'laytpl'], function (exports) {
 
     $(function () {
         var highlight = ace.require("ace/ext/static_highlight");
-        $('.ace_code_highlight_container').each(function () {
-            highlight.loadTheme($(this).children().attr('ace-theme'));
+        $('.ace_code_highlight_container .ace_code_highlight').each(function () {
+            highlight(this, {
+                mode: this.getAttribute("ace-mode"),
+                theme: this.getAttribute("ace-theme"),
+                startLineNumber: 1,
+                showGutter: this.getAttribute("ace-gutter"),
+                trim: true
+            }, function (highlighted) {
+
+            });
         });
     });
 
