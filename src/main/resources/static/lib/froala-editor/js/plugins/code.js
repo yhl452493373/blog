@@ -210,7 +210,7 @@
                     if (highlightBlock) {
                         tempId = highlightBlock.children('pre').attr('id');
                         // noinspection HtmlUnknownAttribute
-                        var tempHighlightBlock = $('<div><pre id="' + tempId + '" contenteditable="false" class="ace_code_highlight" ' +
+                        var tempHighlightBlock = $('<div class="ace_code_highlight_container"contenteditable="false" ><pre id="' + tempId + '" class="ace_code_highlight" ' +
                             'ace-mode="ace/mode/' + insertCodeHead.find('.insert-code-choose-code-language').val() + '" ' +
                             'ace-theme="ace/theme/' + insertCodeHead.find('.insert-code-choose-code-theme').val() + '" ' +
                             'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre></div>');
@@ -220,7 +220,7 @@
                     } else {
                         tempId = 'ace_code_highlight_' + getRandom(10);
                         // noinspection HtmlUnknownAttribute
-                        editor.html.insert('<div><pre id="' + tempId + '" contenteditable="false" class="ace_code_highlight" ' +
+                        editor.html.insert('<div class="ace_code_highlight_container"contenteditable="false" ><pre id="' + tempId + '" class="ace_code_highlight" ' +
                             'ace-mode="ace/mode/' + insertCodeHead.find('.insert-code-choose-code-language').val() + '" ' +
                             'ace-theme="ace/theme/' + insertCodeHead.find('.insert-code-choose-code-theme').val() + '" ' +
                             'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre></div><p><br></p>', true);
@@ -348,7 +348,7 @@
             editor.events.on("window.mouseup", _showToolPopup);
             editor.events.$on(editor.$wp, "scroll.insertCode-popup", function (e) {
                 editor.popups.isVisible("insertCode.popup") && _showPopup();
-            })
+            });
         }
 
         /**
@@ -359,7 +359,7 @@
         function _initPopup() {
             var popup_buttons = '';
             popup_buttons += '<div class="fr-buttons">';
-            popup_buttons += editor.button.buildList(['codeRemove', 'codeTheme', 'codeEdit']);
+            popup_buttons += editor.button.buildList(['codeRemove', 'codeTheme', 'codeEdit', 'insertLineBefore', 'deleteLineBefore']);
             popup_buttons += '</div>';
             var template = {
                 buttons: popup_buttons
@@ -407,6 +407,7 @@
             _removeCode: _removeCode,
             _highlightBlock: _highlightBlock,
             _getOption: _getOption,
+            _hidePopup: _hidePopup,
             show: show,
             hide: hide
         }
@@ -499,6 +500,38 @@
                 text.push(tempText);
             });
             this.insertCode.show(text.join(''), highlightBlock.attr('ace-theme').replace(/ace\/theme\//, ''));
+        }
+    });
+
+    /**
+     * define a icon called newLineBefore.do not add it to froala editor's toolbar
+     */
+    $.FroalaEditor.DefineIcon('insertLineBefore', {NAME: 'plus'});
+    $.FroalaEditor.RegisterCommand('insertLineBefore', {
+        title: 'Prepend Wrap Line',
+        undo: false,
+        focus: false,
+        callback: function () {
+            var highlightBlock = this.insertCode._highlightBlock();
+            highlightBlock.before('<p><br></p>');
+            this.insertCode._hidePopup();
+            this.undo.saveStep();
+        }
+    });
+
+    /**
+     * define a icon called newLineAfter.do not add it to froala editor's toolbar
+     */
+    $.FroalaEditor.DefineIcon('deleteLineBefore', {NAME: 'minus'});
+    $.FroalaEditor.RegisterCommand('deleteLineBefore', {
+        title: 'Delete Wrap Line',
+        undo: false,
+        focus: false,
+        callback: function () {
+            var highlightBlock = this.insertCode._highlightBlock();
+            highlightBlock.prev('p').remove();
+            this.insertCode._hidePopup();
+            this.undo.saveStep();
         }
     });
 })(jQuery);

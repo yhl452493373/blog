@@ -346,7 +346,9 @@ $.FE.LANGUAGE['zh_cn'] = {
     "Edit Code": "编辑代码",
     "Code Language": "代码语言",
     "Code Editor Theme": "代码编辑器主题",
-    "Code Theme": "代码主题"
+    "Code Theme": "代码主题",
+    "Prepend Wrap Line": "代码前增加一行",
+    "Delete Wrap Line": "代码前删除一行"
   },
   direction: "ltr"
 };
