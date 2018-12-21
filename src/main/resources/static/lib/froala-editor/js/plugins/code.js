@@ -206,8 +206,10 @@
                 });
                 editor.events.bindClick(insertCodeBody, ".insert", function (e) {
                     editor.insertCode.hide();
+                    var tempId, value = codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;');
+                    if (value.trim().length === 0)
+                        return;
                     editor.undo.saveStep();
-                    var tempId;
                     if (highlightBlock) {
                         tempId = highlightBlock.children('pre').attr('id');
                         // noinspection HtmlUnknownAttribute
@@ -215,7 +217,7 @@
                             '" contenteditable="false" ><pre id="' + tempId + '" class="ace_code_highlight" ' +
                             'ace-mode="ace/mode/' + insertCodeHead.find('.insert-code-choose-code-language').val() + '" ' +
                             'ace-theme="ace/theme/' + insertCodeHead.find('.insert-code-choose-code-theme').val() + '" ' +
-                            'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre></div>');
+                            'ace-gutter="true">' + value + '</pre></div>');
                         highlightBlock.replaceWith(tempHighlightBlock);
                         highlightBlock = tempHighlightBlock;
                         // _staticHighlight($('#' + tempId));
@@ -226,7 +228,7 @@
                             '" contenteditable="false" ><pre id="' + tempId + '" class="ace_code_highlight" ' +
                             'ace-mode="ace/mode/' + insertCodeHead.find('.insert-code-choose-code-language').val() + '" ' +
                             'ace-theme="ace/theme/' + insertCodeHead.find('.insert-code-choose-code-theme').val() + '" ' +
-                            'ace-gutter="true">' + codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;') + '</pre></div><p><br></p>', true);
+                            'ace-gutter="true">' + value + '</pre></div><p><br></p>', true);
                         highlightBlock = null;
                         // _staticHighlight($('#' + tempId));
                     }
@@ -388,26 +390,7 @@
             if (!$popup) {
                 $popup = _initPopup();
                 editor.popups.onHide("insertCode.popup", function () {
-                    var text = [];
-                    var $aceLines = this.insertCode._highlightBlock().find('.ace_line');
-                    if ($aceLines.length > 0) {
-                        $aceLines.each(function (index) {
-                            var tempText = this.innerText;
-                            if (index < $aceLines.length - 1){
-                                if (/\n+$/.test(tempText)){
-                                    tempText = tempText.replace(/\n+$/,'\n');
-                                }else{
-                                    tempText += '\n';
-                                }
-                            }else{
-                                tempText = tempText.replace(/\n+$/,'');
-                            }
-                            text.push(tempText);
-                        });
-                        if (text.length === 0)
-                            text.push(this.insertCode._highlightBlock().text());
-                        this.insertCode._highlightBlock().children('pre').text(text.join(''));
-                    }
+                    planCode(this.insertCode._highlightBlock());
                 });
             }
             editor.popups.setContainer('insertCode.popup', editor.$sc);
@@ -416,6 +399,34 @@
             offset.height = $highlightBlock.outerHeight();
             editor.popups.show('insertCode.popup', offset.left + offset.width / 2, offset.top + offset.height, offset.height);
             _staticHighlight($highlightBlock);
+        }
+
+        function planCode($highlightBlock) {
+            $highlightBlock.each(function () {
+                var text = [];
+                var highlightBlock = $(this);
+                highlightBlock.children('pre').attr('class', 'ace_code_highlight');
+
+                var $aceLines = highlightBlock.find('.ace_line');
+                if ($aceLines.length > 0) {
+                    $aceLines.each(function (index) {
+                        var tempText = this.innerText;
+                        if (index < $aceLines.length - 1) {
+                            if (/\n+$/.test(tempText)) {
+                                tempText = tempText.replace(/\n+$/, '\n');
+                            } else {
+                                tempText += '\n';
+                            }
+                        } else {
+                            tempText = tempText.replace(/\n+$/, '');
+                        }
+                        text.push(tempText);
+                    });
+                    if (text.length === 0)
+                        text.push(highlightBlock.text());
+                    highlightBlock.children('pre').text(text.join(''));
+                }
+            });
         }
 
         /**
@@ -445,7 +456,8 @@
             _getOption: _getOption,
             _hidePopup: _hidePopup,
             show: show,
-            hide: hide
+            hide: hide,
+            planCode: planCode
         }
     };
 
@@ -507,6 +519,7 @@
             highlightBlock.attr('ace-theme', 'ace/theme/' + val);
             var highlight = ace.require("ace/ext/static_highlight");
             highlight.loadTheme(highlightBlock.attr('ace-theme'), function (themeModule) {
+                highlightBlock.attr('class', 'ace_code_highlight ' + themeModule.cssClass);
                 highlightBlock.children().attr('class', themeModule.cssClass);
                 that.undo.saveStep();
             });

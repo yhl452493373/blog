@@ -1,9 +1,11 @@
 package com.yang.blog.entity.base;
 
+import java.io.Serializable;
+
 /**
  * 常量
  */
-public interface Constant {
+public interface Constant extends Serializable {
     /**
      * 临时状态
      */

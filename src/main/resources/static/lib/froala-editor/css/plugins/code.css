@@ -3,8 +3,11 @@
 }
 
 .ace_code_highlight {
-    white-space: pre-wrap;
-    border: solid lightgrey 1px
+    white-space: pre!important;
+    word-break: break-word!important;
+    word-wrap: break-word!important;
+    border: solid lightgrey 1px;
+    overflow-x: auto!important;
 }
 
 .insert-code-content {
@@ -36,6 +39,15 @@
 
 .ace_code_highlight_container {
     position: relative;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', 'Droid Sans Mono', monospace;
+    font-size: 12px;
+    white-space: pre;
+}
+
+.ace_static_highlight{
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', 'Droid Sans Mono', monospace;
+    font-size: 12px;
+    white-space: pre;
 }
 
 .ace_code_highlight_container:before {
