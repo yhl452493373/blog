@@ -138,6 +138,8 @@
          * @param theme default code editor theme.it can be null
          */
         function show(content, language, theme) {
+            if(content)
+                content = content.replace(/</gm, '&lt;').replace(/>/gm, '&gt;');
             if (!insertCodeWindow) {
                 var tempLanguageList = _getOption('languages', defaultLanguageList);
                 var tempDefaultLanguage = language || _getOption('defaultLanguage', defaultLanguage);
