@@ -343,7 +343,7 @@
                         theme: this.getAttribute("ace-theme"),
                         startLineNumber: 1,
                         showGutter: this.getAttribute("ace-gutter"),
-                        trim: true
+                        trim: false
                     }, function (highlighted) {
 
                     });
@@ -389,11 +389,19 @@
                 $popup = _initPopup();
                 editor.popups.onHide("insertCode.popup", function () {
                     var text = [];
-                    if (this.insertCode._highlightBlock().find('.ace_line').length > 0) {
-                        this.insertCode._highlightBlock().find('.ace_line').each(function () {
+                    var $aceLines = this.insertCode._highlightBlock().find('.ace_line');
+                    if ($aceLines.length > 0) {
+                        $aceLines.each(function (index) {
                             var tempText = this.innerText;
-                            if (!/\n$/.test(tempText))
-                                tempText += '\n';
+                            if (index < $aceLines.length - 1){
+                                if (/\n+$/.test(tempText)){
+                                    tempText = tempText.replace(/\n+$/,'\n');
+                                }else{
+                                    tempText += '\n';
+                                }
+                            }else{
+                                tempText = tempText.replace(/\n+$/,'');
+                            }
                             text.push(tempText);
                         });
                         if (text.length === 0)

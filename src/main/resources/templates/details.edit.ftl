@@ -41,7 +41,7 @@
         <input type="hidden" id="id" name="id" value="${articleEdit.id!}">
         <input type="hidden" id="fileIds" name="fileIds" value="${articleEdit.fileIds!}">
             <textarea id="content" name="content" style="display: none" placeholder="请输入文章内容">${articleEdit.content!}</textarea>
-            <div id="contentHtml" style="display: none">${articleEdit.content!}</div>
+            <div id="contentHtml" class="edit-content" style="display: none">${articleEdit.content!}</div>
             </div>
             <div class="layui-form-item create-tags-container">
         <label class="layui-form-label">文章标签:</label>

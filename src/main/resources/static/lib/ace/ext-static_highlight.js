@@ -106,14 +106,21 @@ var highlight = function(el, opts, callback) {
 
     var data = "";
     var nodes = [];
-
     if (el.firstElementChild) {
         var textLen = 0;
         for (var i = 0; i < el.childNodes.length; i++) {
             var ch = el.childNodes[i];
             if (ch.nodeType == 3) {
                 textLen += ch.data.length;
-                data += ch.data;
+                if (i < el.childNodes.length - 1) {
+                    if (/\n+$/.test(ch.data)) {
+                        data += ch.data.replace(/\n+$/, '\n');
+                    } else {
+                        data += ch.data + '\n';
+                    }
+                } else {
+                    data += ch.data.replace(/\n+$/,'');
+                }
             } else {
                 nodes.push(textLen, ch);
             }
