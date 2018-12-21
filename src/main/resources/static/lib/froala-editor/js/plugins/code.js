@@ -366,6 +366,9 @@
             editor.events.$on(editor.$wp, "scroll.insertCode-popup", function (e) {
                 editor.popups.isVisible("insertCode.popup") && _showPopup();
             });
+            editor.events.on('snapshot.before',function () {
+                editor.insertCode.planCode.call(editor);
+            })
         }
 
         /**
@@ -490,11 +493,10 @@
     $.FroalaEditor.DefineIcon('codeRemove', {NAME: 'trash'});
     $.FroalaEditor.RegisterCommand('codeRemove', {
         title: 'Remove Code',
-        undo: false,
+        undo: true,
         focus: false,
         callback: function () {
             this.insertCode._removeCode();
-            this.undo.saveStep();
         }
     });
 
@@ -519,14 +521,12 @@
             return options.join('');
         },
         callback: function (cmd, val) {
-            var that = this;
             var highlightBlock = this.insertCode._highlightBlock().children('pre');
             highlightBlock.attr('ace-theme', 'ace/theme/' + val);
             var highlight = ace.require("ace/ext/static_highlight");
             highlight.loadTheme(highlightBlock.attr('ace-theme'), function (themeModule) {
                 highlightBlock.attr('class', 'ace_code_highlight ' + themeModule.cssClass);
                 highlightBlock.children().attr('class', themeModule.cssClass);
-                that.undo.saveStep();
             });
         },
         refreshOnShow: function ($btn, $dropdown) {
@@ -563,13 +563,12 @@
     $.FroalaEditor.DefineIcon('insertLineBefore', {NAME: 'plus'});
     $.FroalaEditor.RegisterCommand('insertLineBefore', {
         title: 'Prepend Wrap Line',
-        undo: false,
+        undo: true,
         focus: false,
         callback: function () {
             var highlightBlock = this.insertCode._highlightBlock();
             highlightBlock.before('<p><br></p>');
             this.insertCode._hidePopup();
-            this.undo.saveStep();
         }
     });
 
@@ -579,13 +578,12 @@
     $.FroalaEditor.DefineIcon('deleteLineBefore', {NAME: 'minus'});
     $.FroalaEditor.RegisterCommand('deleteLineBefore', {
         title: 'Delete Wrap Line',
-        undo: false,
+        undo: true,
         focus: false,
         callback: function () {
             var highlightBlock = this.insertCode._highlightBlock();
             highlightBlock.prev('p').remove();
             this.insertCode._hidePopup();
-            this.undo.saveStep();
         }
     });
 })(jQuery);
