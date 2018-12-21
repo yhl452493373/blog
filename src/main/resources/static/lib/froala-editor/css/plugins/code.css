@@ -8,11 +8,17 @@
     word-wrap: break-word!important;
     border: solid lightgrey 1px;
     overflow-x: auto!important;
+    padding: 0 5px;
+}
+
+.ace_code_highlight > div[class^=ace-]{
+    margin: 0 -5px;
 }
 
 .insert-code-content {
     height: 350px;
     font-size: 14px;
+    margin: 0;
 }
 
 .insert-code-header-selector-label {
@@ -41,12 +47,14 @@
     position: relative;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', 'Droid Sans Mono', monospace;
     font-size: 12px;
+    line-height: 14px;
     white-space: pre;
 }
 
 .ace_static_highlight{
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', 'Droid Sans Mono', monospace;
     font-size: 12px;
+    line-height: 14px;
     white-space: pre;
 }
 

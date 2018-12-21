@@ -4,6 +4,9 @@
  * Copyright 2014-2018 Froala Labs
  */
 (function ($) {
+    var replaceChar = function (str) {
+        return str.replace(/</gm, '&lt;').replace(/>/gm, '&gt;');
+    };
     /**
      * ace editor support languages.
      * @type {string[]} language name list.they came from mode-xxx.js, 'xxx' is the language name
@@ -138,13 +141,13 @@
          * @param theme default code editor theme.it can be null
          */
         function show(content, language, theme) {
-            if(content)
-                content = content.replace(/</gm, '&lt;').replace(/>/gm, '&gt;');
+            // if(content)
+            //     content = replaceChar(content);
             if (!insertCodeWindow) {
                 var tempLanguageList = _getOption('languages', defaultLanguageList);
                 var tempDefaultLanguage = language || _getOption('defaultLanguage', defaultLanguage);
                 var titleHtml = "<h4>" + editor.language.translate("Insert Code") + "</h4>",
-                    contentHtml = "<pre class='insert-code-content'>" + (content || "") + "</pre>",
+                    contentHtml = "<pre class='insert-code-content'></pre>",
                     modal = editor.modals.create(pluginName, titleHtml, contentHtml);
                 insertCodeWindow = modal.$modal;
                 insertCodeHead = modal.$head;
@@ -208,7 +211,7 @@
                 });
                 editor.events.bindClick(insertCodeBody, ".insert", function (e) {
                     editor.insertCode.hide();
-                    var tempId, value = codeEditor.getValue().replace(/</gm, '&lt;').replace(/>/gm, '&gt;');
+                    var tempId, value = replaceChar(codeEditor.getValue());
                     if (value.trim().length === 0)
                         return;
                     editor.undo.saveStep();
@@ -254,13 +257,12 @@
             }
             if (!codeEditor) {
                 codeEditor = _initCodeEditor(editor.modals.get(pluginName).$body.find('.insert-code-content').get(0), tempDefaultLanguage, defaultTheme);
+            }
+            if (!content) {
+                codeEditor.setValue('');
             } else {
-                if (!content) {
-                    codeEditor.setValue('');
-                } else {
-                    //-1表示到第一行,1表示到最后一行
-                    codeEditor.setValue(content, 1);
-                }
+                //-1表示到第一行,1表示到最后一行
+                codeEditor.setValue(content, 1);
             }
             var tempBody = editor.modals.get(pluginName).$body;
             if (content) {
@@ -404,11 +406,12 @@
         }
 
         function planCode($highlightBlock) {
+            if (!$highlightBlock)
+                $highlightBlock = this.$el.find('.ace_code_highlight_container');
             $highlightBlock.each(function () {
                 var text = [];
                 var highlightBlock = $(this);
                 highlightBlock.children('pre').attr('class', 'ace_code_highlight');
-
                 var $aceLines = highlightBlock.find('.ace_line');
                 if ($aceLines.length > 0) {
                     $aceLines.each(function (index) {
