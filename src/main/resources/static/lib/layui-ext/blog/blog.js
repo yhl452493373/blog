@@ -15,7 +15,8 @@ layui.define(['element', 'form', 'jquery', 'laytpl'], function (exports) {
     $(function () {
         var highlight = ace.require("ace/ext/static_highlight");
         $('.ace_code_highlight_container .ace_code_highlight').each(function () {
-            if ($(this).closest('.edit-content').length === 0){
+            var $this = $(this);
+            if ($this.closest('.edit-content').length === 0) {
                 highlight(this, {
                     mode: this.getAttribute("ace-mode"),
                     theme: this.getAttribute("ace-theme"),
@@ -23,7 +24,7 @@ layui.define(['element', 'form', 'jquery', 'laytpl'], function (exports) {
                     showGutter: this.getAttribute("ace-gutter"),
                     trim: false
                 }, function (highlighted) {
-
+                    $this.parent().attr('class', 'ace_code_highlight_container ' + highlighted.themeClassName);
                 });
             }
         });

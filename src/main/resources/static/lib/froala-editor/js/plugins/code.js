@@ -351,7 +351,7 @@
                         showGutter: this.getAttribute("ace-gutter"),
                         trim: false
                     }, function (highlighted) {
-
+                        $elements.parent().attr('class', 'ace_code_highlight_container ' + highlighted.themeClassName);
                     });
                 }
             });
@@ -366,7 +366,7 @@
             editor.events.$on(editor.$wp, "scroll.insertCode-popup", function (e) {
                 editor.popups.isVisible("insertCode.popup") && _showPopup();
             });
-            editor.events.on('snapshot.before',function () {
+            editor.events.on('snapshot.before', function () {
                 editor.insertCode.planCode.call(editor);
             })
         }
@@ -414,6 +414,7 @@
             $highlightBlock.each(function () {
                 var text = [];
                 var highlightBlock = $(this);
+                highlightBlock.attr('class', 'ace_code_highlight_container');
                 highlightBlock.children('pre').attr('class', 'ace_code_highlight');
                 var $aceLines = highlightBlock.find('.ace_line');
                 if ($aceLines.length > 0) {

@@ -143,7 +143,7 @@ var highlight = function(el, opts, callback) {
             var lineEl = container.children[pos.row];
             lineEl && lineEl.appendChild(node);
         }
-        callback && callback();
+        callback && callback(highlighted);
     });
 };
 highlight.loadTheme = function (theme, onLoad) {

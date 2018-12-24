@@ -58,13 +58,13 @@
     white-space: pre;
 }
 
-.ace_code_highlight_container:before {
+.ace_code_highlight_container:hover:before {
     content: attr(ace-mode);
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 1px;
+    right: 1px;
     background: rgba(0,0,0,.5);
     color: #fff;
-    padding: 0 5px;
+    padding: 1px 5px;
     font-size: 12px;
 }
