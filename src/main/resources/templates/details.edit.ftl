@@ -186,7 +186,7 @@
                     url: contextPath + '/data/file/delete',
                     data: {
                         sourceUrls: url,
-                        temporary: true
+                        temporary: ${articleEdit.id???c}
                     }
                 }).done(function (res) {
                     console.log(objectType + ' was deleted');

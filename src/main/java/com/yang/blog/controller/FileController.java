@@ -243,7 +243,7 @@ public class FileController implements BaseController {
                     result = service.fileService.setAvailable(Collections.singletonList(fileId), File.TEMP);
                     fileIdList.add(fileId);
                 } else {
-                    FileUtils.delete(fileId);
+                    result = FileUtils.delete(fileId);
                     fileIdList.add(fileId);
                 }
             }
