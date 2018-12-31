@@ -75,9 +75,7 @@
     </div>
 </script>
 <script>
-    layui.extend({
-        blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
-    }).use(['blog', 'jquery', 'layer', 'laytpl', 'laypage'], function () {
+    layui.use(['blog', 'jquery', 'layer', 'laytpl', 'laypage'], function () {
         var $ = layui.jquery, layer = layui.layer, laytpl = layui.laytpl, laypage = layui.laypage;
         var blog = layui.blog, logined = <@shiro.user>true</@shiro.user><@shiro.guest>false</@shiro.guest>;
 

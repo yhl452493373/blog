@@ -12,23 +12,25 @@ layui.define(['element', 'form', 'jquery', 'laytpl'], function (exports) {
         , $ = layui.jquery
         , laytpl = layui.laytpl;
 
-    $(function () {
-        var highlight = ace.require("ace/ext/static_highlight");
-        $('.ace_code_highlight_container .ace_code_highlight').each(function () {
-            var $this = $(this);
-            if ($this.closest('.edit-content').length === 0) {
-                highlight(this, {
-                    mode: this.getAttribute("ace-mode"),
-                    theme: this.getAttribute("ace-theme"),
-                    startLineNumber: 1,
-                    showGutter: this.getAttribute("ace-gutter"),
-                    trim: false
-                }, function (highlighted) {
-                    $this.parent().attr('class', 'ace_code_highlight_container ' + highlighted.themeClassName);
-                });
-            }
+    function renderCode() {
+        $(function () {
+            var highlight = ace && ace.require("ace/ext/static_highlight");
+            $('.ace_code_highlight_container .ace_code_highlight').each(function () {
+                var $this = $(this);
+                if ($this.closest('.edit-content').length === 0) {
+                    highlight && highlight(this, {
+                        mode: this.getAttribute("ace-mode"),
+                        theme: this.getAttribute("ace-theme"),
+                        startLineNumber: 1,
+                        showGutter: this.getAttribute("ace-gutter"),
+                        trim: false
+                    }, function (highlighted) {
+                        $this.parent().attr('class', 'ace_code_highlight_container ' + highlighted.themeClassName);
+                    });
+                }
+            });
         });
-    });
+    }
 
     // start 导航显示隐藏
 
@@ -155,13 +157,15 @@ layui.define(['element', 'form', 'jquery', 'laytpl'], function (exports) {
     //end 评论的特效
 
     // start  图片遮罩
-    var layerphotos = document.getElementsByClassName('layer-photos-demo');
-    for (var i = 1; i <= layerphotos.length; i++) {
-        layer.photos({
-            photos: ".layer-photos-demo" + i + ""
-            , anim: 0
-        });
-    }
+    $(function () {
+        var layerphotos = document.getElementsByClassName('layer-photos-demo');
+        for (var i = 1; i <= layerphotos.length; i++) {
+            layer.photos({
+                photos: ".layer-photos-demo" + i + ""
+                , anim: 0
+            });
+        }
+    });
 
     /**
      * 初始化幻灯片展示图片效果.用于异步加载后的回调
@@ -236,6 +240,7 @@ layui.define(['element', 'form', 'jquery', 'laytpl'], function (exports) {
     //输出test接口
     exports('blog', {
         praise: praise,
-        initLayerPhotos: initLayerPhotos
+        initLayerPhotos: initLayerPhotos,
+        renderCode: renderCode
     });
 });  

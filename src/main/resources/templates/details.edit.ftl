@@ -6,6 +6,7 @@
     <title>撰写-闲言轻博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <#include "include.resource.ftl">
+    <#include "include.detail.ftl">
     <#include "include.froalaeditor.ftl">
     <style>
         .create-tags-container {
@@ -69,7 +70,6 @@
 <#include "include.footer.ftl">
 <script>
     layui.extend({
-        blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog',
         inputTags: '{/}${contextPath}/static/lib/layui-ext/input-tags/inputTags'
     }).use(['blog', 'layer', 'inputTags'], function () {
         var layer = layui.layer, inputTags = layui.inputTags;

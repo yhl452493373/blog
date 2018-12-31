@@ -38,9 +38,7 @@
 </div>
 <#include "include.footer.ftl">
 <script>
-    layui.extend({
-        blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
-    }).use('blog');
+    layui.use('blog');
 </script>
 </body>
 </html>

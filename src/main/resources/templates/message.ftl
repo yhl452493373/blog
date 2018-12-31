@@ -6,6 +6,7 @@
     <title>留言-闲言轻博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <#include "include.resource.ftl">
+    <#include "include.detail.ftl">
     <style>
         .info-item {
             margin-bottom: 0 !important;
@@ -84,9 +85,7 @@
     </div>
 </script>
 <script>
-    layui.extend({
-        blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
-    }).use(['blog', 'jquery', 'laytpl', 'laypage'], function () {
+    layui.use(['blog', 'jquery', 'laytpl', 'laypage'], function () {
         var $ = layui.jquery, laytpl = layui.laytpl, laypage = layui.laypage;
         var blog = layui.blog;
 

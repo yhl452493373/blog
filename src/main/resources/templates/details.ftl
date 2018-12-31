@@ -6,6 +6,7 @@
     <title>文章-闲言轻博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <#include "include.resource.ftl">
+    <#include "include.detail.ftl">
     <style>
         .info-item {
             margin-bottom: 0 !important;
@@ -100,9 +101,7 @@
 <script>
     var articleId = '${article.id}';
 
-    layui.extend({
-        blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
-    }).use(['blog', 'jquery', 'laytpl', 'laypage'], function () {
+    layui.use(['blog', 'jquery', 'laytpl', 'laypage'], function () {
         var $ = layui.jquery, laytpl = layui.laytpl, laypage = layui.laypage;
         var blog = layui.blog;
 
@@ -236,7 +235,6 @@
             var $praiseCount = $('#praiseCount');
             if (localStorage.getItem($praiseCount.data('id') + '_read') !== 'yes') {
                 $.get(contextPath + '/data/article/increaseReadCount?id=' + $praiseCount.data('id'), function (result) {
-                    console.log(result.status);
                     if (result.status === 'success') {
                         localStorage.setItem($praiseCount.data('id') + '_read', 'yes');
                     }

@@ -30,9 +30,7 @@
 </div>
 <#include "include.footer.ftl">
 <script>
-    layui.extend({
-        blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
-    }).use(['blog', 'layer', 'layedit'], function () {
+    layui.use(['blog', 'layer', 'layedit'], function () {
         var layer = layui.layer;
 
         //富文本编辑器

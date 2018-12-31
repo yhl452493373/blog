@@ -37,14 +37,14 @@
         csound_document: 'csound document',
         csound_orchestra: 'csound orchestra',
         csound_score: 'csound score',
-        ftl: 'ftl (freemarker)',
+        ftl: 'freemarker',
         haskell_cabal: 'haskell cabal',
         html_elixir: 'html elixir',
         html_ruby: 'html ruby',
         php_laravel_blade: 'php laravel blade',
         plain_text: 'plain text',
-        soy_template: 'soy template'
-
+        soy_template: 'soy template',
+        nix: 'nginx'
     };
 
     /**
@@ -209,6 +209,7 @@
                 editor.events.$on($(editor.o_win), "resize", function () {
                     (insertCodeWindow.data("instance") || editor).modals.resize(pluginName)
                 });
+                var codeLang;
                 editor.events.bindClick(insertCodeBody, ".insert", function (e) {
                     editor.insertCode.hide();
                     var tempId, value = replaceChar(codeEditor.getValue());
@@ -218,7 +219,8 @@
                     if (highlightBlock) {
                         tempId = highlightBlock.children('pre').attr('id');
                         // noinspection HtmlUnknownAttribute
-                        var tempHighlightBlock = $('<div class="ace_code_highlight_container" ace-mode="' + insertCodeHead.find('.insert-code-choose-code-language').val() +
+                        codeLang = insertCodeHead.find('.insert-code-choose-code-language').val();
+                        var tempHighlightBlock = $('<div class="ace_code_highlight_container" ace-mode="' + (defaultLanguageAlias[codeLang] || codeLang) +
                             '" contenteditable="false" ><pre id="' + tempId + '" class="ace_code_highlight" ' +
                             'ace-mode="ace/mode/' + insertCodeHead.find('.insert-code-choose-code-language').val() + '" ' +
                             'ace-theme="ace/theme/' + insertCodeHead.find('.insert-code-choose-code-theme').val() + '" ' +
@@ -229,7 +231,8 @@
                     } else {
                         tempId = 'ace_code_highlight_' + getRandom(10);
                         // noinspection HtmlUnknownAttribute
-                        editor.html.insert('<div class="ace_code_highlight_container" ace-mode="' + insertCodeHead.find('.insert-code-choose-code-language').val() +
+                        codeLang = insertCodeHead.find('.insert-code-choose-code-language').val();
+                        editor.html.insert('<div class="ace_code_highlight_container" ace-mode="' + (defaultLanguageAlias[codeLang] || codeLang) +
                             '" contenteditable="false" ><pre id="' + tempId + '" class="ace_code_highlight" ' +
                             'ace-mode="ace/mode/' + insertCodeHead.find('.insert-code-choose-code-language').val() + '" ' +
                             'ace-theme="ace/theme/' + insertCodeHead.find('.insert-code-choose-code-theme').val() + '" ' +

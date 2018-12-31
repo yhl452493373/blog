@@ -6,6 +6,7 @@
     <title>评论-闲言轻博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<#include "include.resource.ftl">
+	<#include "include.detail.ftl">
 </head>
 <body class="lay-blog">
 <#include "include.header.ftl">
@@ -66,9 +67,7 @@
     </div>
 </script>
 <script>
-    layui.extend({
-        blog: '{/}${contextPath}/static/lib/layui-ext/blog/blog'
-    }).use(['blog', 'layer', 'jquery'], function () {
+    layui.use(['blog', 'layer', 'jquery'], function () {
         var $ = layui.jquery, layer = layui.layer;
 
         $(document).on('click', '#comment', function (e) {
