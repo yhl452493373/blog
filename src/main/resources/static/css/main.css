@@ -210,7 +210,7 @@ body {
 }
 
 @media only screen and (max-width: 1170px) {
-    .lay-blog .blog-search{
+    .lay-blog .blog-search {
         display: none;
     }
 }
@@ -347,7 +347,7 @@ body {
         padding-top: 110px;
     }
 
-    #page{
+    #page {
         margin: 0 10px;
     }
 }
@@ -665,6 +665,7 @@ body {
     border-radius: 0;
     background: #fff;
     vertical-align: top;
+    padding: 0;
 }
 
 .layui-laypage .layui-laypage-limits, .layui-laypage .layui-laypage-refresh {
