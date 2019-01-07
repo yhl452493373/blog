@@ -72,6 +72,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/comment/**", "anon");
         //添加评论过程
         filterChainDefinitionMap.put("/data/comment/add", "anon");
+        //回复评论过程
+        filterChainDefinitionMap.put("/data/comment/reply", "anon");
         //获取评论
         filterChainDefinitionMap.put("/data/comment/list", "anon");
         //获取文章列表过程

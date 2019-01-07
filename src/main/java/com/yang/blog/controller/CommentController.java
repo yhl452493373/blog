@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author User
@@ -41,11 +42,23 @@ public class CommentController implements BaseController {
         QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(comment);
         queryWrapper.eq("available", Comment.AVAILABLE);
+        queryWrapper.isNull("belong_id");
         queryWrapper.orderByDesc("created_time");
         service.commentService.page(page, queryWrapper);
         page.getRecords().forEach(record -> {
             if (StringUtils.isNotEmpty(record.getUserId()))
                 record.setUserName(service.userService.findUsernameById(record.getUserId()));
+            QueryWrapper<Comment> tempWrapper = new QueryWrapper<>();
+            tempWrapper.orderByAsc("created_time");
+            tempWrapper.eq("article_id", comment.getArticleId());
+            tempWrapper.eq("available", Comment.AVAILABLE);
+            tempWrapper.eq("belong_id", record.getId());
+            List<Comment> replyList = service.commentService.list(tempWrapper);
+            replyList.forEach(reply -> {
+                if (StringUtils.isNotEmpty(reply.getUserId()))
+                    reply.setUserName(service.userService.findUsernameById(reply.getUserId()));
+            });
+            record.setReplyList(replyList);
         });
         jsonResult.success().data(page.getRecords()).count(page.getTotal());
         return jsonResult;
@@ -57,6 +70,7 @@ public class CommentController implements BaseController {
      * @param comment 添加对象
      * @return 添加结果，data中包括文章id和评论id，便于跳转
      */
+    @SuppressWarnings("Duplicates")
     @RequestMapping("/add")
     public JSONResult add(Comment comment) {
         JSONResult jsonResult = JSONResult.init();
@@ -70,6 +84,33 @@ public class CommentController implements BaseController {
         QueryWrapper<Comment> countQueryWrapper = new QueryWrapper<>();
         countQueryWrapper.eq("article_id", comment.getArticleId());
         comment.setFloor(service.commentService.count(countQueryWrapper) + 1);
+        boolean result = service.commentService.save(comment);
+        if (result) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("articleId", comment.getArticleId());
+            jsonObject.put("commentId", comment.getId());
+            jsonResult.success(ADD_SUCCESS).data(jsonObject);
+        } else
+            jsonResult.error(ADD_FAILED);
+        return jsonResult;
+    }
+
+    @SuppressWarnings("Duplicates")
+    @RequestMapping("/reply")
+    public JSONResult reply(Comment comment) {
+        QueryWrapper<Comment> countQueryWrapper = new QueryWrapper<>();
+        countQueryWrapper.eq("article_id", comment.getArticleId());
+        countQueryWrapper.eq("belong_id", comment.getBelongId());
+        comment.setBelongFloor(service.commentService.count(countQueryWrapper) + 1);
+        JSONResult jsonResult = JSONResult.init();
+        comment.setAvailable(Comment.AVAILABLE);
+        comment.setCreatedTime(LocalDateTime.now());
+        if (SecurityUtils.getSubject().isAuthenticated()) {
+            comment.setUserId(ShiroUtils.getLoginUser().getId());
+            comment.setUserName(null);
+        }
+        comment.setPraiseCount(0);
+        comment.setFloor(null);
         boolean result = service.commentService.save(comment);
         if (result) {
             JSONObject jsonObject = new JSONObject();

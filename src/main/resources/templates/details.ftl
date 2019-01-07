@@ -45,12 +45,12 @@
                             <a class="layui-icon layui-icon-edit" href="${contextPath}/edit/${article.id}"></a>
                             <a class="layui-icon layui-icon-delete article-delete" href="${contextPath}/data/article/delete?id=${article.id}"></a>
                         </@shiro.user>
-                        ${article.title}
+                        ${article.title?html}
                     </h3>
                     <h5>发布于：<span>${article.publishTime?string('yyyy-MM-dd HH:mm:ss')}</span></h5>
                     <h6 style="font-size: 12px">
                         <#list tagList as tag>
-                            <a href="#" title="${tag.name}相关文章" style="color: #999">${tag.name}</a>
+                            <a href="#" title="${tag.name?html}相关文章" style="color: #999">${tag.name?html}</a>
                         </#list>
                     </h6>
                     <div class="item-content fr-view">${article.content}</div>
@@ -73,7 +73,7 @@
 </div>
 <#include "include.footer.ftl">
 <script type="text/html" id="commentItem">
-    <div class="info-item">
+    <div class="info-item" data-belong-id="{{ d.id }}">
         <#--头像-->
         <#--<img class="info-img" src="../res/static/images/info-img.png" alt="">-->
         <div class="info-text" style="padding-left: 0" data-id="{{ d.id }}">
@@ -83,7 +83,7 @@
                         <a class="layui-icon layui-icon-delete comment-delete" href="${contextPath}/data/comment/delete?id={{ d.id }}"></a>
                     </@shiro.user>
                     <span>第</span><span class="floor">{{ d.floor }}</span><span>楼. </span>
-                    <span class="username">{{ d.userName }}</span><span> 于 </span>
+                    <span class="username">{{= d.userName }}</span><span> 于 </span>
                     <span class="created-time">{{ d.createdTime }}</span>
                     <span> 评论:</span>
                 </span>
@@ -92,9 +92,30 @@
                     <span class="count">{{ d.praiseCount }}</span>
                 </span>
             </p>
-            <p class="info-intr">{{ d.content }}</p>
+            <p class="info-intr">{{= d.content }}</p>
             <p style="text-align: right;line-height: 24px;"><a href="#" class="comment-reply">回复</a></p>
         </div>
+        {{# layui.each(d.replyList, function(index, reply){ }}
+        <div class="info-text info-reply" style="padding-left: 20px" data-id="{{ reply.id }}">
+            <p class="title count" style="margin-top: 0">
+                <span class="name">
+                    <@shiro.user>
+                        <a class="layui-icon layui-icon-delete comment-delete" href="${contextPath}/data/comment/delete?id={{ reply.id }}"></a>
+                    </@shiro.user>
+                    <span>第</span><span class="belong-floor">{{ reply.belongFloor }}</span><span>楼. </span>
+                    <span class="username">{{= reply.userName }}</span><span> 于 </span>
+                    <span class="created-time">{{ reply.createdTime }}</span>
+                    <span> 评论:</span>
+                </span>
+                <span class="info-img like {{# if (reply.praised) { }}layblog-this{{# } }}" data-id="{{ reply.id }}">
+                    <i class="layui-icon layui-icon-praise"></i>
+                    <span class="count">{{ reply.praiseCount }}</span>
+                </span>
+            </p>
+            <p class="info-intr">{{= reply.content }}</p>
+            <p style="text-align: right;line-height: 24px;"><a href="#" class="comment-reply">回复</a></p>
+        </div>
+        {{# }); }}
     </div>
 </script>
 <script type="text/html" id="commentItemEmpty">
@@ -104,6 +125,7 @@
 </script>
 <script type="text/html" id="replyBox">
     <form id="commentReplyForm" lay-filter="commentReplyForm" class="layui-form" style="display: none" action="${contextPath}/data/comment/reply" method="post">
+        <input type="hidden" name="articleId">
         <input type="hidden" name="replyId">
         <input type="hidden" name="belongId">
         <div class="layui-form-item layui-form-text">
@@ -139,17 +161,17 @@
             deleteComment.call(this);
         }).on('click.comment-reply', '.comment-reply', function (e) {
             e.preventDefault();
-            replyComment.call(this);
+            replyCommentBox.call(this);
         });
 
-        function replyComment() {
+        function replyCommentBox() {
             var $belongComment = $(this).closest('.info-text');
             var hideReplyForm = function () {
                 $('#commentReplyForm').slideUp(function () {
                     $(this).remove();
                 });
             };
-            if ($belongComment.find('#commentReplyForm').length !== 0){
+            if ($belongComment.find('#commentReplyForm').length !== 0) {
                 hideReplyForm();
                 return;
             }
@@ -157,10 +179,10 @@
             var defaultText = function () {
                 var texts = [];
                 if ($belongComment.find('.belong-floor').length !== 0) {
-                    texts.push('回复');
-                    texts.push($belongComment.find('.belong-floor').text().trim() + '#');
+                    texts.push('回复 ');
+                    texts.push($belongComment.find('.belong-floor').text().trim() + '# ');
                     texts.push($belongComment.find('.username').text().trim());
-                    texts.push(':');
+                    texts.push(': ');
                 }
                 return texts.join('');
             }();
@@ -171,16 +193,47 @@
                 $belongComment.append($replyForm);
                 $replyForm.slideDown();
                 form.val('commentReplyForm', {
-                    replyId: '',
-                    belongId: $belongComment.data('id'),
-                    content: defaultText
+                    belongId: $belongComment.parent().data('belongId'),
+                    content: defaultText,
+                    articleId: articleId
                 });
                 $belongComment.on('click.reply', '.reply', function (e) {
                     e.preventDefault();
+                    replyComment.call(document.getElementById('commentReplyForm'), defaultText);
                 }).on('click.cancel-reply', '.cancel-reply', function (e) {
                     e.preventDefault();
                     hideReplyForm();
                 });
+            });
+        }
+
+        function replyComment(defaultText) {
+            var formData = new FormData(this);
+            if (formData.get("userName").trim().length === 0) {
+                layer.msg('昵称不能为空');
+                return;
+            } else if (formData.get("content").trim().length === 0) {
+                layer.msg('评论内容不能为空');
+                return;
+            }
+            if (formData.get("content").trim().indexOf(defaultText.trim()) === -1) {
+                formData.set("content", defaultText + formData.get("content"));
+            }
+            $.ajax({
+                url: this.getAttribute('action'),
+                type: this.getAttribute('method'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    if (result.status === 'success') {
+                        layer.alert('回复成功!', function (index) {
+                            layer.close(index);
+                        });
+                    } else {
+                        layer.alert(result.message);
+                    }
+                }
             });
         }
 

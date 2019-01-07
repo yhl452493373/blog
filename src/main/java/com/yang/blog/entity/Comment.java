@@ -1,8 +1,10 @@
 package com.yang.blog.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.yang.blog.entity.base.BaseEntity;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -57,14 +59,15 @@ public class Comment extends BaseEntity<Comment> implements Serializable {
     private String belongId;
 
     /**
-     * 评论回复的评论id
-     */
-    private String replyId;
-
-    /**
      * 评论在所属评论中的楼层
      */
     private Integer belongFloor;
+
+    /**
+     * 回复列表
+     */
+    @TableField(exist = false)
+    private List<Comment> replyList;
 
     public String getArticleId() {
         return articleId;
@@ -130,14 +133,6 @@ public class Comment extends BaseEntity<Comment> implements Serializable {
         this.belongId = belongId;
     }
 
-    public String getReplyId() {
-        return replyId;
-    }
-
-    public void setReplyId(String replyId) {
-        this.replyId = replyId;
-    }
-
     public Integer getBelongFloor() {
         return belongFloor;
     }
@@ -157,8 +152,15 @@ public class Comment extends BaseEntity<Comment> implements Serializable {
                 ", available=" + available +
                 ", floor=" + floor +
                 ", belongId=" + belongId +
-                ", replyId=" + replyId +
                 ", belongFloor=" + belongFloor +
                 "}";
+    }
+
+    public List<Comment> getReplyList() {
+        return replyList;
+    }
+
+    public void setReplyList(List<Comment> replyList) {
+        this.replyList = replyList;
     }
 }

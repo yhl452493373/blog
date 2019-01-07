@@ -71,17 +71,17 @@
                     <@shiro.user>
                         <a class="layui-icon layui-icon-delete message-delete" href="${contextPath}/data/message/delete?id={{ d.id }}"></a>
                     </@shiro.user>
-                    第{{ d.floor }}楼. {{ d.userName }} 于 {{ d.createdTime }} 留言:
+                    第{{ d.floor }}楼. {{= d.userName }} 于 {{ d.createdTime }} 留言:
                 </span>
                 <span class="info-img like" data-id="{{ d.id }}"><i class="layui-icon layui-icon-praise"></i><span class="count">{{ d.praiseCount }}</span></span>
             </p>
-            <p class="info-intr">{{ d.content }}</p>
+            <p class="info-intr">{{= d.content }}</p>
         </div>
     </div>
 </script>
 <script type="text/html" id="messageItemEmpty">
     <div class="info-item empty">
-        {{ d.message }}
+        {{= d.message }}
     </div>
 </script>
 <script>

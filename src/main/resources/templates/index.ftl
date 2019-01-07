@@ -43,7 +43,7 @@
                 </@shiro.user>
                 <i class="layui-icon layui-icon-speaker"></i>
                 <span>公告：</span>
-                <span>{{ d.content }}</span>
+                <span>{{= d.content }}</span>
                 <br>
                 <span style="color: #aaa;font-size: 14px;display: block;text-align: right">{{ d.createdTime }}</span>
             {{# } }}
@@ -58,10 +58,10 @@
                     <a class="layui-icon layui-icon-edit" href="${contextPath}/edit/{{ d.id }}"></a>
                     <a class="layui-icon layui-icon-delete article-delete" href="${contextPath}/data/article/delete?id={{ d.id }}"></a>
                 </@shiro.user>
-                <a href="${contextPath}/details/{{ d.id }}">{{ d.title }}</a>
+                <a href="${contextPath}/details/{{ d.id }}">{{= d.title }}</a>
             </h3>
             <h5>发布于：<span>{{ d.publishTime }}</span></h5>
-            <div class="preview-content">{{ d.summary }}</div>
+            <div class="preview-content">{{= d.summary }}</div>
         </div>
         <div class="comment count">
             <a href="${contextPath}/comment/{{ d.id }}">评论</a>

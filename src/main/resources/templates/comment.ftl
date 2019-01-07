@@ -19,7 +19,7 @@
                         <@shiro.user>
                             <a class="layui-icon layui-icon-edit" href="${contextPath}/edit/{{ d.id }}"></a>
                         </@shiro.user>
-                        ${article.title}
+                        ${article.title?html}
                     </h3>
                     <h5>发布于：<span>${article.publishTime?string('yyyy-MM-dd HH:mm:ss')}</span></h5>
                     <div class="item-content">${article.content}</div>
@@ -50,17 +50,16 @@
 <script id="LAY-msg-tpl" type="text/html">
     <div class="info-box">
         <div class="info-item">
-            <img class="info-img" src="{{ d.avatar }}" alt="">
             <div class="info-text">
                 <p class="title">
-                    <span class="name">{{ d.username }}</span>
+                    <span class="name">{{= d.username }}</span>
                     <span class="info-img">
 					  	<i class="layui-icon layui-icon-praise"></i>
 					  	{{ d.praise }}
 					 	</span>
                 </p>
                 <p class="info-intr">
-                    {{ d.content }}
+                    {{= d.content }}
                 </p>
             </div>
         </div>
