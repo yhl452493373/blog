@@ -51,6 +51,21 @@ public class Comment extends BaseEntity<Comment> implements Serializable {
      */
     private Integer floor;
 
+    /**
+     * 评论所属的评论id
+     */
+    private String belongId;
+
+    /**
+     * 评论回复的评论id
+     */
+    private String replyId;
+
+    /**
+     * 评论在所属评论中的楼层
+     */
+    private Integer belongFloor;
+
     public String getArticleId() {
         return articleId;
     }
@@ -107,6 +122,30 @@ public class Comment extends BaseEntity<Comment> implements Serializable {
         this.floor = floor;
     }
 
+    public String getBelongId() {
+        return belongId;
+    }
+
+    public void setBelongId(String belongId) {
+        this.belongId = belongId;
+    }
+
+    public String getReplyId() {
+        return replyId;
+    }
+
+    public void setReplyId(String replyId) {
+        this.replyId = replyId;
+    }
+
+    public Integer getBelongFloor() {
+        return belongFloor;
+    }
+
+    public void setBelongFloor(Integer belongFloor) {
+        this.belongFloor = belongFloor;
+    }
+
     @Override
     public String toString() {
         return "Comment{" +
@@ -117,6 +156,9 @@ public class Comment extends BaseEntity<Comment> implements Serializable {
                 ", praiseCount=" + praiseCount +
                 ", available=" + available +
                 ", floor=" + floor +
+                ", belongId=" + belongId +
+                ", replyId=" + replyId +
+                ", belongFloor=" + belongFloor +
                 "}";
     }
 }
