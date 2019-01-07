@@ -530,6 +530,14 @@ body {
     cursor: pointer;
 }
 
+.layui-text-right {
+    text-align: right;
+}
+
+.layui-btn-primary:hover {
+    border-color: #1e9fff;
+}
+
 /* end details */
 
 /* start about */
@@ -676,5 +684,4 @@ body {
     display: inline-block;
     width: 30px;
 }
-
 /*end page*/

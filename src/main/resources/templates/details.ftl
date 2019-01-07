@@ -76,13 +76,16 @@
     <div class="info-item">
         <#--头像-->
         <#--<img class="info-img" src="../res/static/images/info-img.png" alt="">-->
-        <div class="info-text" style="padding-left: 0">
+        <div class="info-text" style="padding-left: 0" data-id="{{ d.id }}">
             <p class="title count" style="margin-top: 0">
                 <span class="name">
                     <@shiro.user>
                         <a class="layui-icon layui-icon-delete comment-delete" href="${contextPath}/data/comment/delete?id={{ d.id }}"></a>
                     </@shiro.user>
-                    第{{ d.floor }}楼. {{ d.userName }} 于 {{ d.createdTime }} 评论:
+                    <span>第</span><span class="floor">{{ d.floor }}</span><span>楼. </span>
+                    <span class="username">{{ d.userName }}</span><span> 于 </span>
+                    <span class="created-time">{{ d.createdTime }}</span>
+                    <span> 评论:</span>
                 </span>
                 <span class="info-img like {{# if (d.praised) { }}layblog-this{{# } }}" data-id="{{ d.id }}">
                     <i class="layui-icon layui-icon-praise"></i>
@@ -90,6 +93,7 @@
                 </span>
             </p>
             <p class="info-intr">{{ d.content }}</p>
+            <p style="text-align: right;line-height: 24px;"><a href="#" class="comment-reply">回复</a></p>
         </div>
     </div>
 </script>
@@ -98,11 +102,33 @@
         {{ d.message }}
     </div>
 </script>
+<script type="text/html" id="replyBox">
+    <form id="commentReplyForm" lay-filter="commentReplyForm" class="layui-form" style="display: none" action="${contextPath}/data/comment/reply" method="post">
+        <input type="hidden" name="replyId">
+        <input type="hidden" name="belongId">
+        <div class="layui-form-item layui-form-text">
+            <textarea name="content" class="layui-textarea" style="resize: none" placeholder="说出您的心声"></textarea>
+        </div>
+        <div class="layui-form-item layui-text-right">
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <#--noinspection FtlReferencesInspection-->
+                    <input type="text" name="userName" value="<@shiro.principal property='username'/>"
+                           placeholder="您的昵称" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn layui-btn-normal reply">发表</button>
+                <button class="layui-btn layui-btn-primary cancel-reply">取消</button>
+            </div>
+        </div>
+    </form>
+</script>
 <script>
     var articleId = '${article.id}';
 
-    layui.use(['blog', 'jquery', 'laytpl', 'laypage'], function () {
-        var $ = layui.jquery, laytpl = layui.laytpl, laypage = layui.laypage;
+    layui.use(['blog', 'jquery', 'laytpl', 'laypage', 'form'], function () {
+        var $ = layui.jquery, laytpl = layui.laytpl, laypage = layui.laypage, form = layui.form;
         var blog = layui.blog;
 
         $(document).on('click.article-delete', '.article-delete', function (e) {
@@ -111,7 +137,52 @@
         }).on('click.comment-delete', '.comment-delete', function (e) {
             e.preventDefault();
             deleteComment.call(this);
+        }).on('click.comment-reply', '.comment-reply', function (e) {
+            e.preventDefault();
+            replyComment.call(this);
         });
+
+        function replyComment() {
+            var $belongComment = $(this).closest('.info-text');
+            var hideReplyForm = function () {
+                $('#commentReplyForm').slideUp(function () {
+                    $(this).remove();
+                });
+            };
+            if ($belongComment.find('#commentReplyForm').length !== 0){
+                hideReplyForm();
+                return;
+            }
+            hideReplyForm();
+            var defaultText = function () {
+                var texts = [];
+                if ($belongComment.find('.belong-floor').length !== 0) {
+                    texts.push('回复');
+                    texts.push($belongComment.find('.belong-floor').text().trim() + '#');
+                    texts.push($belongComment.find('.username').text().trim());
+                    texts.push(':');
+                }
+                return texts.join('');
+            }();
+            var view = $('#replyBox').html();
+            //模板渲染
+            laytpl(view).render({}, function (html) {
+                var $replyForm = $(html);
+                $belongComment.append($replyForm);
+                $replyForm.slideDown();
+                form.val('commentReplyForm', {
+                    replyId: '',
+                    belongId: $belongComment.data('id'),
+                    content: defaultText
+                });
+                $belongComment.on('click.reply', '.reply', function (e) {
+                    e.preventDefault();
+                }).on('click.cancel-reply', '.cancel-reply', function (e) {
+                    e.preventDefault();
+                    hideReplyForm();
+                });
+            });
+        }
 
         function deleteComment() {
             var href = this.getAttribute('href');
