@@ -229,6 +229,7 @@
                     if (result.status === 'success') {
                         layer.alert('回复成功!', function (index) {
                             layer.close(index);
+                            loadComment();
                         });
                     } else {
                         layer.alert(result.message);
