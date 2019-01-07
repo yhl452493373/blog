@@ -93,7 +93,7 @@
                 </span>
             </p>
             <p class="info-intr">{{= d.content }}</p>
-            <p style="text-align: right;line-height: 24px;"><a href="#" class="comment-reply">回复</a></p>
+            <p style="text-align: right;line-height: 24px;padding-right: 10px;"><a href="#" class="comment-reply">回复</a></p>
         </div>
         {{# layui.each(d.replyList, function(index, reply){ }}
         <div class="info-text info-reply" style="padding-left: 20px" data-id="{{ reply.id }}">
@@ -107,7 +107,7 @@
                     <span class="created-time">{{ reply.createdTime }}</span>
                     <span> 评论:</span>
                 </span>
-                <span class="info-img like {{# if (reply.praised) { }}layblog-this{{# } }}" data-id="{{ reply.id }}">
+                <span class="info-img like {{# if (reply.praised) { }}layblog-this{{# } }}" data-id="{{ reply.id }}" style="padding-right: 10px">
                     <i class="layui-icon layui-icon-praise"></i>
                     <span class="count">{{ reply.praiseCount }}</span>
                 </span>
@@ -315,6 +315,13 @@
                             result.data.forEach(function (item) {
                                 if (localStorage.getItem(item.id + '_praised') === 'yes') {
                                     item.praised = true;
+                                }
+                                if(item.replyList.length!==0){
+                                    item.replyList.forEach(function (reply) {
+                                        if (localStorage.getItem(reply.id + '_praised') === 'yes') {
+                                            reply.praised = true;
+                                        }
+                                    });
                                 }
                                 renderData(item);
                             });

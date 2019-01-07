@@ -484,6 +484,7 @@ body {
 
 .info-intr {
     line-height: 24px;
+    word-break: break-all;
 }
 
 .lay-blog .container-message .title .info-img {
@@ -685,3 +686,30 @@ body {
     width: 30px;
 }
 /*end page*/
+
+.info-text.info-reply:nth-child(2){
+    border-top: 1px solid #ddd;
+}
+
+.info-text.info-reply:last-child{
+    border-bottom: 1px solid #ddd;
+}
+
+.info-text.info-reply{
+    background: #f6f8fa;
+    padding-right: 10px;
+    border-bottom: 1px dashed #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+.fr-view ol,
+.fr-view ul,
+.fr-view dl{
+    margin: inherit;
+    padding: inherit;
+}
+
+.fr-view li{
+    list-style: inherit;
+}
