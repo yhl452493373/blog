@@ -25,11 +25,11 @@ public class MyCodeGenerator {
         CodeGenerator.dataSourceCodeGenerate(dsgc);
         CodeGeneratorConfig cgc = new CodeGeneratorConfig(
                 "blog",
+                MyCodeGenerator.class.getPackage().getName(),
                 new String[]{
                         "about", "about_file", "announcement", "article", "article_file", "article_tag",
                         "comment", "file", "message", "praise", "tag", "user"
-                },
-                MyCodeGenerator.class.getPackage().getName()
+                }
         );
         cgc.setMapperResultMap(true);
         cgc.setSuperEntityClass("com.yang.blog.entity.base.BaseEntity");
@@ -52,8 +52,8 @@ public class MyCodeGenerator {
         dataSourceMap.keySet().forEach((key) -> {
             CodeGeneratorConfig cgc = new CodeGeneratorConfig(
                     key,
-                    dataSourceMap.get(key),
-                    MyCodeGenerator.class.getPackage().getName());
+                    MyCodeGenerator.class.getPackage().getName(),
+                    dataSourceMap.get(key));
             cgc.setFileOverride(true);
             cgc.setEnableCache(true);
             cgc.setEnableRedis(true);

@@ -19,14 +19,14 @@
     <parent>
         <groupId>com.github.yhl452493373</groupId>
         <artifactId>code-generator-dependencies</artifactId>
-        <version>1.1.10</version>
+        <version>1.1.11</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-            <version>2.1.0.RELEASE</version>
+            <version>2.1.2.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>
