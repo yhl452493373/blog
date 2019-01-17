@@ -83,6 +83,7 @@ public class CommentController implements BaseController {
         comment.setPraiseCount(0);
         QueryWrapper<Comment> countQueryWrapper = new QueryWrapper<>();
         countQueryWrapper.eq("article_id", comment.getArticleId());
+        countQueryWrapper.isNull("belong_id");
         comment.setFloor(service.commentService.count(countQueryWrapper) + 1);
         boolean result = service.commentService.save(comment);
         if (result) {
