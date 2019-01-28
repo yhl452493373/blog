@@ -11,7 +11,7 @@
  Target Server Version : 50722
  File Encoding         : 65001
 
- Date: 07/01/2019 16:20:06
+ Date: 28/01/2019 13:40:15
 */
 
 SET NAMES utf8mb4;
@@ -127,9 +127,9 @@ CREATE TABLE `comment` (
   PRIMARY KEY (`id`),
   KEY `fk_comment_user_1` (`user_id`),
   KEY `fk_comment_article_1` (`article_id`),
-  KEY `fk_comment_comment_2` (`belong_id`),
+  KEY `fk_comment_comment_1` (`belong_id`),
   CONSTRAINT `fk_comment_article_1` FOREIGN KEY (`article_id`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_comment_comment_2` FOREIGN KEY (`belong_id`) REFERENCES `comment` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_comment_comment_1` FOREIGN KEY (`belong_id`) REFERENCES `comment` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_comment_user_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='评论';
 
@@ -159,11 +159,15 @@ CREATE TABLE `message` (
   `user_id` varchar(32) DEFAULT NULL COMMENT '留言人id，内部用户使用。和user_name二选一',
   `content` text COMMENT '留言内容',
   `praise_count` int(11) DEFAULT NULL COMMENT '点赞次数',
-  `created_time` datetime DEFAULT NULL COMMENT '留言时间',
   `available` int(1) DEFAULT NULL COMMENT '留言状态。-1-删除，0-不可见，1-正常',
   `floor` int(10) DEFAULT NULL COMMENT '留言楼层',
+  `belong_id` varchar(32) DEFAULT NULL COMMENT '留言回复所属留言',
+  `belong_floor` int(10) DEFAULT NULL COMMENT '留言回复所属留言楼层',
+  `created_time` datetime DEFAULT NULL COMMENT '留言时间',
   PRIMARY KEY (`id`),
   KEY `fk_message_user_1` (`user_id`),
+  KEY `fk_message_message_1` (`belong_id`),
+  CONSTRAINT `fk_message_message_1` FOREIGN KEY (`belong_id`) REFERENCES `message` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_message_user_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='留言';
 
