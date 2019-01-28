@@ -37,6 +37,7 @@ public class MainController {
 
     @GetMapping("/index")
     public String index(ModelMap modelMap) {
+        int s=3/0;
         modelMap.addAttribute("index", "layui-this");
         return "index";
     }

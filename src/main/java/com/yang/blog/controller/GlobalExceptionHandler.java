@@ -12,12 +12,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.springframework.web.servlet.view.AbstractTemplateView.SPRING_MACRO_REQUEST_CONTEXT_ATTRIBUTE;
 
 /**
  * 全局处理异常的类，给与用户友好的异常提示
@@ -32,7 +40,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public void defaultHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) {
         //打印出错误信息到控制台
-        logger.error("",exception);
+        logger.error("", exception);
         JSONResult jsonResult = JSONResult.init();
         if (exception instanceof MaxUploadSizeExceededException) {
             MaxUploadSizeExceededException me = (MaxUploadSizeExceededException) exception;
@@ -57,6 +65,8 @@ public class GlobalExceptionHandler {
                 response.setContentType("text/html; charset=utf-8");
                 try {
                     Configuration configuration = freeMarkerConfigurer.getConfiguration();
+                    Map<String, Object> model = new HashMap<>();
+                    jsonResult.put(SPRING_MACRO_REQUEST_CONTEXT_ATTRIBUTE,new RequestContext(request, response, request.getServletContext(), model));
                     //渲染错误页面
                     Template template = configuration.getTemplate("error.ftl");
                     template.process(jsonResult, writer);

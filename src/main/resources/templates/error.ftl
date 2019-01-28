@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>404 - 闲言轻博客</title>
+    <title>${code!"500"} - 闲言轻博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <#include "include.resource.ftl">
 </head>
@@ -12,8 +12,9 @@
 <div class="container-wrap">
     <div class="container">
         <div class="contar-wrap">
-            <div style="padding: 150px 0 50px; text-align: center; font-chunkSize: 30px; color: #ccc; font-weight: 300;">
-                心姐抛出了个 404
+            <h3>${message}</h3>
+            <div style="padding: 15px 0 50px; text-align: left; color: #666; ">
+                ${detail!"异常页面"}
             </div>
         </div>
     </div>
