@@ -12,7 +12,7 @@
                 <div class="layui-inline" style="width: 250px">
                     <div class="layui-input-inline blog-sebox">
                         <i class="layui-icon layui-icon-search"></i>
-                        <input type="text" name="content" lay-verify="title" autocomplete="off" class="layui-input" id="search">
+                        <input type="text" name="content" autocomplete="off" class="layui-input" id="search">
                     </div>
                 </div>
                 <div class="layui-inline search-area">
@@ -28,6 +28,7 @@
                 </@shiro.user>
                 <li class="layui-nav-item ${message!''}"><a href="${contextPath}/message">留言</a></li>
                 <li class="layui-nav-item ${about!''}"><a href="${contextPath}/about">关于</a></li>
+                <li class="layui-nav-item"><a href="https://github.com/yhl452493373">GitHub</a></li>
             </ul>
             <@shiro.user>
                 <a href="${contextPath}/logout" class="personal pull-left">
@@ -53,6 +54,7 @@
         </@shiro.user>
         <li><a href="${contextPath}/message">留言</a></li>
         <li><a href="${contextPath}/about">关于</a></li>
+        <li><a href="https://github.com/yhl452493373">GitHub</a></li>
         <@shiro.user>
             <li><a href="${contextPath}/logout">退出</a></li>
         </@shiro.user>

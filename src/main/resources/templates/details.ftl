@@ -58,7 +58,7 @@
                 <div class="count article-count layui-clear">
                     <span class="pull-left">阅读 <em>${article.readCount}</em></span>
                     <span class="pull-right like" data-id="${article.id}" id="praiseCount">
-                        <i class="layui-icon layui-icon-praise"></i><em class="count">${article.praiseCount}</em>
+                        <i class="layui-icon layui-icon-praise"></i><span class="count">${article.praiseCount}</span>
                     </span>
                 </div>
             </div>
@@ -74,8 +74,6 @@
 <#include "include.footer.ftl">
 <script type="text/html" id="commentItem">
     <div class="info-item" data-belong-id="{{ d.id }}">
-        <#--头像-->
-        <#--<img class="info-img" src="../res/static/images/info-img.png" alt="">-->
         <div class="info-text" style="padding-left: 0" data-id="{{ d.id }}">
             <p class="title count" style="margin-top: 0">
                 <span class="name">
@@ -126,7 +124,6 @@
 <script type="text/html" id="replyBox">
     <form id="commentReplyForm" lay-filter="commentReplyForm" class="layui-form" style="display: none" action="${contextPath}/data/comment/reply" method="post">
         <input type="hidden" name="articleId">
-        <input type="hidden" name="replyId">
         <input type="hidden" name="belongId">
         <div class="layui-form-item layui-form-text">
             <textarea name="content" class="layui-textarea" style="resize: none" placeholder="说出您的心声"></textarea>
@@ -326,6 +323,7 @@
                                 }
                                 renderData(item);
                             });
+                            initPraised();
                         } else {
                             renderEmpty({
                                 message: '还没有人评论,来抢沙发!'
@@ -356,11 +354,14 @@
         }
 
         function initPraised() {
-            var $praiseCount = $('#praiseCount');
-            var itemId = $praiseCount.data('id');
-            if (localStorage.getItem(itemId + '_praised') === 'yes') {
-                $praiseCount.addClass('layblog-this');
-            }
+            var $praiseCounts = $('span.count');
+            $praiseCounts.each(function () {
+                var $praiseCount = $(this).closest('.like');
+                var itemId = $praiseCount.data('id');
+                if (localStorage.getItem(itemId + '_praised') === 'yes') {
+                    $praiseCount.addClass('layblog-this');
+                }
+            });
         }
 
         function increaseReadCount() {

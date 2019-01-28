@@ -24,6 +24,11 @@ public class MainController {
     //TODO 调用service的全局对象,代码生成后取消这里的注释,并引入相关类
     private ServiceConfig service = ServiceConfig.serviceConfig;
 
+    @GetMapping("/error")
+    public String error() {
+        return "/error";
+    }
+
     @GetMapping("/captcha")
     public void captcha(HttpServletRequest request, HttpServletResponse response) {
         //TODO 生成验证码代码生成后取消这里的注释

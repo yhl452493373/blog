@@ -50,6 +50,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/", "anon");
         //静态资源
         filterChainDefinitionMap.put("/static/**", "anon");
+        //异常页面
+        filterChainDefinitionMap.put("/error", "anon");
         //注册页面
         filterChainDefinitionMap.put("/register", "anon");
         //登录页面
@@ -86,6 +88,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/data/praise/delete", "anon");
         //留言过程
         filterChainDefinitionMap.put("/data/message/add", "anon");
+        //回复留言过程
+        filterChainDefinitionMap.put("/data/message/reply", "anon");
         //获取留言列表过程
         filterChainDefinitionMap.put("/data/message/list", "anon");
         //获取最新公告过程

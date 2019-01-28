@@ -1,8 +1,10 @@
 package com.yang.blog.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.yang.blog.entity.base.BaseEntity;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -45,6 +47,22 @@ public class Message extends BaseEntity<Message> implements Serializable {
      * 留言楼层
      */
     private Integer floor;
+
+    /**
+     * 留言回复所属的留言id
+     */
+    private String belongId;
+
+    /**
+     * 留言回复在所属留言中的楼层
+     */
+    private Integer belongFloor;
+
+    /**
+     * 留言回复列表
+     */
+    @TableField(exist = false)
+    private List<Message> replyList;
 
     public String getUserName() {
         return userName;
@@ -94,6 +112,30 @@ public class Message extends BaseEntity<Message> implements Serializable {
         this.floor = floor;
     }
 
+    public String getBelongId() {
+        return belongId;
+    }
+
+    public void setBelongId(String belongId) {
+        this.belongId = belongId;
+    }
+
+    public Integer getBelongFloor() {
+        return belongFloor;
+    }
+
+    public void setBelongFloor(Integer belongFloor) {
+        this.belongFloor = belongFloor;
+    }
+
+    public List<Message> getReplyList() {
+        return replyList;
+    }
+
+    public void setReplyList(List<Message> replyList) {
+        this.replyList = replyList;
+    }
+
     @Override
     public String toString() {
         return "Message{" +
@@ -103,6 +145,8 @@ public class Message extends BaseEntity<Message> implements Serializable {
                 ", praiseCount=" + praiseCount +
                 ", available=" + available +
                 ", floor=" + floor +
+                ", belongId=" + belongId +
+                ", belongFloor=" + belongFloor +
                 "}";
     }
 }

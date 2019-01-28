@@ -141,6 +141,14 @@ public class Comment extends BaseEntity<Comment> implements Serializable {
         this.belongFloor = belongFloor;
     }
 
+    public List<Comment> getReplyList() {
+        return replyList;
+    }
+
+    public void setReplyList(List<Comment> replyList) {
+        this.replyList = replyList;
+    }
+
     @Override
     public String toString() {
         return "Comment{" +
@@ -154,13 +162,5 @@ public class Comment extends BaseEntity<Comment> implements Serializable {
                 ", belongId=" + belongId +
                 ", belongFloor=" + belongFloor +
                 "}";
-    }
-
-    public List<Comment> getReplyList() {
-        return replyList;
-    }
-
-    public void setReplyList(List<Comment> replyList) {
-        this.replyList = replyList;
     }
 }

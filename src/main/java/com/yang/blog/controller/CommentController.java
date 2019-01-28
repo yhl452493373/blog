@@ -77,8 +77,8 @@ public class CommentController implements BaseController {
         comment.setAvailable(Comment.AVAILABLE);
         comment.setCreatedTime(LocalDateTime.now());
         if (SecurityUtils.getSubject().isAuthenticated()) {
-            comment.setUserId(ShiroUtils.getLoginUser().getId());
             comment.setUserName(null);
+            comment.setUserId(ShiroUtils.getLoginUser().getId());
         }
         comment.setPraiseCount(0);
         QueryWrapper<Comment> countQueryWrapper = new QueryWrapper<>();
@@ -107,8 +107,8 @@ public class CommentController implements BaseController {
         comment.setAvailable(Comment.AVAILABLE);
         comment.setCreatedTime(LocalDateTime.now());
         if (SecurityUtils.getSubject().isAuthenticated()) {
-            comment.setUserId(ShiroUtils.getLoginUser().getId());
             comment.setUserName(null);
+            comment.setUserId(ShiroUtils.getLoginUser().getId());
         }
         comment.setPraiseCount(0);
         comment.setFloor(null);

@@ -1,11 +1,13 @@
 package com.yang.blog.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yhl452493373.bean.JSONResult;
 import com.yang.blog.config.ServiceConfig;
+import com.yang.blog.entity.Comment;
 import com.yang.blog.entity.Message;
 import com.yang.blog.shiro.ShiroUtils;
 import org.apache.shiro.SecurityUtils;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author User
@@ -40,11 +43,22 @@ public class MessageController implements BaseController {
         QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(message);
         queryWrapper.eq("available", Message.AVAILABLE);
+        queryWrapper.isNull("belong_id");
         queryWrapper.orderByDesc("created_time");
         service.messageService.page(page, queryWrapper);
         page.getRecords().forEach(record -> {
             if (StringUtils.isNotEmpty(record.getUserId()))
                 record.setUserName(service.userService.findUsernameById(record.getUserId()));
+            QueryWrapper<Message> tempWrapper = new QueryWrapper<>();
+            tempWrapper.orderByAsc("created_time");
+            tempWrapper.eq("available", message.AVAILABLE);
+            tempWrapper.eq("belong_id", record.getId());
+            List<Message> replyList = service.messageService.list(tempWrapper);
+            replyList.forEach(reply -> {
+                if (StringUtils.isNotEmpty(reply.getUserId()))
+                    reply.setUserName(service.userService.findUsernameById(reply.getUserId()));
+            });
+            record.setReplyList(replyList);
         });
         jsonResult.success().data(page.getRecords()).count(page.getTotal());
         return jsonResult;
@@ -66,7 +80,9 @@ public class MessageController implements BaseController {
         message.setAvailable(Message.AVAILABLE);
         message.setCreatedTime(LocalDateTime.now());
         message.setPraiseCount(0);
-        message.setFloor(service.messageService.count() + 1);
+        QueryWrapper<Message> countQueryWrapper = new QueryWrapper<>();
+        countQueryWrapper.isNull("belong_id");
+        message.setFloor(service.messageService.count(countQueryWrapper) + 1);
         boolean result = service.messageService.save(message);
         if (SecurityUtils.getSubject().isAuthenticated()) {
             message.setUserName(ShiroUtils.getLoginUser().getUsername());
@@ -74,6 +90,31 @@ public class MessageController implements BaseController {
         if (result)
             jsonResult.success(ADD_SUCCESS).data(message);
         else
+            jsonResult.error(ADD_FAILED);
+        return jsonResult;
+    }
+
+    @SuppressWarnings("Duplicates")
+    @RequestMapping("/reply")
+    public JSONResult reply(Message message) {
+        QueryWrapper<Message> countQueryWrapper = new QueryWrapper<>();
+        countQueryWrapper.eq("belong_id", message.getBelongId());
+        message.setBelongFloor(service.messageService.count(countQueryWrapper) + 1);
+        JSONResult jsonResult = JSONResult.init();
+        message.setAvailable(Comment.AVAILABLE);
+        message.setCreatedTime(LocalDateTime.now());
+        if (SecurityUtils.getSubject().isAuthenticated()) {
+            message.setUserName(null);
+            message.setUserId(ShiroUtils.getLoginUser().getId());
+        }
+        message.setPraiseCount(0);
+        message.setFloor(null);
+        boolean result = service.messageService.save(message);
+        if (result) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("messageId", message.getId());
+            jsonResult.success(ADD_SUCCESS).data(jsonObject);
+        } else
             jsonResult.error(ADD_FAILED);
         return jsonResult;
     }
