@@ -3,12 +3,14 @@ package com.yang.blog.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yhl452493373.utils.CommonUtils;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import com.yang.blog.bean.Constant;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.config.SystemProperties;
 import com.yang.blog.entity.*;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +28,7 @@ public class MainController {
 
     @GetMapping("/error")
     public String error() {
-        return "/error";
+        return "error";
     }
 
     @GetMapping("/captcha")
@@ -37,8 +39,20 @@ public class MainController {
 
     @GetMapping("/index")
     public String index(ModelMap modelMap) {
-        modelMap.addAttribute("index", "layui-this");
-        return "index";
+        modelMap.addAttribute("index", "selected");
+        return "new/index";
+    }
+
+    @GetMapping("/article")
+    public String article(ModelMap modelMap){
+        modelMap.addAttribute("article", "selected");
+        return "new/article";
+    }
+
+    @GetMapping("/album")
+    public String album(ModelMap modelMap){
+        modelMap.addAttribute("album", "selected");
+        return "new/album";
     }
 
     @GetMapping("/register")
@@ -110,8 +124,8 @@ public class MainController {
 
     @GetMapping("/message")
     public String message(ModelMap modelMap) {
-        modelMap.addAttribute("message", "layui-this");
-        return "message";
+        modelMap.addAttribute("message", "selected");
+        return "new/message";
     }
 
     @GetMapping("/about")
@@ -120,8 +134,8 @@ public class MainController {
         aboutQueryWrapper.orderByDesc("created_time");
         About about = service.aboutService.getOne(aboutQueryWrapper);
         modelMap.addAttribute("aboutRead", about);
-        modelMap.addAttribute("about", "layui-this");
-        return "about";
+        modelMap.addAttribute("about", "selected");
+        return "new/about";
     }
 
     @GetMapping("/about/edit")

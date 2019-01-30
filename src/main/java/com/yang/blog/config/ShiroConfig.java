@@ -64,8 +64,12 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/data/user/login", "anon");
         //留言页面
         filterChainDefinitionMap.put("/message", "anon");
-        //文章列表页面
+        //首页
         filterChainDefinitionMap.put("/index", "anon");
+        //文章列表页面
+        filterChainDefinitionMap.put("/article", "anon");
+        //相册列表页面
+        filterChainDefinitionMap.put("/album", "anon");
         //关于页面
         filterChainDefinitionMap.put("/about", "anon");
         //文章页面
