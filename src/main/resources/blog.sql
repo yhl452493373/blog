@@ -11,7 +11,7 @@
  Target Server Version : 50722
  File Encoding         : 65001
 
- Date: 28/01/2019 13:40:15
+ Date: 31/01/2019 18:24:16
 */
 
 SET NAMES utf8mb4;
@@ -73,7 +73,11 @@ CREATE TABLE `article` (
   `publish_time` datetime DEFAULT NULL COMMENT '发布时间',
   `modified_time` datetime DEFAULT NULL COMMENT '修改时间',
   `available` int(1) DEFAULT NULL COMMENT '博文状态。-1-删除，0-不可见，1-正常',
-  PRIMARY KEY (`id`)
+  `image_file_ids` text COMMENT '博文中包含的图片id，多个则英文逗号分隔',
+  `author_id` varchar(32) DEFAULT NULL COMMENT '博文作者id',
+  PRIMARY KEY (`id`),
+  KEY `fk_article_user_1` (`author_id`),
+  CONSTRAINT `fk_article_user_1` FOREIGN KEY (`author_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='博文内容';
 
 -- ----------------------------
