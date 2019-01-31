@@ -1,8 +1,11 @@
 package com.yang.blog.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.entity.base.BaseEntity;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -26,6 +29,12 @@ public class Tag extends BaseEntity<Tag> implements Serializable {
      */
     private Integer available;
 
+    /**
+     * 标签下的文章
+     */
+    @TableField(exist = false)
+    private List<Article> articleList;
+
     public String getName() {
         return name;
     }
@@ -40,6 +49,14 @@ public class Tag extends BaseEntity<Tag> implements Serializable {
 
     public void setAvailable(Integer available) {
         this.available = available;
+    }
+
+    public List<Article> getArticleList() {
+        return articleList;
+    }
+
+    public void setArticleList(List<Article> articleList) {
+        this.articleList = articleList;
     }
 
     @Override

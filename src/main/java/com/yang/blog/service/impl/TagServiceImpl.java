@@ -7,6 +7,7 @@ import com.yang.blog.service.TagService;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * <p>
@@ -22,5 +23,10 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     @Override
     public Collection<Tag> listArticleRelateTagAsc(String articleId, String... orderColumns) {
         return baseMapper.listArticleRelateTagAsc(articleId, orderColumns);
+    }
+
+    @Override
+    public List<Tag> getMost(int size) {
+        return baseMapper.getMost(size);
     }
 }

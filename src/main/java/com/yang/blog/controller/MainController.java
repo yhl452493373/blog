@@ -3,14 +3,12 @@ package com.yang.blog.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yhl452493373.utils.CommonUtils;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import com.yang.blog.bean.Constant;
 import com.yang.blog.config.ServiceConfig;
 import com.yang.blog.config.SystemProperties;
 import com.yang.blog.entity.*;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,18 +37,39 @@ public class MainController {
 
     @GetMapping("/index")
     public String index(ModelMap modelMap) {
+        //获取最新一条公告
+        Announcement announcement = service.announcementService.getNewest();
+        //获取最新的5篇文章
+        List<Article> newest = service.articleService.getNewest(5);
+        //获取最热门的5篇文章
+        List<Article> hottest = service.articleService.getHottest(5);
+        //获取所有的标签
+        QueryWrapper<Tag> tagQueryWrapper = new QueryWrapper<>();
+        tagQueryWrapper.eq("available", Tag.AVAILABLE);
+        List<Tag> tags = service.tagService.list(tagQueryWrapper);
+        //获取文章最多的5个标签
+        List<Tag> mostTags = service.tagService.getMost(5);
+        for (Tag tag : mostTags) {
+            List<Article> tagList = service.articleService.findByTagId(tag.getId(),5);
+            tag.setArticleList(tagList);
+        }
+        modelMap.addAttribute("announcement", announcement);
+        modelMap.addAttribute("newest", newest);
+        modelMap.addAttribute("hottest", hottest);
+        modelMap.addAttribute("tags", tags);
+        modelMap.addAttribute("mostTags", mostTags);
         modelMap.addAttribute("index", "selected");
         return "new/index";
     }
 
     @GetMapping("/article")
-    public String article(ModelMap modelMap){
+    public String article(ModelMap modelMap) {
         modelMap.addAttribute("article", "selected");
         return "new/article";
     }
 
     @GetMapping("/album")
-    public String album(ModelMap modelMap){
+    public String album(ModelMap modelMap) {
         modelMap.addAttribute("album", "selected");
         return "new/album";
     }

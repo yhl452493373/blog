@@ -596,7 +596,7 @@ nav {
 }
 
 .newsitem:nth-child(1) {
-    display: block;
+    display: flex;
 }
 
 /*tab_box*/
@@ -614,18 +614,19 @@ nav {
 }
 
 .newslist {
-    float: right;
-    width: 66%
+    flex: 1 1 75%;
+    align-self: flex-start;
 }
 
 .newslist li {
     overflow: hidden;
     line-height: 32px;
-    padding: 0 20px 10px 20px;
+    padding: 10px 20px;
 }
 
-.newslist li a {
+.newslist li span {
     height: 32px;
+    display: block;
 }
 
 .newslist li img {
@@ -637,11 +638,11 @@ nav {
 }
 
 .newslist li:hover {
-    height: 100%;
+    height: 80px;
     background: #f7f7f7
 }
 
-.newslist li:hover a {
+.newslist li:hover span {
     color: #000;
     font-weight: bold
 }
@@ -651,11 +652,11 @@ nav {
 }
 
 .newslist li:nth-child(1) {
-    height: 100%;
+    height: 80px;
     background: #f7f7f7
 }
 
-.newslist li:nth-child(1) a {
+.newslist li:nth-child(1) span {
     color: #000;
     font-weight: bold
 }
@@ -669,7 +670,7 @@ nav {
     background: none;
 }
 
-.newslist:hover li:nth-child(1) a {
+.newslist:hover li:nth-child(1) span {
     color: #333;
     font-weight: normal
 }
@@ -679,11 +680,11 @@ nav {
 }
 
 .newslist:hover li:nth-child(1):hover {
-    height: 100%;
+    height: 80px;
     background: #f7f7f7;
 }
 
-.newslist:hover li:nth-child(1):hover a {
+.newslist:hover li:nth-child(1):hover span {
     color: #000;
     font-weight: bold
 }
@@ -704,24 +705,29 @@ nav {
 }
 
 .newspic {
-    float: left;
-    width: 32%;
-    height: 218px;
+    flex: 0 1 25%;
     overflow: hidden;
     position: relative;
+    margin-right: 10px;
 }
 
 .newspic ul {
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .newspic li {
-    height: 100px;
+    flex: 0 1 100px;
     position: relative;
     background: rgba(0, 0, 0, 1);
     overflow: hidden;
     margin-bottom: 10px;
     border-radius: 3px
+}
+
+.newspic li:last-child{
+    margin-bottom: 0;
 }
 
 .newspic li a {
@@ -911,6 +917,15 @@ nav {
 }
 
 /*bloglist*/
+.bloglist .empty {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+    color: #999;
+    height: 100px;
+    line-height: 100px;
+}
+
 .bloglist ul {
     padding: 10px 0 0
 }
@@ -976,20 +991,17 @@ a.viewmore {
 }
 
 .bplist {
-    display: block;
+    display: flex;
     overflow: hidden
 }
 
 .bplist a {
-    display: block;
-    float: left;
-    width: 25%;
-    overflow: hidden
+    flex: 1;
 }
 
 .bplist a img {
     border-radius: 3px;
-    width: 200px;
+    width: 95%;
     height: 140px;
     -moz-transition: all .5s ease;
     -webkit-transition: all .5s ease;
@@ -1030,6 +1042,7 @@ a.viewmore {
 }
 
 .avatar {
+    overflow: hidden;
     position: relative;
     float: left;
     width: 30px;
@@ -1040,6 +1053,11 @@ a.viewmore {
     background: -webkit-linear-gradient(bottom left, rgba(0, 153, 255, .9), rgba(42, 228, 197, .7));
     background: -o-linear-gradient(bottom left, rgba(0, 153, 255, .9), rgba(42, 228, 197, .7));
     background: linear-gradient(to top right, rgba(0, 153, 255, .9), rgba(42, 228, 197, .7));
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
 }
 
 /*links*/
@@ -1274,7 +1292,17 @@ a.viewmore {
     transform: scale(1.1);
 }
 
+.paihang .empty {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+    color: #999;
+    height: 60px;
+    line-height: 60px;
+}
+
 /*paihang*/
+
 .paihang ul {
     overflow: hidden
 }

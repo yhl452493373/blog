@@ -21,4 +21,9 @@ public class AnnouncementServiceImpl extends ServiceImpl<AnnouncementMapper, Ann
     public void setOtherAvailable(Integer available) {
         baseMapper.setOtherAvailable(available);
     }
+
+    @Override
+    public Announcement getNewest() {
+        return baseMapper.getNewest();
+    }
 }

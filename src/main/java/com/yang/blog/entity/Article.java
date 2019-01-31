@@ -69,6 +69,16 @@ public class Article extends BaseEntity<Article> implements Serializable, Clonea
     private Integer available;
 
     /**
+     * 博文包含的图片id,多个用英文逗号分隔.主要用于展示时,根据其个数决定用哪个模板.这里只包括图片的
+     */
+    private String imageFileIds;
+
+    /**
+     * 作者id
+     */
+    private String authorId;
+
+    /**
      * 纯文本的内容,用于过滤html标签后生成摘要
      */
     @TableField(exist = false)
@@ -81,10 +91,16 @@ public class Article extends BaseEntity<Article> implements Serializable, Clonea
     private String tags;
 
     /**
-     * 与文章对应的文件id，多个用逗号分隔
+     * 与文章对应的文件id，多个用逗号分隔.这里包括任意格式的文件id
      */
     @TableField(exist = false)
     private String fileIds;
+
+    /**
+     * 作者名字
+     */
+    @TableField(exist = false)
+    private String authorName;
 
     public String getTitle() {
         return title;
@@ -158,6 +174,22 @@ public class Article extends BaseEntity<Article> implements Serializable, Clonea
         this.available = available;
     }
 
+    public String getImageFileIds() {
+        return imageFileIds;
+    }
+
+    public void setImageFileIds(String imageFileIds) {
+        this.imageFileIds = imageFileIds;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+    }
+
     public String getPlanTextContent() {
         return planTextContent;
     }
@@ -182,6 +214,14 @@ public class Article extends BaseEntity<Article> implements Serializable, Clonea
         this.fileIds = fileIds;
     }
 
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+
     @Override
     public String toString() {
         return "Article{" +
@@ -194,9 +234,12 @@ public class Article extends BaseEntity<Article> implements Serializable, Clonea
                 ", publishTime=" + publishTime +
                 ", modifiedTime=" + modifiedTime +
                 ", available=" + available +
+                ", imageFileIds=" + imageFileIds +
+                ", authorId=" + authorId +
                 ", planTextContent=" + planTextContent +
                 ", tags=" + tags +
                 ", fileIds=" + fileIds +
+                ", authorName=" + authorName +
                 "}";
     }
 }

@@ -5,6 +5,7 @@ import com.yang.blog.entity.Tag;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +18,6 @@ import java.util.Collection;
 public interface TagMapper extends BaseMapper<Tag> {
 
     Collection<Tag> listArticleRelateTagAsc(@Param("articleId") String articleId, @Param("orderColumns") String[] orderColumns);
+
+    List<Tag> getMost(int size);
 }

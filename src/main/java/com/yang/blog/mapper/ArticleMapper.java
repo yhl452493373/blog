@@ -2,6 +2,9 @@ package com.yang.blog.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yang.blog.entity.Article;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,9 @@ import com.yang.blog.entity.Article;
  */
 public interface ArticleMapper extends BaseMapper<Article> {
 
+    List<Article> getNewest(int size);
+
+    List<Article> getHottest(int size);
+
+    List<Article> findByTagId(@Param("tagId") String tagId, @Param("size") int size);
 }

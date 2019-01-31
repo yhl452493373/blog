@@ -9,5 +9,12 @@
         set announcement.available = #{available}
         where announcement.available != #{available}
     </update>
+    <select id="getNewest" resultType="com.yang.blog.entity.Announcement">
+        select *
+        from announcement
+        where available = ${@com.yang.blog.entity.Announcement@AVAILABLE}
+        order by created_time desc
+        limit 0,1
+    </select>
 
 </mapper>

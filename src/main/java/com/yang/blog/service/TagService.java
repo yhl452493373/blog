@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yang.blog.entity.Tag;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * <p>
@@ -16,4 +17,6 @@ import java.util.Collection;
 public interface TagService extends IService<Tag> {
 
     Collection<Tag> listArticleRelateTagAsc(String articleId, String... orderColumns);
+
+    List<Tag> getMost(int size);
 }

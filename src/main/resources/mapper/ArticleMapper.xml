@@ -4,5 +4,28 @@
 
     <!-- 开启二级缓存 -->
     <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    <select id="getNewest" resultType="com.yang.blog.entity.Article">
+        select a.*, u.username author_name
+        from article a
+                 join user u on a.author_id = u.id
+        where a.available = ${@com.yang.blog.entity.Article@AVAILABLE}
+        order by a.publish_time desc
+        limit 0,#{size}
+    </select>
+    <select id="getHottest" resultType="com.yang.blog.entity.Article">
+        select *
+        from article
+        where available = ${@com.yang.blog.entity.Article@AVAILABLE}
+        order by read_count desc
+        limit 0,#{size}
+    </select>
+    <select id="findByTagId" resultType="com.yang.blog.entity.Article">
+        select a.*
+        from article a
+                 join article_tag at on a.id = at.article_id and at.tag_id = #{tagId}
+        group by a.id
+        order by read_count desc
+        limit 0,#{size}
+    </select>
 
 </mapper>

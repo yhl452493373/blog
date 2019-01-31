@@ -312,16 +312,26 @@
 
     .newspic {
         width: 100%;
-        height: auto
+        height: auto;
+        display: flex;
+        margin-right: 0;
+    }
+
+    .newspic ul {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        margin-bottom: 10px;
     }
 
     .newspic li {
-        width: 49%;
-        float: left
+        flex: 1;
+        height: 90px;
+        margin-left: 5px;
     }
 
-    .newspic li:last-child {
-        float: right
+    .newspic li:first-of-type{
+        margin-left: 0;
     }
 
     .newspic li a {
@@ -331,6 +341,10 @@
     .newslist {
         float: none;
         width: 100%
+    }
+
+    .newsitem {
+        flex-direction: column;
     }
 
     .zhuanti ul {

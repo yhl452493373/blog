@@ -5,22 +5,34 @@
     <!-- 开启二级缓存 -->
     <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
     <select id="listArticleRelateTagAsc" resultType="com.yang.blog.entity.Tag" flushCache="true">
-        SELECT
-            *
-        FROM
-            tag t
-        WHERE
-            #静态常量
-            t.available = ${@com.yang.blog.entity.Tag@AVAILABLE}
-        AND
-            EXISTS ( SELECT * FROM article_tag `at` WHERE `at`.tag_id = t.id AND `at`.article_id = #{articleId} )
+        select
+        *
+        from
+        tag t
+        where
+        #静态常量
+        t.available = ${@com.yang.blog.entity.Tag@AVAILABLE}
+        and
+        exists ( select * from article_tag `at` where `at`.tag_id = t.id and `at`.article_id = #{articleId} )
         <if test="orderColumns != null and orderColumns.length > 0">
-            ORDER BY
-                <foreach collection="orderColumns" item="ascColumn" separator=",">
-                    ${ascColumn}
-                </foreach>
-            ASC
+            order by
+            <foreach collection="orderColumns" item="ascColumn" separator=",">
+                ${ascColumn}
+            </foreach>
+            asc
         </if>
+    </select>
+    <select id="getMost" resultType="com.yang.blog.entity.Tag">
+        select newTag.*
+        from (select t.*,
+                     count(at.tag_id) num
+              from tag t
+                       left join article_tag at on t.id = at.tag_id
+              group by t.id
+              order by num desc) as newTag
+        where newTag.num > 0
+          and newTag.available = ${@com.yang.blog.entity.Tag@AVAILABLE}
+        limit 0,#{size}
     </select>
 
 </mapper>
