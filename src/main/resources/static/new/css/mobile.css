@@ -384,16 +384,13 @@
     a.viewmore {
         position: static;
         margin-top: 20px;
-        text-align: center;
-        display: block;
-        float: none;
+        text-align: center
     }
 
     .blogpic {
         width: 100px;
         margin-right: 10px;
         height: 76px;
-        margin-bottom: 10px;
     }
 
     .blogtext {
@@ -515,8 +512,7 @@
     }
 
     .bloginfo {
-        width: 100%;
-        margin-top: 20px;
+        width: 100%
     }
 
     .imgscale img {
