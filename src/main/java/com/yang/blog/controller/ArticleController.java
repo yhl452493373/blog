@@ -37,20 +37,16 @@ public class ArticleController implements BaseController {
     /**
      * 分页查询数据
      *
-     * @param page    分页信息
-     * @param article 查询对象
+     * @param page 分页信息
      * @return 查询结果
      */
     @RequestMapping("/list")
-    public JSONResult list(Article article, Page<Article> page) {
+    public JSONResult list(Page<Article> page) {
         JSONResult jsonResult = JSONResult.init();
-        QueryWrapper<Article> queryWrapper = new QueryWrapper<>(article);
-        queryWrapper.setEntity(article);
-        queryWrapper.eq("available", Article.AVAILABLE);
-        queryWrapper.orderByDesc("publish_time");
-        service.articleService.page(page, queryWrapper);
+        page.setDesc("created_time");
+        service.articleService.unionPage(page);
         jsonResult.success(QUERY_SUCCESS)
-                .data(page.getRecords(), JSONResult.Pattern.INCLUDE, "id", "title", "summary", "publishTime")
+                .data(page.getRecords(), JSONResult.Pattern.INCLUDE, "id", "title", "summary", "publishTime","authorName")
                 .count(page.getTotal());
         return jsonResult;
     }

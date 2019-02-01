@@ -35,7 +35,7 @@ public class MyCodeGenerator {
         cgc.setSuperEntityClass("com.yang.blog.entity.base.BaseEntity");
         cgc.setSuperEntityColumns("id", "created_time");
         cgc.setFileOverride(false);
-        cgc.setEnableCache(true);
+        cgc.setEnableCache(false);
         cgc.setEnableRedis(false);
         CodeGenerator.baseCodeGenerate(cgc);
     }

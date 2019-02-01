@@ -37,26 +37,16 @@ public class MainController {
 
     @GetMapping("/index")
     public String index(ModelMap modelMap) {
-        //获取最新一条公告
-        Announcement announcement = service.announcementService.getNewest();
         //获取最新的5篇文章
         List<Article> newest = service.articleService.getNewest(5);
-        //获取最热门的5篇文章
-        List<Article> hottest = service.articleService.getHottest(5);
-        //获取所有的标签
-        QueryWrapper<Tag> tagQueryWrapper = new QueryWrapper<>();
-        tagQueryWrapper.eq("available", Tag.AVAILABLE);
-        List<Tag> tags = service.tagService.list(tagQueryWrapper);
         //获取文章最多的5个标签
         List<Tag> mostTags = service.tagService.getMost(5);
         for (Tag tag : mostTags) {
-            List<Article> tagList = service.articleService.findByTagId(tag.getId(),5);
+            List<Article> tagList = service.articleService.findByTagId(tag.getId(), 5);
             tag.setArticleList(tagList);
         }
-        modelMap.addAttribute("announcement", announcement);
+        loadBaseData(modelMap);
         modelMap.addAttribute("newest", newest);
-        modelMap.addAttribute("hottest", hottest);
-        modelMap.addAttribute("tags", tags);
         modelMap.addAttribute("mostTags", mostTags);
         modelMap.addAttribute("index", "selected");
         return "new/index";
@@ -64,6 +54,7 @@ public class MainController {
 
     @GetMapping("/article")
     public String article(ModelMap modelMap) {
+        loadBaseData(modelMap);
         modelMap.addAttribute("article", "selected");
         return "new/article";
     }
@@ -220,5 +211,19 @@ public class MainController {
             List<String> tagNameList = CommonUtils.convertToFieldList(tagList, "getName");
             article.setTags(String.join(",", tagNameList));
         }
+    }
+
+    private void loadBaseData(ModelMap modelMap){
+        //获取最新一条公告
+        Announcement announcement = service.announcementService.getNewest();
+        //获取最热门的5篇文章
+        List<Article> hottest = service.articleService.getHottest(5);
+        //获取所有的标签
+        QueryWrapper<Tag> tagQueryWrapper = new QueryWrapper<>();
+        tagQueryWrapper.eq("available", Tag.AVAILABLE);
+        List<Tag> tags = service.tagService.list(tagQueryWrapper);
+        modelMap.addAttribute("announcement", announcement);
+        modelMap.addAttribute("hottest", hottest);
+        modelMap.addAttribute("tags", tags);
     }
 }

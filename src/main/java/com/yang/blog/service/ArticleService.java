@@ -1,5 +1,7 @@
 package com.yang.blog.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yang.blog.entity.Article;
 
@@ -20,4 +22,6 @@ public interface ArticleService extends IService<Article> {
     List<Article> getHottest(int size);
 
     List<Article> findByTagId(String tagId, int size);
+
+    List<Article> unionPage(IPage<Article> page);
 }

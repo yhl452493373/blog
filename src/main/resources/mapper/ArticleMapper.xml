@@ -2,8 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yang.blog.mapper.ArticleMapper">
 
-    <!-- 开启二级缓存 -->
-    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
     <select id="getNewest" resultType="com.yang.blog.entity.Article">
         select a.*, u.username author_name
         from article a
@@ -26,6 +24,12 @@
         group by a.id
         order by read_count desc
         limit 0,#{size}
+    </select>
+    <select id="selectUnionPage" resultType="com.yang.blog.entity.Article">
+        select a.*, u.username author_name
+        from article a
+                 join user u on a.author_id = u.id
+        where a.available = ${@com.yang.blog.entity.Article@AVAILABLE}
     </select>
 
 </mapper>
