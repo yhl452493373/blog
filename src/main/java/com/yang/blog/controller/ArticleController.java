@@ -46,7 +46,7 @@ public class ArticleController implements BaseController {
         page.setDesc("created_time");
         service.articleService.unionPage(page);
         jsonResult.success(QUERY_SUCCESS)
-                .data(page.getRecords(), JSONResult.Pattern.INCLUDE, "id", "title", "summary", "publishTime","authorName")
+                .data(page.getRecords(), JSONResult.Pattern.INCLUDE, "id", "title", "summary", "publishTime", "authorName", "imageFileIds")
                 .count(page.getTotal());
         return jsonResult;
     }

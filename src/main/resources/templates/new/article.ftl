@@ -62,8 +62,8 @@
                             <span>{{ article.publishTime }}</span>
                             <#--暂时不展示标签-->
                             <#--<span>【<a href="/">原创模板</a>】</span>-->
+                            <a href="/" class="viewmore">阅读更多</a>
                         </p>
-                        <a href="/" class="viewmore">阅读更多</a>
                     </li>
                 {{# } else if ( imageIds.length<3 ) { }}
                     <!-- 图片数量小于3个,则为普通单图模式,只显示1到2张图片 -->
@@ -89,8 +89,8 @@
                             <span>{{ article.publishTime }}</span>
                             <#--暂时不展示标签-->
                             <#--<span>【<a href="/">原创模板</a>】</span>-->
+                            <a href="/" class="viewmore">阅读更多</a>
                         </p>
-                        <a href="/" class="viewmore">阅读更多</a>
                     </li>
                 {{# } else { }}
                     <!-- 图片数量大于等于3个,则为多图模式 -->
@@ -118,6 +118,7 @@
                             <span>{{ article.publishTime }}</span>
                             <#--暂时不展示标签-->
                             <#--<span>【<a href="/">原创模板</a>】</span>-->
+                            <a href="/" class="viewmore">阅读更多</a>
                         </p>
                     </li>
                 {{# } }}
