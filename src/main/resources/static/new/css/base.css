@@ -973,7 +973,7 @@ nav {
 a.viewmore {
     display: block;
     right: 10px;
-    bottom: 20px;
+    bottom: 15px;
     position: absolute;
     padding: 3px 10px;
     background: #12b7de;
@@ -1044,7 +1044,7 @@ a.viewmore {
 
 .bloginfo {
     position: absolute;
-    bottom: 20px;
+    bottom: 15px;
     overflow: hidden;
     color: #999;
     line-height: 34px;

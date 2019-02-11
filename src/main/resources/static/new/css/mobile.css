@@ -555,8 +555,8 @@
     }
 
     .bloglist li{
-        padding-bottom: 90px;
-        margin-bottom: 10px;
+        padding-bottom: 90px!important;
+        margin-bottom: 10px!important;
     }
 
     .bloglist li.piclist.mutipiclist{

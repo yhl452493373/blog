@@ -188,7 +188,7 @@
                                         </a>
                                     </#list>
                                 </span>
-                                <p class="blogtext">${article.summary}</p>
+                                <div class="blogtext">${article.summary}</div>
                                 <p class="bloginfo">
                                     <i class="avatar">
                                         <img src="${contextPath}/static/new/images/avatar.png">
