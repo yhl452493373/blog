@@ -65,9 +65,9 @@
                         </p>
                         <a href="/" class="viewmore">阅读更多</a>
                     </li>
-                {{# } else if ( imageIds.length<3 ) { }}
-                    <!-- 图片数量小于3个,则为普通单图模式,只显示1到2张图片 -->
-                    <li>
+                {{# } else if ( imageIds.length==1 ) { }}
+                    <!-- 图片数量为1个,则为普通单图模式,只显示1张图片 -->
+                    <li class="piclist">
                         <h3 class="blogtitle">
                             <a href="/" target="_blank">{{ article.title }}</a>
                         </h3>
@@ -80,21 +80,23 @@
                                 </a>
                             {{# }); }}
                         </span>
-                        <p class="blogtext">{{ article.summary }}</p>
-                        <p class="bloginfo">
-                            <i class="avatar">
-                                <img src="${contextPath}/static/new/images/avatar.png">
-                            </i>
-                            <span>{{ article.authorName }}</span>
-                            <span>{{ article.publishTime }}</span>
-                            <#--暂时不展示标签-->
-                            <#--<span>【<a href="/">原创模板</a>】</span>-->
-                        </p>
-                        <a href="/" class="viewmore">阅读更多</a>
+                        <div class="blogpic-item">
+                            <p class="blogtext">{{ article.summary }}</p>
+                            <p class="bloginfo">
+                                <i class="avatar">
+                                    <img src="${contextPath}/static/new/images/avatar.png">
+                                </i>
+                                <span>{{ article.authorName }}</span>
+                                <span>{{ article.publishTime }}</span>
+                                <#--暂时不展示标签-->
+                                <#--<span>【<a href="/">原创模板</a>】</span>-->
+                            </p>
+                            <a href="/" class="viewmore">阅读更多</a>
+                        </div>
                     </li>
                 {{# } else { }}
-                    <!-- 图片数量大于等于3个,则为多图模式 -->
-                    <li>
+                    <!-- 图片数量大于等于2个,则为多图模式 -->
+                    <li class="piclist mutipiclist">
                         <h3 class="blogtitle">
                             <a href="/" target="_blank">
                                 <#--不置顶-->
@@ -119,6 +121,7 @@
                             <#--暂时不展示标签-->
                             <#--<span>【<a href="/">原创模板</a>】</span>-->
                         </p>
+                        <a href="/" class="viewmore">阅读更多</a>
                     </li>
                 {{# } }}
             {{# }); }}

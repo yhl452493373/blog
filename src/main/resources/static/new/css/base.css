@@ -118,8 +118,13 @@ header::before {
     margin-top: 14px;
 }
 
+.imgscale{
+    text-align: center;
+}
+
 .imgscale img {
     width: 100%;
+    height: 110px;
     -moz-transition: all .5s ease;
     -webkit-transition: all .5s ease;
     -ms-transition: all .5s ease;
@@ -934,9 +939,21 @@ nav {
     overflow: hidden;
     margin-bottom: 20px;
     border-bottom: #eee 1px dashed;
-    padding-bottom: 20px;
+    padding-bottom: 40px;
     position: relative;
     min-height: 120px;
+}
+
+.bloglist li.piclist{
+    padding-bottom: 20px;
+}
+
+.bloglist li.piclist.mutipiclist{
+    padding-bottom: 70px;
+}
+
+.bloglist li.piclist.mutipiclist .blogtext{
+    margin-top: 10px;
 }
 
 .blogtitle {
@@ -966,12 +983,11 @@ a.viewmore {
 
 .blogpic {
     float: left;
-    width: 23.2%;
-    margin-right: 20px;
+    width: 25%;
     display: block;
     overflow: hidden;
     border-radius: 3px;
-    position: relative
+    position: relative;
 }
 
 .blogpic i {
@@ -1023,11 +1039,11 @@ a.viewmore {
     -webkit-box-orient: vertical;
     display: -webkit-box;
     -webkit-line-clamp: 3;
-    margin-top: 20px
 }
 
 .bloginfo {
-    margin-top: 20px;
+    position: absolute;
+    bottom: 20px;
     overflow: hidden;
     color: #999;
     line-height: 34px;
@@ -2397,4 +2413,11 @@ textarea#lytext {
 .layer-black .layui-layer-btn .layui-layer-btn0 {
     border-color: #1c2327;
     background-color: #1c2327;
+}
+
+.blogpic-item{
+    float: right;
+    width: 75%;
+    padding-left: 20px;
+    box-sizing: border-box;
 }

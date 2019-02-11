@@ -382,9 +382,11 @@
     }
 
     a.viewmore {
-        position: static;
         margin-top: 20px;
-        text-align: center
+        text-align: center;
+        bottom: 15px;
+        left: 0;
+        position: absolute;
     }
 
     .blogpic {
@@ -512,7 +514,9 @@
     }
 
     .bloginfo {
-        width: 100%
+        width: 100%;
+        bottom: 55px;
+        left: 0;
     }
 
     .imgscale img {
@@ -548,5 +552,21 @@
 
     .newscurrent:after {
         width: 100%
+    }
+
+    .bloglist li{
+        padding-bottom: 90px;
+        margin-bottom: 10px;
+    }
+
+    .bloglist li.piclist.mutipiclist{
+        padding-bottom: 100px;
+    }
+
+    .blogpic-item{
+        margin-left: 110px;
+        float: none;
+        width: auto;
+        padding-left: 0;
     }
 }
