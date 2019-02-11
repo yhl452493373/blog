@@ -1039,6 +1039,7 @@ a.viewmore {
     -webkit-box-orient: vertical;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    word-break: break-all;
 }
 
 .bloginfo {
