@@ -13,9 +13,9 @@
   <div class="whitebg about">
     <h2 class="gd_title">个人简介</h2>
     <div class="ab_box">
-      <p>一个80后草根女站长！Web前端设计师、网页设计师。</p>
-      <p>天津智尚互联科技有限公司设计总监，青于蓝网络工作室创始人。</p>
+      ${aboutRead.content}
     </div>
+    <sub style="float: right">更新时间:&nbsp;${aboutRead.createdTime?datetime}</sub>
   </div>
 </article>
 <#include "include.footer.ftl">
