@@ -65,6 +65,22 @@ public class MainController {
         return "new/album";
     }
 
+    @GetMapping("/message")
+    public String message(ModelMap modelMap) {
+        modelMap.addAttribute("message", "selected");
+        return "new/message";
+    }
+
+    @GetMapping("/about")
+    public String about(ModelMap modelMap) {
+        QueryWrapper<About> aboutQueryWrapper = new QueryWrapper<>();
+        aboutQueryWrapper.orderByDesc("created_time");
+        About about = service.aboutService.getOne(aboutQueryWrapper);
+        modelMap.addAttribute("aboutRead", about);
+        modelMap.addAttribute("about", "selected");
+        return "new/about";
+    }
+
     @GetMapping("/register")
     public String register(ModelMap modelMap) {
         modelMap.addAttribute("allowRegister", SystemProperties.getAllowRegister());
@@ -130,22 +146,6 @@ public class MainController {
         }
         modelMap.addAttribute("create", "layui-this");
         return "details.edit";
-    }
-
-    @GetMapping("/message")
-    public String message(ModelMap modelMap) {
-        modelMap.addAttribute("message", "selected");
-        return "new/message";
-    }
-
-    @GetMapping("/about")
-    public String about(ModelMap modelMap) {
-        QueryWrapper<About> aboutQueryWrapper = new QueryWrapper<>();
-        aboutQueryWrapper.orderByDesc("created_time");
-        About about = service.aboutService.getOne(aboutQueryWrapper);
-        modelMap.addAttribute("aboutRead", about);
-        modelMap.addAttribute("about", "selected");
-        return "new/about";
     }
 
     @GetMapping("/about/edit")
