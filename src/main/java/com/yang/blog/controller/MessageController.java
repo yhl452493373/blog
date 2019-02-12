@@ -120,28 +120,6 @@ public class MessageController implements BaseController {
     }
 
     /**
-     * 更新数据
-     *
-     * @param message 更新对象
-     * @return 添加结果
-     */
-    @RequestMapping("/update")
-    public JSONResult update(Message message) {
-        JSONResult jsonResult = JSONResult.init();
-        UpdateWrapper<Message> updateWrapper = new UpdateWrapper<>();
-        //TODO 根据需要设置需要更新的列，字段值从message获取。以下注释部分为指定更新列示例，使用时需要注释或删除updateWrapper.setEntity(message);
-        //updateWrapper.set("数据库字段1","字段值");
-        //updateWrapper.set("数据库字段2","字段值");
-        updateWrapper.eq("表示主键的字段", "message中表示主键的值");
-        boolean result = service.messageService.update(message, updateWrapper);
-        if (result)
-            jsonResult.success();
-        else
-            jsonResult.error();
-        return jsonResult;
-    }
-
-    /**
      * 删除数据
      *
      * @param message 删除对象

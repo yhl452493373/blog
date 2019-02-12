@@ -118,7 +118,7 @@ header::before {
     margin-top: 14px;
 }
 
-.imgscale{
+.imgscale {
     text-align: center;
 }
 
@@ -731,7 +731,7 @@ nav {
     border-radius: 3px
 }
 
-.newspic li:last-child{
+.newspic li:last-child {
     margin-bottom: 0;
 }
 
@@ -944,15 +944,15 @@ nav {
     min-height: 120px;
 }
 
-.bloglist li.piclist{
+.bloglist li.piclist {
     padding-bottom: 20px;
 }
 
-.bloglist li.piclist.mutipiclist{
+.bloglist li.piclist.mutipiclist {
     padding-bottom: 70px;
 }
 
-.bloglist li.piclist.mutipiclist .blogtext{
+.bloglist li.piclist.mutipiclist .blogtext {
     margin-top: 10px;
 }
 
@@ -2316,39 +2316,42 @@ about
     border-bottom: #dedddd 1px dashed;
 }
 
-.fb ul {
+.fb ul{
     margin: 10px 10px;
-    padding: 10px 10px 10px 70px;
+    padding: 0 10px 0 70px;
     border-bottom: #ececec 1px solid;
 }
 
-textarea#lytext {
-    width: 100%;
-}
-
-.gbox input[type="submit"] {
-    display: block;
-    background: #040404;
-    color: #fff;
-    border: 0;
-    line-height: 30px;
-    padding: 0 20px;
-    border-radius: 5px;
-    float: right;
-}
-
-#plpost input[type="submit"] {
-    display: block;
-    background: #303030;
-    color: #fff;
-    border: 0;
-    line-height: 30px;
-    padding: 0 20px;
-    border-radius: 5px;
-    float: right;
+.fb ul li{
+    padding: 10px 0;
 }
 
 /*layui颜色变更*/
+.layui-btn-normal{
+    background: #040404;
+}
+
+.layui-btn-primary:hover{
+    border-color: #040404;
+}
+
+
+.layui-layer-btn .layui-layer-btn0{
+    border-color: #1c2327!important;
+    background-color: #1c2327!important;
+}
+
+.blogpic-item {
+    float: right;
+    width: 75%;
+    padding-left: 20px;
+    box-sizing: border-box;
+}
+
+.layui-text-right {
+    text-align: right;
+}
+
 .layui-laypage a, .layui-laypage span {
     background: #f7f7f7;
     color: #666;
@@ -2409,16 +2412,4 @@ textarea#lytext {
 
 .list-page {
     text-align: center;
-}
-
-.layer-black .layui-layer-btn .layui-layer-btn0 {
-    border-color: #1c2327;
-    background-color: #1c2327;
-}
-
-.blogpic-item{
-    float: right;
-    width: 75%;
-    padding-left: 20px;
-    box-sizing: border-box;
 }

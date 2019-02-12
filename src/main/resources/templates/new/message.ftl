@@ -12,11 +12,31 @@
         }
 
         .message-reply{
-            border-bottom-style: dashed!important;
+            border-bottom: none!important;
+        }
+
+        .message-reply li{
+            border-bottom: 1px dashed #ccc;
         }
 
         .fbinfo{
             word-break: break-all;
+        }
+
+        .fbreply{
+            text-align: right;
+            line-height: 24px;
+            padding-right: 10px;
+            font-size: 14px;
+            border-width: 1px;
+        }
+
+        .fbreply a{
+            color: #888;
+        }
+
+        .fbreply a:hover{
+            color: #444;
         }
 
         .layui-form-label{
@@ -58,7 +78,7 @@
                             <textarea class="layui-textarea" name="content" placeholder="留下你想说的话吧"></textarea>
                         </div>
                     </div>
-                    <input type="submit" id="leaveMessage" value="提交">
+                    <button class="layui-btn layui-btn-normal" style="float: right" id="leaveMessage">提交</button>
                 </form>
             </div>
         </div>
@@ -72,37 +92,55 @@
     {{# layui.each(d.itemList, function(index, message){ }}
         <div class="fb">
             <ul class="message">
-                <li>
+                <li data-belong-id="{{ message.id }}">
                     <p class="fbtime">
-                        <span>第&nbsp;{{ message.floor }}&nbsp;楼</span><span>&nbsp;</span>
+                        <@shiro.user>
+                            <a class="layui-icon layui-icon-delete message-delete" href="${contextPath}/data/message/delete?id={{ message.id }}"></a>
+                        </@shiro.user>
+                        <span>第&nbsp;<span class="floor">{{ message.floor }}</span>&nbsp;楼</span><span>&nbsp;</span>
                         <span>{{ message.createdTime }}</span><span>&nbsp;</span>
-                        <span>{{ message.userName }}:</span>
+                        <span><span class="username">{{ message.userName }}</span>:</span>
                     </p>
                     <p class="fbinfo">{{= message.content }}</p>
+                    <p class="fbreply">
+                        <a href="#" class="message-reply-button">回复</a>
+                    </p>
                 </li>
             </ul>
             {{# layui.each(message.replyList, function(index, reply){ }}
                 {{# if(reply.userId!=null){ }}
                     <ul class="message-reply">
-                        <li>
+                        <li data-belong-id="{{ message.id }}">
                             <p class="zzhf">
-                                <span>第&nbsp;{{ reply.belongFloor }}&nbsp;楼</span><span>&nbsp;</span>
+                                <@shiro.user>
+                                    <a class="layui-icon layui-icon-delete message-delete" href="${contextPath}/data/message/delete?id={{ reply.id }}"></a>
+                                </@shiro.user>
+                                <span>第&nbsp;<span class="belong-floor">{{ reply.belongFloor }}</span>&nbsp;楼</span><span>&nbsp;</span>
                                 <span>{{ message.createdTime }}</span><span>&nbsp;</span>
-                                <span style="color: #FF0000">博主回复:</span>
+                                <span style="color: #ff0000">博主&nbsp;</span><span class="username">{{ reply.userName }}</span>:
                                 <br>
                             </p>
                             <p class="fbinfo">{{= reply.content }}</p>
+                            <p class="fbreply">
+                                <a href="#" class="message-reply-button">回复</a>
+                            </p>
                         </li>
                     </ul>
                 {{# } else { }}
                     <ul class="message-reply">
-                        <li>
+                        <li data-belong-id="{{ message.id }}">
                             <p class="fbtime">
-                                <span>第&nbsp;{{ reply.belongFloor }}&nbsp;楼</span><span>&nbsp;</span>
+                                <@shiro.user>
+                                    <a class="layui-icon layui-icon-delete message-delete" href="${contextPath}/data/message/delete?id={{ reply.id }}"></a>
+                                </@shiro.user>
+                                <span>第&nbsp;<span class="belong-floor">{{ reply.belongFloor }}</span>&nbsp;楼:</span><span>&nbsp;</span>
                                 <span>{{ reply.createdTime }}</span><span>&nbsp;</span>
-                                <span>{{ reply.userName }}</span>
+                                <span><span class="username">{{ reply.userName }}</span>:</span>
                             </p>
                             <p class="fbinfo">{{= reply.content }}</p>
+                            <p class="fbreply">
+                                <a href="#" class="message-reply-button">回复</a>
+                            </p>
                         </li>
                     </ul>
                 {{# } }}
@@ -110,9 +148,30 @@
         </div>
     {{# }); }}
 </script>
+<script type="text/html" id="replyBox">
+    <form id="messageReplyForm" lay-filter="messageReplyForm" class="layui-form" style="display: none" action="${contextPath}/data/message/reply" method="post">
+        <input type="hidden" name="belongId">
+        <div class="layui-form-item layui-form-text">
+            <textarea name="content" class="layui-textarea" style="resize: none" placeholder="说出您的心声"></textarea>
+        </div>
+        <div class="layui-form-item layui-text-right">
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <#--noinspection FtlReferencesInspection-->
+                    <input type="text" name="userName" value="<@shiro.principal property='username'/>"
+                           placeholder="您的昵称" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn layui-btn-normal reply">提交</button>
+                <button class="layui-btn layui-btn-primary cancel-reply">取消</button>
+            </div>
+        </div>
+    </form>
+</script>
 <script>
-    layui.use(['jquery', 'laytpl', 'laypage', 'layer'], function () {
-        var $ = layui.jquery, laytpl = layui.laytpl, laypage = layui.laypage, layer = layui.layer;
+    layui.use(['jquery', 'laytpl', 'laypage', 'layer','form'], function () {
+        var $ = layui.jquery, laytpl = layui.laytpl, laypage = layui.laypage, layer = layui.layer,form = layui.form;
 
         $(document).on('click', '#leaveMessage', function (e) {
             e.preventDefault();
@@ -120,13 +179,13 @@
         }).on('click.message-delete', '.message-delete', function (e) {
             e.preventDefault();
             deleteMessage.call(this);
-        }).on('click.message-reply', '.message-reply', function (e) {
+        }).on('click.message-reply-button', '.message-reply-button', function (e) {
             e.preventDefault();
             replyMessageBox.call(this);
         });
 
         function replyMessageBox() {
-            var $belongMessage = $(this).closest('.info-text');
+            var $belongMessage = $(this).closest('li');
             var hideReplyForm = function () {
                 $('#messageReplyForm').slideUp(function () {
                     $(this).remove();
@@ -154,7 +213,7 @@
                 $belongMessage.append($replyForm);
                 $replyForm.slideDown();
                 form.val('messageReplyForm', {
-                    belongId: $belongMessage.parent().data('belongId'),
+                    belongId: $belongMessage.data('belongId'),
                     content: defaultText
                 });
                 $belongMessage.on('click.reply', '.reply', function (e) {
