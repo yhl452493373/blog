@@ -132,11 +132,6 @@
     layui.use(['laypage', 'layer', 'laytpl'], function () {
         var laypage = layui.laypage, layer = layui.layer, laytpl = layui.laytpl;
 
-        layer.config({
-            skin: 'layer-black',
-            area: '300px'
-        });
-
         function loadData(size=5, current=1) {
             var loadIndex;
             $.ajax({

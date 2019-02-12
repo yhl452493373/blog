@@ -283,12 +283,16 @@
          * @param current 当前页数
          */
         function loadMessage(size=5, current=1) {
+            var loadIndex;
             $.ajax({
                 url: 'data/message/list',
                 type: 'post',
                 data: {
                     size: size,
                     current: current
+                },
+                beforeSend:function(){
+                    loadIndex = layer.load();
                 },
                 success: function (result) {
                     if (result.status === 'success') {
@@ -312,6 +316,9 @@
                         });
                         renderData({itemList: result.data});
                     }
+                },
+                complete:function () {
+                    layer.close(loadIndex);
                 }
             })
         }
