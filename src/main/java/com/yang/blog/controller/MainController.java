@@ -61,12 +61,14 @@ public class MainController {
 
     @GetMapping("/album")
     public String album(ModelMap modelMap) {
+        loadBaseData(modelMap);
         modelMap.addAttribute("album", "selected");
         return "new/album";
     }
 
     @GetMapping("/message")
     public String message(ModelMap modelMap) {
+        loadBaseData(modelMap);
         modelMap.addAttribute("message", "selected");
         return "new/message";
     }
