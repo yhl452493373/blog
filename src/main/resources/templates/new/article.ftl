@@ -51,7 +51,7 @@
                     <!--没有图片id,则为纯文字模式-->
                     <li>
                         <h3 class="blogtitle">
-                            <a href="/" target="_blank">{{ article.title }}</a>
+                            <a href="/detail/{{ article.id }}" target="_blank">{{ article.title }}</a>
                         </h3>
                         <div class="blogtext">{{ article.summary }}</div>
                         <p class="bloginfo">
@@ -63,19 +63,19 @@
                             <#--暂时不展示标签-->
                             <#--<span>【<a href="/">原创模板</a>】</span>-->
                         </p>
-                        <a href="/" class="viewmore">阅读更多</a>
+                        <a href="/detail/{{ article.id }}" class="viewmore">阅读更多</a>
                     </li>
                 {{# } else if ( imageIds.length==1 ) { }}
                     <!-- 图片数量为1个,则为普通单图模式,只显示1张图片 -->
                     <li class="piclist">
                         <h3 class="blogtitle">
-                            <a href="/" target="_blank">{{ article.title }}</a>
+                            <a href="/detail/{{ article.id }}" target="_blank">{{ article.title }}</a>
                         </h3>
                         <span class="blogpic imgscale">
                                     <#--暂时不展示标签-->
                             <#--<i><a href="/">原创模板</a></i>-->
                             {{# layui.each(imageIds,function(index,imageId){ }}
-                                <a href="/" title="">
+                                <a href="/detail/{{ article.id }}" title="">
                                     <img src="https://img.zcool.cn/community/016eae5a26227ca801216e8d48b176.jpg@1280w_1l_2o_100sh.jpg" alt="">
                                 </a>
                             {{# }); }}
@@ -91,14 +91,14 @@
                                 <#--暂时不展示标签-->
                                 <#--<span>【<a href="/">原创模板</a>】</span>-->
                             </p>
-                            <a href="/" class="viewmore">阅读更多</a>
+                            <a href="/detail/{{ article.id }}" class="viewmore">阅读更多</a>
                         </div>
                     </li>
                 {{# } else { }}
                     <!-- 图片数量大于等于2个,则为多图模式 -->
                     <li class="piclist mutipiclist">
                         <h3 class="blogtitle">
-                            <a href="/" target="_blank">
+                            <a href="/detail/{{ article.id }}" target="_blank">
                                 <#--不置顶-->
                                 <#--<b>【顶】</b>-->
                                 {{ article.title }}
@@ -106,7 +106,7 @@
                         </h3>
                         <span class="bplist">
                             {{# layui.each(imageIds,function(index,imageId){ }}
-                                <a href="/" title="">
+                                <a href="/detail/{{ article.id }}" title="">
                                     <img src="https://img.zcool.cn/community/016eae5a26227ca801216e8d48b176.jpg@1280w_1l_2o_100sh.jpg" alt="">
                                 </a>
                             {{# }); }}
@@ -121,7 +121,7 @@
                             <#--暂时不展示标签-->
                             <#--<span>【<a href="/">原创模板</a>】</span>-->
                         </p>
-                        <a href="/" class="viewmore">阅读更多</a>
+                        <a href="/detail/{{ article.id }}" class="viewmore">阅读更多</a>
                     </li>
                 {{# } }}
             {{# }); }}

@@ -1,15 +1,13 @@
 package com.yang.blog.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yang.blog.entity.Article;
 import com.yang.blog.mapper.ArticleMapper;
 import com.yang.blog.service.ArticleService;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -41,5 +39,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public List<Article> unionPage(IPage<Article> page) {
         return baseMapper.selectUnionPage(page).getRecords();
+    }
+
+    @Override
+    public Article getById(Serializable id) {
+        return baseMapper.getById(id);
     }
 }

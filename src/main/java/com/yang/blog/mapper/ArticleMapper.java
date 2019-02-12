@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yang.blog.entity.Article;
 import org.apache.ibatis.annotations.Param;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -24,4 +25,6 @@ public interface ArticleMapper extends BaseMapper<Article> {
     List<Article> findByTagId(@Param("tagId") String tagId, @Param("size") int size);
 
     IPage<Article> selectUnionPage(IPage<Article> page);
+
+    Article getById(Serializable id);
 }

@@ -5,11 +5,11 @@
         <div class="logo"><a href="http://www.yanghuanglin.com">个人博客</a></div>
         <nav>
             <ul id="starlist">
-                <li class="${index!}"><a href="index">首页</a></li>
-                <li class="${article!}"><a href="article">文章</a></li>
-                <li class="${album!}"><a href="album">相册</a></li>
-                <li class="${message!}"><a href="message">留言</a></li>
-                <li class="${about!}"><a href="about">关于</a></li>
+                <li class="${index!}"><a href="${contextPath}/index">首页</a></li>
+                <li class="${article!}"><a href="${contextPath}/article">文章</a></li>
+                <li class="${album!}"><a href="${contextPath}/album">相册</a></li>
+                <li class="${message!}"><a href="${contextPath}/message">留言</a></li>
+                <li class="${about!}"><a href="${contextPath}/about">关于</a></li>
             </ul>
         </nav>
         <div class="searchico"><i class="blog-icon blog-icon-search"></i></div>

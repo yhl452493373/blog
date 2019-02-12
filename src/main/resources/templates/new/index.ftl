@@ -100,7 +100,7 @@
                                 <#list tag.articleList as article>
                                     <li>
                                         <i></i><span>${article.title}</span>
-                                        <p><a href="/">${article.summary}</a></p>
+                                        <p><a href="/detail/${article.id}">${article.summary}</a></p>
                                     </li>
                                 </#list>
                             </ul>
@@ -128,7 +128,7 @@
                             <!--没有图片id,则为纯文字模式-->
                             <li>
                                 <h3 class="blogtitle">
-                                    <a href="/" target="_blank">${article.title}</a>
+                                    <a href="/detail/${article.id}" target="_blank">${article.title}</a>
                                 </h3>
                                 <p class="blogtext">${article.summary}</p>
                                 <p class="bloginfo">
@@ -140,13 +140,13 @@
                                     <#--暂时不展示标签-->
                                     <#--<span>【<a href="/">原创模板</a>】</span>-->
                                 </p>
-                                <a href="/" class="viewmore">阅读更多</a>
+                                <a href="/detail/${article.id}" class="viewmore">阅读更多</a>
                             </li>
                         <#elseif imageIds?size == 1>
                             <!-- 图片数量小于1个,则为普通单图模式,只显示1张图片 -->
                             <li class="piclist">
                                 <h3 class="blogtitle">
-                                    <a href="/" target="_blank">${article.title}</a>
+                                    <a href="/detail/${article.id}" target="_blank">${article.title}</a>
                                 </h3>
                                 <span class="blogpic imgscale">
                                     <#--暂时不展示标签-->
@@ -168,14 +168,14 @@
                                         <#--暂时不展示标签-->
                                         <#--<span>【<a href="/">原创模板</a>】</span>-->
                                     </p>
-                                    <a href="/" class="viewmore">阅读更多</a>
+                                    <a href="/detail/${article.id}" class="viewmore">阅读更多</a>
                                 </div>
                             </li>
                         <#else>
                             <!-- 图片数量大于等于1个,则为多图模式 -->
                             <li class="piclist mutipiclist">
                                 <h3 class="blogtitle">
-                                    <a href="/" target="_blank">
+                                    <a href="/detail/${article.id}" target="_blank">
                                         <#--不置顶-->
                                         <#--<b>【顶】</b>-->
                                         ${article.title}
@@ -183,7 +183,7 @@
                                 </h3>
                                 <span class="bplist">
                                     <#list imageIds as imageId>
-                                        <a href="/">
+                                        <a href="/detail/${article.id}">
                                             <img src="https://img.zcool.cn/community/01875f5b971a35a80121a0f7579922.jpg@1280w_1l_0o_100sh.jpg" alt="">
                                         </a>
                                     </#list>
@@ -198,7 +198,7 @@
                                     <#--暂时不展示标签-->
                                     <#--<span>【<a href="/">原创模板</a>】</span>-->
                                 </p>
-                                <a href="/" class="viewmore">阅读更多</a>
+                                <a href="/detail/${article.id}" class="viewmore">阅读更多</a>
                             </li>
                         </#if>
                     </#list>

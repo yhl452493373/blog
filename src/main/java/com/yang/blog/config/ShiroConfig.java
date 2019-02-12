@@ -48,6 +48,8 @@ public class ShiroConfig {
 
         //默认目录：
         filterChainDefinitionMap.put("/", "anon");
+        //网站图标
+        filterChainDefinitionMap.put("/favicon.ico", "anon");
         //静态资源
         filterChainDefinitionMap.put("/static/**", "anon");
         //异常页面
@@ -73,7 +75,7 @@ public class ShiroConfig {
         //关于页面
         filterChainDefinitionMap.put("/about", "anon");
         //文章页面
-        filterChainDefinitionMap.put("/details/**", "anon");
+        filterChainDefinitionMap.put("/detail/**", "anon");
         //评论页面
         filterChainDefinitionMap.put("/comment/**", "anon");
         //添加评论过程

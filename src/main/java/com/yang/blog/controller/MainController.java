@@ -59,6 +59,21 @@ public class MainController {
         return "new/article";
     }
 
+    @GetMapping("/detail/{articleId}")
+    public String details(@PathVariable String articleId, ModelMap modelMap) {
+        Article article = service.articleService.getById(articleId);
+        if (article == null) {
+            modelMap.addAttribute("detail", new Article());
+            modelMap.addAttribute("tagList", new ArrayList<>());
+        } else {
+            modelMap.addAttribute("detail", article);
+            Collection<Tag> tagList = service.tagService.listArticleRelateTagAsc(articleId, "name");
+            modelMap.addAttribute("tagList", tagList);
+        }
+        modelMap.addAttribute("article", "layui-this");
+        return "new/detail";
+    }
+
     @GetMapping("/album")
     public String album(ModelMap modelMap) {
         loadBaseData(modelMap);
@@ -168,21 +183,6 @@ public class MainController {
         modelMap.addAttribute("aboutEdit", about);
         modelMap.addAttribute("about", "layui-this");
         return "about.edit";
-    }
-
-    @GetMapping("/details/{articleId}")
-    public String details(@PathVariable String articleId, ModelMap modelMap) {
-        Article article = service.articleService.getById(articleId);
-        if (article == null) {
-            modelMap.addAttribute("article", new Article());
-            modelMap.addAttribute("tagList", new ArrayList<>());
-        } else {
-            modelMap.addAttribute("article", article);
-            Collection<Tag> tagList = service.tagService.listArticleRelateTagAsc(articleId, "name");
-            modelMap.addAttribute("tagList", tagList);
-        }
-        modelMap.addAttribute("index", "layui-this");
-        return "details";
     }
 
     @GetMapping("/comment/{articleId}")

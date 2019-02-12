@@ -31,5 +31,11 @@
                  join user u on a.author_id = u.id
         where a.available = ${@com.yang.blog.entity.Article@AVAILABLE}
     </select>
+    <select id="getById" resultType="com.yang.blog.entity.Article">
+        select a.*, u.username author_name
+        from article a
+                 join user u on a.author_id = u.id
+        where a.available = ${@com.yang.blog.entity.Article@AVAILABLE} and a.id=#{id}
+    </select>
 
 </mapper>
