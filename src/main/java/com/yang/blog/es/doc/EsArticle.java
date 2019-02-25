@@ -31,20 +31,20 @@ public class EsArticle extends EsBaseDoc<EsArticle, Article> implements Constant
     /**
      * 博文标题
      */
-    @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp-smart", analyzer = "hanlp-index")
+    @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp_smart", analyzer = "hanlp_index")
     private String title;
 
     /**
      * 博文内容
      */
     @FieldNotUpdate
-    @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp-smart", analyzer = "hanlp-index")
+    @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp_smart", analyzer = "hanlp_index")
     private String content;
 
     /**
      * 博文摘要
      */
-    @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp-smart", analyzer = "hanlp-index")
+    @Field(type = FieldType.Text, fielddata = true, searchAnalyzer = "hanlp_smart", analyzer = "hanlp_index")
     private String summary;
 
     /**
